@@ -112,7 +112,7 @@ function monsterMove(){
 }
 
 function init() {
-    canvas = document.getElementById("canvas");;
+    canvas = document.createElement("canvas");
     context = canvas.getContext("2d");
     canvas.width = 600;
     canvas.height = 400;
