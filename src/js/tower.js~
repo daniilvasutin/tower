@@ -1,10 +1,73 @@
 var canvas, context, toggle;
 
 var images = {};
-var monster = {
-     x: 0,
-     y: 200
-};
+
+function monster(){
+
+    var x;
+    var y;
+
+    this.makeStep = function() {
+
+        if(this.x < coordinates[1][0]+1 && this.y == coordinates[0][1])   { this.x += 1; }
+        if(this.x == coordinates[1][0] && this.y > coordinates[1][1])     { this.y -= 1; }
+        if(this.x < coordinates[2][0]+1 && this.y == coordinates[1][1])   { this.x += 1; }
+        if(this.x == coordinates[2][0] && this.y < coordinates[2][1])     { this.y += 1; }
+        if(this.x < coordinates[3][0]+1 && this.y == coordinates[2][1])   { this.x += 1; }
+        if(this.x == coordinates[3][0] && this.y > coordinates[3][1])     { this.y -= 1; }
+        if(this.x < coordinates[4][0] && this.y == coordinates[3][1] && this.x >= coordinates[3][0]){ this.x += 1; }
+    }
+
+    this.getX = function() {
+        return this.x;
+    }
+
+    this.getY = function() {
+        return this.y;
+    }
+
+    this.setX = function(x) {
+        this.x = x;
+    }
+
+    this.setY = function(y) {
+        this.y = y;
+    }
+
+}
+
+//var monsterArray = new Array(new monster().setX(30), new monster().setX(0));
+var monsterArray = new Array();
+monsterArray.push(new monster());
+monsterArray.push(new monster());
+monsterArray.push(new monster());
+monsterArray[0].setX(0);
+monsterArray[0].setY(200);
+
+monsterArray[1].setX(-50);
+monsterArray[1].setY(200);
+
+monsterArray[2].setX(-100);
+monsterArray[2].setY(200);
+
+//var ii = 0;
+/var xx =0;
+//createMonster();
+//setTimeout(createMonster(),500);
+
+//function createMonster(){
+   // monsterArray.push(new monster());
+
+//    monsterArray[ii].setX(xx);
+ //   monsterArray[ii].setY(200);
+
+   // ii++;
+   // xx += 5;
+
+  //  if(ii < 5) setTimeout(createMonster(),2000);
+//}
+
+var monster = new monster();
 
 var coordinates = [
     [0, 200], //0
@@ -15,8 +78,13 @@ var coordinates = [
 ];
 
 function render(){
+
     context.drawImage(images.bg, 0, 0);
-    context.drawImage(images.monster, monster.x, monster.y);
+    for(var i=0; i<monsterArray.length; i++){
+        context.drawImage(images.monster, monsterArray[i].getX(), monsterArray[i].getY());
+    }
+
+
 }
 
 function loadImages(sources) {
@@ -74,45 +142,28 @@ function animate() {
 
     monsterMove();
 
-    // request new frame
     var req = requestAnimFrame(animate);
 
-    if(monster.x+32 >= canvas.width){
+    if(monsterArray[0].getX()+32 >= canvas.width){
         cancelRequestAnimFrame(req);
     }
 }
 
 function monsterMove(){
 
-    if(monster.x < coordinates[1][0]+1 && monster.y == coordinates[0][1]){
-        monster.x += 1;
-    }
-    if(monster.x == coordinates[1][0] && monster.y > coordinates[1][1]){
-        monster.y -= 1;
-    }
-    if(monster.x < coordinates[2][0]+1 && monster.y == coordinates[1][1]){
-        monster.x += 1;
-    }
-    if(monster.x == coordinates[2][0] && monster.y < coordinates[2][1]){
-        monster.y += 1;
-    }
-    if(monster.x < coordinates[3][0]+1 && monster.y == coordinates[2][1]){
-        monster.x += 1;
-    }
-    if(monster.x == coordinates[3][0] && monster.y > coordinates[3][1]){
-        monster.y -= 1;
-    }
-    if(monster.x < coordinates[4][0] && monster.y == coordinates[3][1] && monster.x >= coordinates[3][0]){
-        monster.x += 1;
+
+    for(var i=0; i<monsterArray.length; i++){
+        monsterArray[i].makeStep();
     }
 
-    console.log(monster.x + " : " + monster.y);
+    console.log(ii);
+//    console.log(monster.getX() + " : " + monster.getY());
 
     render();
 }
 
 function init() {
-    canvas = document.createElement("canvas");
+    canvas = document.getElementById("canvas");;
     context = canvas.getContext("2d");
     canvas.width = 600;
     canvas.height = 400;
