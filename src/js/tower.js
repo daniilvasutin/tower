@@ -1,15 +1,13 @@
 var canvas, context, toggle;
 
-
-
 var images = {};
 
 function monster(){
 
     var x;
     var y;
-
     var currentFrame;
+    var direction;
 
     this.getX = function() {
         return this.x;
@@ -29,28 +27,38 @@ function monster(){
 
     this.makeStep = function() {
 
-        if(this.x < coordinates[1][0]+1 && this.y == coordinates[0][1])   { this.x += 1; }
-        if(this.x == coordinates[1][0] && this.y > coordinates[1][1])     { this.y -= 1; }
-        if(this.x < coordinates[2][0]+1 && this.y == coordinates[1][1])   { this.x += 1; }
-        if(this.x == coordinates[2][0] && this.y < coordinates[2][1])     { this.y += 1; }
-        if(this.x < coordinates[3][0]+1 && this.y == coordinates[2][1])   { this.x += 1; }
-        if(this.x == coordinates[3][0] && this.y > coordinates[3][1])     { this.y -= 1; }
-        if(this.x < coordinates[4][0] && this.y == coordinates[3][1] && this.x >= coordinates[3][0]){ this.x += 1; }
+        if(this.x < coordinates[1][0]+1 && this.y == coordinates[0][1])   { this.x += 1; this.setDirection("right"); }
+        if(this.x == coordinates[1][0] && this.y > coordinates[1][1])     { this.y -= 1; this.setDirection("top");   }
+        if(this.x < coordinates[2][0]+1 && this.y == coordinates[1][1])   { this.x += 1; this.setDirection("right"); }
+        if(this.x == coordinates[2][0] && this.y < coordinates[2][1])     { this.y += 1; this.setDirection("bottom");}
+        if(this.x < coordinates[3][0]+1 && this.y == coordinates[2][1])   { this.x += 1; this.setDirection("right"); }
+        if(this.x == coordinates[3][0] && this.y > coordinates[3][1])     { this.y -= 1; this.setDirection("top"); }
+        if(this.x < coordinates[4][0] && this.y == coordinates[3][1] && this.x >= coordinates[3][0]){ this.x += 1; this.setDirection("right"); }
     }
 
-    this.nextFrame = function(){
+    this.goToNextFigure = function(){
 
         this.currentFrame++;
     }
 
-    this.getFrameNumber = function(){
+    this.getCurrentFigure = function(){
 
         return this.currentFrame;
     }
 
-    this.setFrameNumber = function(aFrameNumber) {
+    this.setCurrentFigure = function(aFrameNumber) {
 
         this.currentFrame = aFrameNumber;
+    }
+
+    this.setDirection = function(aDirection) {
+
+       this.direction = aDirection;
+    }
+
+    this.getDirection = function() {
+
+        return this.direction;
     }
 
 }
@@ -64,10 +72,10 @@ function createMonsters(){
 
         firstDelay += 40;
 
-        monsterArray[i].setFrameNumber(0);
+        monsterArray[i].setCurrentFigure(0);
         monsterArray[i].setX(-firstDelay);
         monsterArray[i].setY(170);
-
+        monsterArray[i].setDirection("right");
     }
 }
 
@@ -87,37 +95,56 @@ var coordinates = [
     [610,145] //4
 ];
 
-var numberOfFrames=3,xOffset;
-var frameWidth;
-var frameHeight;
-var coutInWave=10;
+var numberOfEnemyFigures=4;
+var enemyCoutInWave=10, delayForSlowAnimation= 7;
+var figureOfEnemyFromSpriteX,figureOfEnemyFromSpriteY;
 var next=0;
 
 function drawSprite(monster){
 
-    monster.nextFrame();
-    if (monster.getFrameNumber()>=numberOfFrames)
-        monster.setFrameNumber(0);
-    var frameWidth=images.newMonster.width/numberOfFrames;
-    var frameHeight=images.newMonster.height;
-    if(next==5*coutInWave){
-        xOffset=frameWidth*monster.getFrameNumber();
+    monster.goToNextFigure();
+    if (monster.getCurrentFigure()>=numberOfEnemyFigures) { monster.setCurrentFigure(0); }
+
+    var figureOfEnemyFromSpriteWeight=images.newMonster.width/numberOfEnemyFigures-2;//2 - погрешность ширины изображения
+    var figureOfEnemyFromSpriteHeight=images.newMonster.height/numberOfEnemyFigures-2;
+
+    if(next==delayForSlowAnimation*enemyCoutInWave){
+        figureOfEnemyFromSpriteX=figureOfEnemyFromSpriteWeight*monster.getCurrentFigure();
         next=0;
     }
     next++;
 
-    context.drawImage(images.newMonster, xOffset, 0,
-        frameWidth, frameHeight,
-        monster.getX(), monster.getY(), frameWidth, frameHeight);
+    if(monster.getDirection() === "right")  { figureOfEnemyFromSpriteY = images.newMonster.height/numberOfEnemyFigures*2; }
+    if(monster.getDirection() === "top")    { figureOfEnemyFromSpriteY = images.newMonster.height/numberOfEnemyFigures*3; }
+    if(monster.getDirection() === "bottom") { figureOfEnemyFromSpriteY = images.newMonster.height/numberOfEnemyFigures*0; }
+    if(monster.getDirection() === "left")   { figureOfEnemyFromSpriteY = images.newMonster.height/numberOfEnemyFigures*1; }
+
+
+    context.drawImage(images.newMonster, figureOfEnemyFromSpriteX, figureOfEnemyFromSpriteY,
+        figureOfEnemyFromSpriteWeight, figureOfEnemyFromSpriteHeight,
+        monster.getX(), monster.getY(), figureOfEnemyFromSpriteWeight, figureOfEnemyFromSpriteHeight);
 }
 
 function render(){
 
     context.drawImage(images.bg, 0, 0);
+
+    var countEnemyBottomMove = 0;
     for(var i=0; i<monsterArray.length; i++){
-        drawSprite(monsterArray[i]);
+        if(monsterArray[i].getDirection() === "bottom"){
+            countEnemyBottomMove++;
+        }
     }
 
+    if(countEnemyBottomMove >= 1){
+        for(var i = monsterArray.length-1; i >= 0; i--){
+            drawSprite(monsterArray[i]);
+        }
+    }else{
+        for(var i=0; i<monsterArray.length; i++){
+            drawSprite(monsterArray[i]);
+        }
+    }
 }
 
 function loadImages(sources) {
@@ -131,22 +158,20 @@ function loadImages(sources) {
         images[src] = new Image();
         images[src].onload = function() {
             if(++loadedImages >= numImages) {
-                showImages();
+                showBg();
             }
         };
         images[src].src = sources[src];
     }
-    frameWidth=images.newMonster.width/numberOfFrames;
-    frameHeight=images.newMonster.height;
 }
 
 var sources = {
     bg: "../images/levelbg1.png",
     monster: "../images/monster.png",
-    newMonster: "../images/enemy.png"
+    newMonster: "../images/mo1.png"
 };
 
-function showImages(){
+function showBg(){
     context.drawImage(images.bg, 0, 0);
 }
 
@@ -171,7 +196,7 @@ window.cancelRequestAnimFrame = ( function() {
 })();
 
 init();
-render();
+showBg();
 createMonsters();
 setTimeout(animate, 1000);
 
@@ -187,7 +212,6 @@ function animate() {
 }
 
 function monsterMove(){
-
 
     for(var i=0; i<monsterArray.length; i++){
         monsterArray[i].makeStep();
