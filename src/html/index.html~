@@ -1,17 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>Simple Canvas Game</title>
-    <script src="../js/jquery.js"></script>
-</head>
-<body>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+   "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML>
+   <HEAD>
+      <TITLE>Главная страница</TITLE>
+      <link rel="stylesheet" type="text/css" href="../css/style.css" />
+   </HEAD>
+   <BODY id=>
+   
+   <form action="game.html">
+<div><button value="send" name="hidden" ><img src="buttongame.png"> </button></div>
+</form>
 
-    <!--<script src="../js/game.js"></script>-->
-
-
-    <script src="../js/tower.js"></script>
-
-
-</body>
-</html>
+   <form action="help.html">
+<div><button value="send" name="hidden" ><img src="buttonhelp.png"> </button></div>
+</form>
+   <form action="best.html">
+<div><button value="send" name="hidden" ><img src="buttonbest.png"> </button></div>
+</form>
+   <form action="exit.html">
+<div><button value="send" name="hidden" ><img src="buttonexit.png"> </button></div>
+</form>
+</BODY>
+</HTML>

@@ -1,0 +1,174 @@
+var canvas, context, toggle;
+
+var images = {};
+
+function monster(){
+
+    var x;
+    var y;
+
+    this.makeStep = function() {
+
+        if(this.x < coordinates[1][0]+1 && this.y == coordinates[0][1])   { this.x += 1; }
+        if(this.x == coordinates[1][0] && this.y > coordinates[1][1])     { this.y -= 1; }
+        if(this.x < coordinates[2][0]+1 && this.y == coordinates[1][1])   { this.x += 1; }
+        if(this.x == coordinates[2][0] && this.y < coordinates[2][1])     { this.y += 1; }
+        if(this.x < coordinates[3][0]+1 && this.y == coordinates[2][1])   { this.x += 1; }
+        if(this.x == coordinates[3][0] && this.y > coordinates[3][1])     { this.y -= 1; }
+        if(this.x < coordinates[4][0] && this.y == coordinates[3][1] && this.x >= coordinates[3][0]){ this.x += 1; }
+    }
+
+    this.getX = function() {
+        return this.x;
+    }
+
+    this.getY = function() {
+        return this.y;
+    }
+
+    this.setX = function(x) {
+        this.x = x;
+    }
+
+    this.setY = function(y) {
+        this.y = y;
+    }
+
+}
+
+//var monsterArray = new Array(new monster().setX(30), new monster().setX(0));
+var monsterArray = new Array();
+monsterArray.push(new monster());
+monsterArray.push(new monster());
+monsterArray.push(new monster());
+monsterArray[0].setX(0);
+monsterArray[0].setY(200);
+
+monsterArray[1].setX(-50);
+monsterArray[1].setY(200);
+
+monsterArray[2].setX(-100);
+monsterArray[2].setY(200);
+
+//var ii = 0;
+/var xx =0;
+//createMonster();
+//setTimeout(createMonster(),500);
+
+//function createMonster(){
+   // monsterArray.push(new monster());
+
+//    monsterArray[ii].setX(xx);
+ //   monsterArray[ii].setY(200);
+
+   // ii++;
+   // xx += 5;
+
+  //  if(ii < 5) setTimeout(createMonster(),2000);
+//}
+
+var monster = new monster();
+
+var coordinates = [
+    [0, 200], //0
+    [80,75],  //1
+    [205,235],//2
+    [370,165],//3
+    [570,165] //4
+];
+
+function render(){
+
+    context.drawImage(images.bg, 0, 0);
+    for(var i=0; i<monsterArray.length; i++){
+        context.drawImage(images.monster, monsterArray[i].getX(), monsterArray[i].getY());
+    }
+
+
+}
+
+function loadImages(sources) {
+    var loadedImages = 0;
+    var numImages = 0;
+    // get num of sources
+    for(var src in sources) {
+        numImages++;
+    }
+    for(var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+                showImages();
+            }
+        };
+        images[src].src = sources[src];
+    }
+}
+
+var sources = {
+    bg: "../images/levelbg1.png",
+    monster: "../images/monster.png"
+};
+
+function showImages(){
+    context.drawImage(images.bg, 0, 0);
+}
+
+window.requestAnimFrame = (function(){
+    return  window.requestAnimationFrame   ||
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame    ||
+        window.oRequestAnimationFrame      ||
+        window.msRequestAnimationFrame     ||
+        function(callback){
+            window.setTimeout(callback, 1000 / 60);
+        };
+})();
+
+window.cancelRequestAnimFrame = ( function() {
+    return window.cancelAnimationFrame              ||
+        window.webkitCancelRequestAnimationFrame    ||
+        window.mozCancelRequestAnimationFrame       ||
+        window.oCancelRequestAnimationFrame         ||
+        window.msCancelRequestAnimationFrame        ||
+        clearTimeout
+})();
+
+init();
+render();
+setTimeout(animate, 1000);
+
+function animate() {
+
+    monsterMove();
+
+    var req = requestAnimFrame(animate);
+
+    if(monsterArray[0].getX()+32 >= canvas.width){
+        cancelRequestAnimFrame(req);
+    }
+}
+
+function monsterMove(){
+
+
+    for(var i=0; i<monsterArray.length; i++){
+        monsterArray[i].makeStep();
+    }
+
+    console.log(ii);
+//    console.log(monster.getX() + " : " + monster.getY());
+
+    render();
+}
+
+function init() {
+    canvas = document.getElementById("canvas");;
+    context = canvas.getContext("2d");
+    canvas.width = 600;
+    canvas.height = 400;
+
+    document.body.appendChild(canvas);
+
+    loadImages(sources);
+}

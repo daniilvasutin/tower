@@ -1,0 +1,10 @@
+.menuWindows {
+    background-image: url(../images/menubg.png);
+    background-repeat: no-repeat;
+    color: #ffffff;
+}
+
+#indexButtons{
+    margin-left: 200px;
+    margin-top: 50px;
+}
