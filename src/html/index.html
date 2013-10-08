@@ -1,0 +1,27 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0//EN"
+   "http://www.w3.org/TR/REC-html40/strict.dtd">
+<HTML>
+   <HEAD>
+       <meta charset="utf-8">
+      <TITLE></TITLE>
+      <link rel="stylesheet" type="text/css" href="../css/style.css" />
+       <script>
+           function closeWindow(){
+                setTimeout(function(){
+                    var ww = window.open(window.location, '_self');
+                    ww.close();
+                }, 300);
+           }
+       </script>
+   </HEAD>
+   <BODY class="menuWindows">
+
+   <div id="indexButtons">
+        <button onclick="window.location.href='game.html'"><img src="../images/buttongame.png"></button> <br>
+        <button onclick="window.location.href='help.html'"><img src="../images/buttonhelp.png"></button> <br>
+        <button onclick="window.location.href='best.html'"><img src="../images/buttonbest.png"></button> <br>
+        <button onclick="closeWindow()"><img src="../images/buttonexit.png"></button>
+   </div>
+
+</BODY>
+</HTML>
