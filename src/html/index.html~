@@ -2,23 +2,26 @@
    "http://www.w3.org/TR/REC-html40/strict.dtd">
 <HTML>
    <HEAD>
-      <TITLE>Главная страница</TITLE>
+       <meta charset="utf-8">
+      <TITLE></TITLE>
       <link rel="stylesheet" type="text/css" href="../css/style.css" />
+       <script>
+           function closeWindow(){
+                setTimeout(function(){
+                    var ww = window.open(window.location, '_self');
+                    ww.close();
+                }, 300);
+           }
+       </script>
    </HEAD>
-   <BODY id=>
-   
-   <form action="game.html">
-<div><button value="send" name="hidden" ><img src="buttongame.png"> </button></div>
-</form>
+   <BODY class="menuWindows">
 
-   <form action="help.html">
-<div><button value="send" name="hidden" ><img src="buttonhelp.png"> </button></div>
-</form>
-   <form action="best.html">
-<div><button value="send" name="hidden" ><img src="buttonbest.png"> </button></div>
-</form>
-   <form action="exit.html">
-<div><button value="send" name="hidden" ><img src="buttonexit.png"> </button></div>
-</form>
+   <div id="indexButtons">
+        <button onclick="window.location.href='game.html'"><img src="../images/buttongame.png"></button> <br>
+        <button onclick="window.location.href='help.html'"><img src="../images/buttonhelp.png"></button> <br>
+        <button onclick="window.location.href='best.html'"><img src="../images/buttonbest.png"></button> <br>
+        <button onclick="closeWindow()"><img src="../images/buttonexit.png"></button>
+   </div>
+
 </BODY>
 </HTML>

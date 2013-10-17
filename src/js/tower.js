@@ -56,6 +56,10 @@ function init() {                                   //init game
     context = canvas.getContext("2d");              //create 2d context
 
     loadImages(sources);                            //load all images
+
+    var audio1 = document.getElementById('aTsIwR');
+    audio1.volume = 0.3;
+    audio1.play();
 }
 
 function loadImages(sources) {
@@ -156,16 +160,19 @@ function drawBuildingNowTower(){
 function drawSceneAgain(){
     var req = requestAnimFrame(drawScene);  //make request to internal function which optimizes all animation
 
+    if(monsterArray[0].x == 50){
+        playSprite('monsterA');
+    }
+
     if(monsterArray[monsterArray.length-1].x >= canvas.width){  //if all monsters go through the map animation stop
+        playSprite("monsterHa");
         cancelRequestAnimFrame(req);
     }
 }
 
 function drawScene() {  //main draw function
 
-    clear();
     drawBg();
-
     drawMonsters();
 
     drawTowers();
@@ -223,6 +230,7 @@ function drawMonsters(){
     for(var i=0; i<monsterArray.length; i++){   //make step for all monsters
         monsterArray[i].makeStep();
     }
+
     renderMonster();                            //redraw monster new position
 }
 
@@ -235,10 +243,10 @@ function renderMonster(){
         }
     }
 
-    if(countEnemyBottomMove >= 1){                  //if more then one monster go bottom we will draw monsters in another diraction(overlay problem)
-        for(var i = monsterArray.length-1; i >= 0; i--){
+   if(countEnemyBottomMove >= 1){                  //if more then one monster go bottom we will draw monsters in another diraction(overlay problem)
+       for(var i = monsterArray.length-1; i >= 0; i--){
             drawMonsterSprite(monsterArray[i]);
-        }
+       }
     }else{
         for(var i=0; i<monsterArray.length; i++){   //in normal diraction(overlay problem)
             drawMonsterSprite(monsterArray[i]);
@@ -283,7 +291,7 @@ function Tower(image, x, y, type, damage, cost, width, height)
     this.type = type;
     this.damage = damage;
     this.level = 1;
-    this.radius = 50;
+    this.radius = 25;
     this.image = image;
     this.x = x;
     this.y = y;
@@ -354,3 +362,43 @@ canvas.onmousemove = function(e) { //mousemove handle
 }
 /* ----------------------------Tower processing----------------------------*/
 
+/***************************************************************************/
+/***************************************************************************/
+/** ----------------------------Sound processing---------------------------*/
+var audioSprite = document.getElementById('effects');
+
+// sprite data
+var spriteData = {
+    monsterA: {
+        start: 0.1,
+        length: 2.4
+    },
+    arrow: {
+        start: 3.0,
+        length: 2.0
+    },
+    monsterHa:{
+        start: 8.1,
+        length: 9.5
+    }
+};
+
+// current sprite being played
+var currentSprite = {};
+
+// time update handler to ensure we stop when a sprite is complete
+var onTimeUpdate = function() {
+    if (this.currentTime >= currentSprite.start + currentSprite.length) {
+        this.pause();
+    }
+};
+audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+
+var playSprite = function(id) {          //play sprite according to the id
+    if (spriteData[id] && spriteData[id].length) {
+        currentSprite = spriteData[id];
+        audioSprite.currentTime = currentSprite.start;
+        audioSprite.play();
+    }
+};
+/* ----------------------------Sound processing----------------------------*/
