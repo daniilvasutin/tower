@@ -113,6 +113,8 @@ function startGame(){
     buildBackground(map1);
     afterBgCreating();
     createMonsters();
+    createMonstersTweens();
+    monstersMove();
 }
 startGame();
 /* ------------------------------------------------------------------------*/
@@ -180,7 +182,58 @@ function createMonsters(){
     }
 }
 
+function createMonstersTweens(){
+    for (var i=0; i < 10; i++) {
+        var monsterTween = createMonsterTween(i);
+        monsterTweenArray.push(monsterTween);
+    }
+}
 
+function createMonsterTween(currentMonster){
+    var tween = new Kinetic.Tween({
+        node: monsterArray[currentMonster],
+        duration: 0.5,
+        x: pathCells[0].j * cellSize,
+        y: (pathCells[0].i-1) * cellSize,
+        onFinish: function(){
+            monsterArray[currentMonster].setAnimation(direction[0]);
+            monsterStepToNextCell(1, currentMonster);
+        }
+    });
+    return tween;
+}
+
+function monsterStepToNextCell(currentStep, currentMonster){
+    var i = currentStep;
+    new Kinetic.Tween({
+        node: monsterArray[currentMonster],
+        duration: 0.5,
+        x: pathCells[i].j * cellSize,
+        y: (pathCells[i].i-1) * cellSize,
+        onFinish: function(){
+            if(i < pathCells.length-1){
+                if(direction[i] !== direction[i+1]){
+                    monsterArray[currentMonster].setAnimation(direction[i+1]);
+                }
+                if(direction[i] === "goBottom"){
+                    console.log(currentMonster,i, direction[i]);
+                    monsterArray[currentMonster].moveUp();
+                }
+
+                i++;
+                monsterStepToNextCell(i,currentMonster);
+            }
+        }
+    }).play();
+}
+
+function monstersMove(currentMonsterTween){
+    var currentMonsterTween = currentMonsterTween || 0;
+    monsterArray[currentMonsterTween].show();
+    monsterTweenArray[currentMonsterTween].play();
+    currentMonsterTween++;
+    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 700);
+}
 
 
 /***************************************************************************/
