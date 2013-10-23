@@ -126,7 +126,7 @@ function drawMainCounters(){                //render count of gold etc.
     context.fillText('Gold: ' + gold_count + ' Mobs: ' + mobs_count, canvas.width/2, 50);
 }
 
-function drawErrors() {
+function drawErrors(){
     if (error) {
         context.font = '15pt Calibri';
         context.fillStyle = '#FF4500';
@@ -147,7 +147,7 @@ function drawTowers(){
         context.drawImage(towersArray[i].image, towersArray[i].x, towersArray[i].y);
     }
 }
-function drawBuildingNowTower(){
+function drawBuildingNewTower(){
     if (typeof(newTower) != "undefined") { //draw tower that is building now
         context.drawImage(newTower.image, newTower.x, newTower.y);
     }
@@ -170,7 +170,7 @@ function drawScene() {  //main draw function
 
     drawTowers();
     transparentBg();
-    drawBuildingNowTower();
+    drawBuildingNewTower();
 
     drawTowersMenu();
     drawMainCounters();
@@ -235,15 +235,15 @@ function renderMonster(){
         }
     }
 
-   // if(countEnemyBottomMove >= 1){                  //if more then one monster go bottom we will draw monsters in another diraction(overlay problem)
-       // for(var i = monsterArray.length-1; i >= 0; i--){
-       //     drawMonsterSprite(monsterArray[i]);
-      //  }
-   // }else{
+   if(countEnemyBottomMove >= 1){                  //if more then one monster go bottom we will draw monsters in another diraction(overlay problem)
+       for(var i = monsterArray.length-1; i >= 0; i--){
+           drawMonsterSprite(monsterArray[i]);
+       }
+   }else{
         for(var i=0; i<monsterArray.length; i++){   //in normal diraction(overlay problem)
             drawMonsterSprite(monsterArray[i]);
         }
-    //}
+    }
 }
 
 function drawMonsterSprite(monster){                //draw monster animation from sprite
@@ -278,8 +278,7 @@ function drawMonsterSprite(monster){                //draw monster animation fro
 /***************************************************************************/
 /** ----------------------------Tower processing---------------------------*/
 
-function Tower(image, x, y, type, damage, cost, width, height)
-{
+function Tower(image, x, y, type, damage, cost, width, height) {
     this.type = type;
     this.damage = damage;
     this.level = 1;
