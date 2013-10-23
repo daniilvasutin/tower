@@ -85,11 +85,56 @@ var animations = {
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
+/** ----------------------------Towers var--------------------------------*/
+function Tower(image, x, y, type, damage, cost, width, height) {
+    this.type = type;
+    this.damage = damage;
+    this.level = 1;
+    this.radius = 50;
+    this.cost = cost;
+    this.image = new Kinetic.Image({
+        x: x,
+        y: y,
+        image: image,
+        width: width,
+        height: height
+    });
+    this.bullet = new Kinetic.Circle({
+        x: x,
+        y: y,
+        fill: 'black',
+        width: 10,
+        height: 10,
+        visible: false
+    });
+    towersLayer.add(this.image);
+    towersLayer.add(this.bullet);
+    towersLayer.draw();
+
+    this.bulletTween = new Kinetic.Tween({
+        node: this.bullet,
+        x: 420,
+        duration: 0.3,
+        easing: Kinetic.Easings.Linear,
+        onFinish: function() {
+            this.reset();
+        }
+    });
+}
+
 var towerType; //stores the type of tower build
 var towersArray = new Array(); //tower objects array
 var isBuildingNow = false; //is the tower now under construction?
 
 
+var beingConstructedTower = new Kinetic.Image({ //building tower image
+    x: 0,
+    y: 0,
+    image: images.flameTower,
+    width: 20,
+    height: 60,
+    visible: false
+});
 var beingConstructedTower = new Kinetic.Image({ //building tower image
     x: 0,
     y: 0,
@@ -127,6 +172,13 @@ function afterBgCreating() { //run, after background is creating
     stage.add(bgLayer);
 }
 
+function shoot() {
+    for (var i = 0; i < towersArray.length; i++) {
+        towersArray[i].bullet.show();
+        towersArray[i].bulletTween.play();
+    }
+}
+
 function buildTowersMenu() { //draw menu with towers
     var frostTowerButton = new Kinetic.Image({
         x: 12*cellSize,
@@ -157,7 +209,6 @@ function buildTowersMenu() { //draw menu with towers
         isBuildingNow = true;
     });
 }
-
 
 /***************************************************************************/
 /***************************************************************************/
@@ -242,6 +293,41 @@ bgLayer.on('mousemove', function(){
     }
     bgLayer.draw();
 });
+bgLayer.on('mouseup', function(){
+    var mousePos = stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x / cellSize);
+    var mouseY = parseInt(mousePos.y / cellSize);
+    if (isBuildingNow) {
+        if (beingConstructedRect.attrs.fill != 'red') {
+            switch(towerType) {
+                case 'frost':
+                    var newTower = new Tower(images.frostTower, mouseX * cellSize + 5, (mouseY-1) * cellSize, 'frost', 15, 100, 20, 60);
+                        goldCounter = goldCounter - 10;
+                        goldDisplay.setText(goldCounter);
+                        bgLayer.draw();
+                    break;
+                case 'flame':
+                    var newTower = new Tower(images.flameTower, mouseX * cellSize + 5, (mouseY-1) * cellSize, 'flame', 15, 100, 20, 60);
+                        goldCounter = goldCounter - 15;
+                        goldDisplay.setText(goldCounter);
+                        bgLayer.draw();
+                    break;
+            }
+            towersArray.push(newTower);
+            busyCells.push({x: mouseX, y: mouseY}); //add tower rectangle to busy cells array
+
+            /* test tween (temporary)*/
+            towersArray[towersArray.length-1].bullet.show();
+            towersArray[towersArray.length-1].bulletTween.play();
+
+            beingConstructedRect.hide();
+            beingConstructedTower.hide();
+            isBuildingNow = false;
+        }
+    }
+    towersLayer.draw();
+});
+
 
 function findPath(map,mapBeginCell,mapEndCell) {
     var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
