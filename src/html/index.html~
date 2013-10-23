@@ -2,26 +2,6 @@
    "http://www.w3.org/TR/REC-html40/strict.dtd">
 <HTML>
    <HEAD>
-<<<<<<< HEAD
-      <TITLE>Главная страница</TITLE>
-      <link rel="stylesheet" type="text/css" href="../css/style.css" />
-   </HEAD>
-   <BODY id=>
-   
-   <form action="game.html">
-<div><button value="send" name="hidden" ><img src="buttongame.png"> </button></div>
-</form>
-
-   <form action="help.html">
-<div><button value="send" name="hidden" ><img src="buttonhelp.png"> </button></div>
-</form>
-   <form action="best.html">
-<div><button value="send" name="hidden" ><img src="buttonbest.png"> </button></div>
-</form>
-   <form action="exit.html">
-<div><button value="send" name="hidden" ><img src="buttonexit.png"> </button></div>
-</form>
-=======
        <meta charset="utf-8">
       <TITLE></TITLE>
       <link rel="stylesheet" type="text/css" href="../css/style.css" />
@@ -43,6 +23,5 @@
         <button onclick="closeWindow()"><img src="../images/buttonexit.png"></button>
    </div>
 
->>>>>>> 337c89ce10c3e4fda04eb4834c66eb27e452b9a7
 </BODY>
 </HTML>
