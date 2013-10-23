@@ -50,7 +50,19 @@ var animations = {
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
+var towerType; //stores the type of tower build
+var towersArray = new Array(); //tower objects array
+var isBuildingNow = false; //is the tower now under construction?
 
+
+var beingConstructedTower = new Kinetic.Image({ //building tower image
+    x: 0,
+    y: 0,
+    image: images.flameTower,
+    width: 20,
+    height: 60,
+    visible: false
+});
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Need for run the game----------------------*/
@@ -75,9 +87,41 @@ startGame();
 /***************************************************************************/
 /** ----------------------------Tower processing---------------------------*/
 function afterBgCreating() { //run, after background is creating
+    buildTowersMenu();
+    bgLayer.add(beingConstructedRect);
     stage.add(bgLayer);
 }
 
+function buildTowersMenu() { //draw menu with towers
+    var frostTowerButton = new Kinetic.Image({
+        x: 12*cellSize,
+        y: 9*cellSize,
+        image: images.frostTowerIco,
+        width: cellSize,
+        height: cellSize
+    });
+    var flameTowerButton = new Kinetic.Image({
+        x: 13*cellSize,
+        y: 9*cellSize,
+        image: images.flameTowerIco,
+        width: cellSize,
+        height: cellSize
+    });
+
+    bgLayer.add(frostTowerButton);
+    bgLayer.add(flameTowerButton);
+
+    /* Towers menu events */
+    frostTowerButton.on('mousedown',  function() {
+        isBuildingNow = true;
+    });
+    frostTowerButton.on('mouseover',  function() {
+
+    });
+    flameTowerButton.on('mousedown',  function() {
+        isBuildingNow = true;
+    });
+}
 
 
 /***************************************************************************/
@@ -132,5 +176,35 @@ function buildBackground(map) {
     stage.add(bgLayer);
 }
 
-
+/* Events */
+bgLayer.on('mousemove', function(){
+    var mousePos = stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x/cellSize);
+    var mouseY = parseInt(mousePos.y/cellSize);
+    if (isBuildingNow) {
+        for (var i = 0; i < busyCells.length; i++) {
+            if ((busyCells[i].x != mouseX) || (busyCells[i].y != mouseY)) {
+                beingConstructedRect.setAttrs({
+                    x: mouseX * cellSize,
+                    y: mouseY * cellSize,
+                    fill: "green",
+                    visible: true
+                });
+                beingConstructedTower.setAttrs({
+                    x: mouseX * cellSize + 5,
+                    y: (mouseY-1) * cellSize,
+                    visible: true
+                });
+            } else {
+                beingConstructedRect.setAttrs({
+                    x: mouseX * cellSize,
+                    y: mouseY * cellSize,
+                    fill: "red"
+                });
+                break;
+            }
+        }
+    }
+    bgLayer.draw();
+});
 
