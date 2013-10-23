@@ -35,6 +35,41 @@ var map1 = //Map by two-dimensional array
         [{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // row 9
         [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}] // row 10
     ];
+
+var mapBeginCell1 = {i: 6, j: 0};
+var mapEndCell1 = {i: 5, j: 14};
+
+var map2 = //Map by two-dimensional array
+    [
+        [{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1}], // 1ый ряд
+        [{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1}], // 2ый ряд
+        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 3ый ряд
+        [{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1}], // 4ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 5ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 6ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 7ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}],  // 8ый ряд
+        [{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // row 9
+        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}] // row 10
+    ];
+var mapBeginCell2 = {i: 3, j: 0};
+var mapEndCell2 = {i: 9, j: 5};
+
+var map3 = //Map by two-dimensional array
+    [
+        [{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1}], // 1ый ряд
+        [{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1}], // 2ый ряд
+        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1}], // 3ый ряд
+        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1}], // 4ый ряд
+        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 5ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 6ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 7ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}],  // 8ый ряд
+        [{x:1,y:1},{x:3,y:1},{x:2,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // row 9
+        [{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}] // row 10
+    ];
+var mapBeginCell3 = {i: 9, j: 1};
+var mapEndCell3 = {i: 2, j: 14};
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Monster var--------------------------------*/
@@ -131,6 +166,118 @@ function buildBackground(map) {
     }
     stage.add(bgLayer);
 }
+
+function findPath(map,mapBeginCell,mapEndCell) {
+    var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
+    var first = {i: mapBeginCell.i, j: mapBeginCell.j};
+    var last = {i: mapEndCell.i, j: mapEndCell.j};
+    findNextCell(map,mapBeginCell, mapEndCell,stepBefore,first, last);
+}
+
+function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
+    var ii= currentCell.i;
+    var jj= currentCell.j;
+
+    var indexI = ii;
+    var indexJ = jj;
+
+    try{ map[indexI][indexJ+1].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ--; }
+    if(map[indexI][indexJ+1].x-1 == 2 && indexJ+1 !== stepBefore.j){
+        if(first.i == ii && first.j == jj){
+            pathCells.push({i: ii, j: jj-2});
+            direction.push("goRight");
+            pathCells.push({i: ii, j: jj-1});
+            direction.push("goRight");
+            pathCells.push({i: ii, j: jj});
+            direction.push("goRight");
+        }
+        stepBefore = {i: ii, j: jj};
+        jj++;
+        pathCells.push({i: ii, j: jj});
+        direction.push("goRight");
+        if(last.i == ii && last.j == jj){
+            pathCells.push({i: ii, j: jj+1});
+            direction.push("goRight");
+            pathCells.push({i: ii, j: jj+2});
+            direction.push("goRight");
+        }
+    }else{
+        try{ map[indexI][indexJ-1].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ++; }
+        if(map[indexI][indexJ-1].x-1 == 2 && indexJ-1 !== stepBefore.j){
+            if(first.i == ii && first.j == jj){
+                pathCells.push({i: ii, j: jj+2});
+                direction.push("goLeft");
+                pathCells.push({i: ii, j: jj+1});
+                direction.push("goLeft");
+                pathCells.push({i: ii, j: jj});
+                direction.push("goLeft");
+            }
+            stepBefore = {i: ii, j: jj};
+            jj--;
+            pathCells.push({i: ii, j: jj});
+            direction.push("goLeft");
+            if(last.i == ii && last.j == jj){
+                pathCells.push({i: ii, j: jj-1});
+                direction.push("goLeft");
+                pathCells.push({i: ii, j: jj-2});
+                direction.push("goLeft");
+            }
+        }else{
+            try{ map[indexI+1][indexJ].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexI--; }
+            if(map[indexI+1][indexJ].x-1 == 2 && indexI+1 !== stepBefore.i){
+                if(first.i == ii && first.j == jj){
+                    pathCells.push({i: ii-2, j: jj});
+                    direction.push("goBottom");
+                    pathCells.push({i: ii-1, j: jj});
+                    direction.push("goBottom");
+                    pathCells.push({i: ii, j: jj});
+                    direction.push("goBottom");
+                }
+                stepBefore = {i: ii, j: jj};
+                ii++;
+                pathCells.push({i: ii, j: jj});
+                direction.push("goBottom");
+                if(last.i == ii && last.j == jj){
+                    pathCells.push({i: ii+1, j: jj});
+                    direction.push("goBottom");
+                    pathCells.push({i: ii+2, j: jj});
+                    direction.push("goBottom");
+                }
+            }else{
+                try{ map[indexI-1][indexJ].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexI++; }
+                if(map[indexI-1][indexJ].x-1 == 2 && indexI-1 !== stepBefore.i){
+                    if(first.i == ii && first.j == jj){
+                        pathCells.push({i: ii+2, j: jj});
+                        direction.push("goTop");
+                        pathCells.push({i: ii+1, j: jj});
+                        direction.push("goTop");
+                        pathCells.push({i: ii, j: jj});
+                        direction.push("goTop");
+                    }
+                    stepBefore = {i: ii, j: jj};
+                    ii--;
+                    pathCells.push({i: ii, j: jj});
+                    direction.push("goTop");
+                    if(last.i == ii && last.j == jj){
+                        pathCells.push({i: ii-1, j: jj});
+                        direction.push("goTop");
+                        pathCells.push({i: ii-2, j: jj});
+                        direction.push("goTop");
+                    }
+                }
+            }
+        }
+    }
+
+    if(ii == mapEndCell.i && jj == mapEndCell.j){
+
+    }else{
+        currentCell.i = ii;
+        currentCell.j = jj;
+        findNextCell(map,currentCell, mapEndCell, stepBefore, first, last);
+    }
+}
+/* -----------------------------Map processing-----------------------------*/
 
 
 
