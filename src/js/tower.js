@@ -37,6 +37,18 @@ var map1 = //Map by two-dimensional array
     ];
 /* ------------------------------------------------------------------------*/
 
+/** ----------------------------Monster var--------------------------------*/
+var monsterArray = new Array();
+var monsterTweenArray = new Array();
+var direction = new Array();
+var animations = {
+    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
+    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
+    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
+    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
+};
+/* ------------------------------------------------------------------------*/
+
 /** ----------------------------Towers var--------------------------------*/
 
 /* ------------------------------------------------------------------------*/
@@ -53,6 +65,7 @@ var bgLayer = new Kinetic.Layer();
 function startGame(){
     buildBackground(map1);
     afterBgCreating();
+    createMonsters();
 }
 startGame();
 /* ------------------------------------------------------------------------*/
@@ -64,6 +77,31 @@ startGame();
 function afterBgCreating() { //run, after background is creating
     stage.add(bgLayer);
 }
+
+
+
+/***************************************************************************/
+/***************************************************************************/
+/** ----------------------------Monster processing-------------------------*/
+function createMonsters(){
+    for (var i=0; i < 10; i++) {
+        var monster = new Kinetic.Sprite({
+            x: pathCells[0].j * cellSize,
+            y: (pathCells[0].i-1) * cellSize,
+            image: images.monsterImg,
+            animation: 'goRight',
+            animations: animations,
+            frameRate: 6,
+            index: 0,
+            visible: false
+        });
+        monsterArray.push(monster);
+        bgLayer.add(monster);
+        monster.start();
+    }
+}
+
+
 
 
 /***************************************************************************/
