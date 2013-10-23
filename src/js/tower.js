@@ -160,10 +160,17 @@ function startGame(){
     createMonsters();
     createMonstersTweens();
     monstersMove();
+	playBackgroundMusic();
+	 setTimeout(function(){playSprite('monsterA');},3000);
+    setTimeout(function(){playSprite('monsterHa');},15000);
 }
 startGame();
 /* ------------------------------------------------------------------------*/
-
+function playBackgroundMusic(){
+    var audio1 = document.getElementById('aTsIwR');
+    audio1.volume = 0.2;
+    audio1.play();
+}
 
 /***************************************************************************/
 /***************************************************************************/
@@ -494,4 +501,46 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
 }
 /* -----------------------------Map processing-----------------------------*/
 
+
+
+/***************************************************************************/
+/** ----------------------------Sound processing---------------------------*/
+
+var audioSprite = document.getElementById('effects');
+
+// sprite data
+var spriteData = {
+    monsterA: {
+        start: 0.1,
+        length: 2.4
+    },
+    arrow: {
+        start: 3.0,
+        length: 2.0
+    },
+    monsterHa:{
+        start: 8.1,
+        length: 9.5
+    }
+};
+
+// current sprite being played
+var currentSprite = {};
+
+// time update handler to ensure we stop when a sprite is complete
+var onTimeUpdate = function() {
+    if (this.currentTime >= currentSprite.start + currentSprite.length) {
+        this.pause();
+    }
+};
+audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+
+var playSprite = function(id) {          //play sprite according to the id
+    if (spriteData[id] && spriteData[id].length) {
+        currentSprite = spriteData[id];
+        audioSprite.currentTime = currentSprite.start;
+        audioSprite.play();
+    }
+};
+/* ----------------------------Sound processing----------------------------*/
 
