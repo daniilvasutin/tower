@@ -6,8 +6,10 @@ var sources = {
     flameTowerIco: "../images/flame_tower_ico.png",
     frostTowerIco: "../images/frost_tower_ico.png",
     flameTower: "../images/flame_tower.png",
-    frostTower: "../images/frost_tower.png"
+    frostTower: "../images/frost_tower.png",
+    topPanel: "../images/top_panel.png"
 };
+
 for(var src in sources) {
     images[src] = new Image();
     images[src].src = sources[src];
@@ -35,7 +37,6 @@ var map1 = //Map by two-dimensional array
         [{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // row 9
         [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}] // row 10
     ];
-
 var mapBeginCell1 = {i: 6, j: 0};
 var mapEndCell1 = {i: 5, j: 14};
 
@@ -72,19 +73,6 @@ var mapBeginCell3 = {i: 9, j: 1};
 var mapEndCell3 = {i: 2, j: 14};
 /* ------------------------------------------------------------------------*/
 
-/** ----------------------------Monster var--------------------------------*/
-var monsterArray = new Array();
-var monsterTweenArray = new Array();
-var direction = new Array();
-var animations = {
-    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
-    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
-    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
-    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
-};
-/* ------------------------------------------------------------------------*/
-
-/** ----------------------------Towers var--------------------------------*/
 /** ----------------------------Towers var--------------------------------*/
 function Tower(image, x, y, type, damage, cost, width, height) {
     this.type = type;
@@ -100,8 +88,8 @@ function Tower(image, x, y, type, damage, cost, width, height) {
         height: height
     });
     this.bullet = new Kinetic.Circle({
-        x: x,
-        y: y,
+        x: x+5,
+        y: y+3,
         fill: 'black',
         width: 10,
         height: 10,
@@ -126,13 +114,15 @@ var towerType; //stores the type of tower build
 var towersArray = new Array(); //tower objects array
 var isBuildingNow = false; //is the tower now under construction?
 
-
-var beingConstructedTower = new Kinetic.Image({ //building tower image
+var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     x: 0,
     y: 0,
-    image: images.flameTower,
-    width: 20,
-    height: 60,
+    width: cellSize,
+    height: cellSize,
+    fill: 'green',
+    stroke: 'black',
+    opacity: 0.5,
+    strokeWidth: 2,
     visible: false
 });
 var beingConstructedTower = new Kinetic.Image({ //building tower image
@@ -144,6 +134,50 @@ var beingConstructedTower = new Kinetic.Image({ //building tower image
     visible: false
 });
 /* ------------------------------------------------------------------------*/
+
+
+/** ----------------------------Monster var--------------------------------*/
+var monsterArray = new Array();
+var monsterTweenArray = new Array();
+var direction = new Array();
+var animations = {
+    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
+    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
+    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
+    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
+};
+/* ------------------------------------------------------------------------*/
+
+/**-----------------------Counters vars-------------------------------------*/
+var goldCounter = 100;
+var mobsPassedCounter = 0;
+/*--------------------------------------------------------------------------*/
+
+/**-----------------------------Top-panel var-----------------------------*/
+var topPanel = new Kinetic.Image({
+    x: 0,
+    y: 0,
+    image: images.topPanel,
+    width: 480,
+    height: 25
+});
+var goldDisplay = new Kinetic.Text({
+    x: 75,
+    y: 5,
+    text: '100',
+    fontSize: 12,
+    fontFamily: 'Calibri',
+    fill: 'white'
+});
+var mobsPassedDisplay = new Kinetic.Text({
+    x: 215,
+    y: 5,
+    text: '0',
+    fontSize: 12,
+    fontFamily: 'Calibri',
+    fill: 'white'
+});
+/*-------------------------------------------------------------------------*/
 
 /** ----------------------------Need for run the game----------------------*/
 var stage = new Kinetic.Stage({
@@ -153,71 +187,39 @@ var stage = new Kinetic.Stage({
 });
 
 var bgLayer = new Kinetic.Layer();
+var towersLayer = new Kinetic.Layer();
 
-function startGame(){
-    buildBackground(map1);
-    afterBgCreating();
-    createMonsters();
-    createMonstersTweens();
-    monstersMove();
-	playBackgroundMusic();
-	 setTimeout(function(){playSprite('monsterA');},3000);
-    setTimeout(function(){playSprite('monsterHa');},15000);
-}
-startGame();
-/* ------------------------------------------------------------------------*/
 function playBackgroundMusic(){
     var audio1 = document.getElementById('aTsIwR');
     audio1.volume = 0.2;
     audio1.play();
 }
 
-/***************************************************************************/
-/***************************************************************************/
-/** ----------------------------Tower processing---------------------------*/
-function afterBgCreating() { //run, after background is creating
-    buildTowersMenu();
-    bgLayer.add(beingConstructedRect);
-    stage.add(bgLayer);
+function startGame(){
+    //buildBackground(map1);
+    //findPath(map1,mapBeginCell1,mapEndCell1);
+//    findPath(map1,mapEndCell1,mapBeginCell1);
+
+//    buildBackground(map2);
+//    findPath(map2,mapBeginCell2,mapEndCell2);
+//    findPath(map2,mapEndCell2,mapBeginCell2);
+//
+   buildBackground(map3);
+    findPath(map3,mapBeginCell3,mapEndCell3);
+//    findPath(map3,mapEndCell3,mapBeginCell3);
+
+    afterBgCreating();
+    createMonsters();
+    createMonstersTweens();
+    monstersMove();
+    playBackgroundMusic();
+    setTimeout(function(){playSprite('monsterA');},3000);
+    setTimeout(function(){playSprite('monsterHa');},15000);
 }
+startGame();
+/* ------------------------------------------------------------------------*/
 
-function shoot() {
-    for (var i = 0; i < towersArray.length; i++) {
-        towersArray[i].bullet.show();
-        towersArray[i].bulletTween.play();
-    }
-}
 
-function buildTowersMenu() { //draw menu with towers
-    var frostTowerButton = new Kinetic.Image({
-        x: 12*cellSize,
-        y: 9*cellSize,
-        image: images.frostTowerIco,
-        width: cellSize,
-        height: cellSize
-    });
-    var flameTowerButton = new Kinetic.Image({
-        x: 13*cellSize,
-        y: 9*cellSize,
-        image: images.flameTowerIco,
-        width: cellSize,
-        height: cellSize
-    });
-
-    bgLayer.add(frostTowerButton);
-    bgLayer.add(flameTowerButton);
-
-    /* Towers menu events */
-    frostTowerButton.on('mousedown',  function() {
-        isBuildingNow = true;
-    });
-    frostTowerButton.on('mouseover',  function() {
-
-    });
-    flameTowerButton.on('mousedown',  function() {
-        isBuildingNow = true;
-    });
-}
 
 /***************************************************************************/
 /***************************************************************************/
@@ -292,34 +294,30 @@ function monstersMove(currentMonsterTween){
     currentMonsterTween++;
     if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 700);
 }
+/* -----------------------------Monster processing-------------------------*/
+
 
 
 /***************************************************************************/
 /***************************************************************************/
-/** ----------------------------Map processing-----------------------------*/
-function buildBackground(map) {
-    for (var i = 0; i < heightCellCount; i++) {
-        for (var j = 0; j < widthCellCount; j++) {
-            var tile = new Kinetic.Image({
-                x: j*cellSize,
-                y: i*cellSize,
-                image: images.bg_sprite,
-                width: cellSize,
-                height: cellSize,
-                crop: [(map[i][j].x-1)*cellSize, (map[i][j].y-1)*cellSize, cellSize, cellSize]
-            });
-            backgroundImageArray.push(tile);
-
-            if (map[i][j].x-1 == 2 || map[i][j].x-1 == 3 || map[i][j].x-1 == 4) { //define the occupied space
-                busyCells.push({x: j, y: i});
-            }
-        }
-    }
-    // add tiles to the layer
-    for (var i=0; i < backgroundImageArray.length; i++) {
-        bgLayer.add(backgroundImageArray[i]);
-    }
+/** ----------------------------Tower processing---------------------------*/
+function afterBgCreating() { //run, after background is creating
+    buildTowersMenu();
+    bgLayer.add(beingConstructedRect);
+    bgLayer.add(beingConstructedTower);
+    bgLayer.add(topPanel);
+    bgLayer.add(goldDisplay);
+    bgLayer.add(mobsPassedDisplay);
     stage.add(bgLayer);
+    stage.add(towersLayer);
+    setInterval(shoot, 100);
+}
+
+function shoot() {
+    for (var i = 0; i < towersArray.length; i++) {
+        towersArray[i].bullet.show();
+        towersArray[i].bulletTween.play();
+    }
 }
 
 /* Events */
@@ -387,7 +385,76 @@ bgLayer.on('mouseup', function(){
     }
     towersLayer.draw();
 });
+/* ----------------------------Tower processing----------------------------*/
 
+
+
+/***************************************************************************/
+/***************************************************************************/
+/** ----------------------------Map processing-----------------------------*/
+function buildBackground(map) {
+    for (var i = 0; i < heightCellCount; i++) {
+        for (var j = 0; j < widthCellCount; j++) {
+            var tile = new Kinetic.Image({
+                x: j*cellSize,
+                y: i*cellSize,
+                image: images.bg_sprite,
+                width: cellSize,
+                height: cellSize,
+                crop: [(map[i][j].x-1)*cellSize, (map[i][j].y-1)*cellSize, cellSize, cellSize]
+            });
+            backgroundImageArray.push(tile);
+
+            if (map[i][j].x-1 == 2 || map[i][j].x-1 == 3 || map[i][j].x-1 == 4) { //define the occupied space
+                busyCells.push({x: j, y: i});
+            }
+        }
+    }
+    // add tiles to the layer
+    for (var i=0; i < backgroundImageArray.length; i++) {
+        bgLayer.add(backgroundImageArray[i]);
+    }
+    stage.add(bgLayer);
+}
+
+function buildTowersMenu() { //draw menu with towers
+    var frostTowerButton = new Kinetic.Image({
+        x: 12*cellSize,
+        y: 9*cellSize,
+        image: images.frostTowerIco,
+        width: cellSize,
+        height: cellSize
+    });
+    var flameTowerButton = new Kinetic.Image({
+        x: 13*cellSize,
+        y: 9*cellSize,
+        image: images.flameTowerIco,
+        width: cellSize,
+        height: cellSize
+    });
+
+    bgLayer.add(frostTowerButton);
+    bgLayer.add(flameTowerButton);
+
+    /* Towers menu events */
+    frostTowerButton.on('mousedown',  function() {
+        isBuildingNow = true;
+        towerType = 'frost';
+        beingConstructedTower.setAttrs({
+            image: images.frostTower
+        });
+    });
+    frostTowerButton.on('mouseover',  function() {
+
+    });
+    flameTowerButton.on('mousedown',  function() {
+        isBuildingNow = true;
+        towerType = 'flame';
+        beingConstructedTower.setAttrs({
+            image: images.flameTower
+        });
+    });
+}
 
 function findPath(map,mapBeginCell,mapEndCell) {
     var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
@@ -504,6 +571,7 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
 
 
 /***************************************************************************/
+/***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
 
 var audioSprite = document.getElementById('effects');
@@ -543,4 +611,59 @@ var playSprite = function(id) {          //play sprite according to the id
     }
 };
 /* ----------------------------Sound processing----------------------------*/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//    console.log(this.node.attrs['x'], this.node.attrs['y'],direction[i], monster.getIndex());
+//    monsterArray[currentMonster].afterFrame(3, function(){
+//
+//    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//function imagesOnload() { //run, when images loaded
+//    buildBackground(map1);
+//    setTimeout(afterBgCreating, 100)
+//}
+
+
+/* Classes */
+
+
+
+
+
 
