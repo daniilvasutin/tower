@@ -2,6 +2,7 @@
    "http://www.w3.org/TR/REC-html40/strict.dtd">
 <HTML>
    <HEAD>
+<<<<<<< HEAD
       <TITLE>Главная страница</TITLE>
       <link rel="stylesheet" type="text/css" href="../css/style.css" />
    </HEAD>
@@ -20,5 +21,28 @@
    <form action="exit.html">
 <div><button value="send" name="hidden" ><img src="buttonexit.png"> </button></div>
 </form>
+=======
+       <meta charset="utf-8">
+      <TITLE></TITLE>
+      <link rel="stylesheet" type="text/css" href="../css/style.css" />
+       <script>
+           function closeWindow(){
+                setTimeout(function(){
+                    var ww = window.open(window.location, '_self');
+                    ww.close();
+                }, 300);
+           }
+       </script>
+   </HEAD>
+   <BODY class="menuWindows">
+
+   <div id="indexButtons">
+        <button onclick="window.location.href='game.html'"><img src="../images/buttongame.png"></button> <br>
+        <button onclick="window.location.href='help.html'"><img src="../images/buttonhelp.png"></button> <br>
+        <button onclick="window.location.href='best.html'"><img src="../images/buttonbest.png"></button> <br>
+        <button onclick="closeWindow()"><img src="../images/buttonexit.png"></button>
+   </div>
+
+>>>>>>> 337c89ce10c3e4fda04eb4834c66eb27e452b9a7
 </BODY>
 </HTML>
