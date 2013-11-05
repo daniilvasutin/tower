@@ -493,7 +493,7 @@ function buildBackground(map) { //draw background
             });
             backgroundImageArray.push(tile);
 
-            if (map[i][j].x-1 == 2 || map[i][j].x-1 == 3 || map[i][j].x-1 == 4) { //define the occupied space
+            if (map[i][j].busy == 1) { //define the occupied space
                 busyCells.push({x: j, y: i});
             }
         }
