@@ -3,6 +3,7 @@ var images = {};
 var sources = {
     bgSprite: "../images/sprite_bg.jpg",
     rightPanel: "../images/panel.jpg",
+//    monsterImg: "../images/mfly.png",
     monsterImg: "../images/monster.png",
     towerFoundationIco: "../images/tower_foundation_ico.jpg",
     puddleBlueIco: "../images/puddle_blue_ico.jpg",
@@ -30,25 +31,25 @@ var busyCells = new Array(); //busy cells in map
 var pathCells = new Array()  //path cells in map
 
 var map1 = //Map by two-dimensional array
-    [
-        [{x:2,y:2,busy:0,type:0},{x:7,y:2,busy:1,type:2},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:9,y:2,busy:1,type:2},{x:7,y:3,busy:1,type:3},{x:7,y:1,busy:1,type:4},{x:7,y:2,busy:1,type:1},{x:7,y:1,busy:1,type:4},{x:7,y:3,busy:1,type:3},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:1,busy:1,type:5},{x:11,y:1,busy:1,type:5},{x:12,y:1,busy:1,type:5},{x:2,y:2,busy:0,type:0}], // 1 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:2,busy:1,type:5},{x:11,y:2,busy:1,type:5},{x:12,y:2,busy:1,type:5},{x:2,y:2,busy:0,type:0}], // 2 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:3,busy:1,type:5},{x:11,y:3,busy:1,type:5},{x:12,y:3,busy:1,type:5},{x:2,y:2,busy:0,type:0}], //3 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:1,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:1,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //4 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //5 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //6 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //7 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //8 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:3,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //9 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //10 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //11 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:3,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:3,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //12 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //13 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //14 row
-        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}] //15 row
-    ];
-var mapBeginCell1 = {i: 6, j: 0};
-var mapEndCell1 = {i: 5, j: 14};
+        [          //0                          //1                        //2                         //3                         //4                         //5С                        //6                         //7                         //8                         //9                         //10                         11                         12                          13                           14                          15                         16                            17                          18                           19                          20
+        [{x:2,y:2,busy:0,TileType:0},{x:7,y:2,busy:1,TileType:2},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:9,y:2,busy:1,TileType:2},{x:7,y:3,busy:1,TileType:3},{x:7,y:1,busy:1,TileType:4},{x:7,y:2,busy:1,TileType:1},{x:7,y:1,busy:1,TileType:4},{x:7,y:3,busy:1,TileType:3},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:10,y:1,busy:1,TileType:5},{x:11,y:1,busy:1,TileType:5},{x:12,y:1,busy:1,TileType:5},{x:2,y:2,busy:0,TileType:0}], // 1 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:10,y:2,busy:1,TileType:5},{x:11,y:2,busy:1,TileType:5},{x:12,y:2,busy:1,TileType:5},{x:2,y:2,busy:0,TileType:0}], // 2 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:10,y:3,busy:1,TileType:5},{x:11,y:3,busy:1,TileType:5},{x:12,y:3,busy:1,TileType:5},{x:2,y:2,busy:0,TileType:0}], //3 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:3,y:1,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:3,y:1,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //4 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //5 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //6 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //7 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //8 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:3,y:3,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //9 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //10 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:3,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //11 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:3,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:2,y:1,busy:1,TileType:6},{x:3,y:3,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:2,busy:1,TileType:6},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //12 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //13 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //14 row
+        [{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}] //15 row
+    ];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           //17F
+var mapBeginCell1 = {i: 3, j: 5};
+var mapEndCell1 = {i: 11, j: 17};
 
 var map2 = //Map by two-dimensional array
     [
@@ -150,6 +151,12 @@ var beingConstructedTower = new Kinetic.Image({ //building tower image
 var monsterArray = new Array();
 var monsterTweenArray = new Array();
 var direction = new Array();
+//var animations = {
+//    goRight: [{x:290,y:192,width:26,height:33},{x:323,y:192,width:27,height:33},{x:356,y:192,width:30,height:33}],
+//    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
+//    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
+//    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
+//};
 var animations = {
     goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
     goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
@@ -208,13 +215,14 @@ function playBackgroundMusic(){
 
 function startGame(){
    buildBackground(map1);
+    findPath(map1,mapBeginCell1,mapEndCell1);
     //findPath(map3,mapBeginCell3,mapEndCell3);
 //    findPath(map3,mapEndCell3,mapBeginCell3);
 
     afterBgCreating();
-    //createMonsters();
-    //createMonstersTweens();
-    //monstersMove();
+    createMonsters();
+    createMonstersTweens();
+    monstersMove();
     //playBackgroundMusic();
     //setTimeout(function(){playSprite('monsterA');},3000);
     //setTimeout(function(){playSprite('monsterHa');},15000);
@@ -236,7 +244,8 @@ function createMonsters(){
             animations: animations,
             frameRate: 6,
             index: 0,
-            visible: false
+//            visible: false,
+            opacity:0.001
         });
         monsterArray.push(monster);
         bgLayer.add(monster);
@@ -255,21 +264,23 @@ function createMonsterTween(currentMonster){
     var tween = new Kinetic.Tween({
         node: monsterArray[currentMonster],
         duration: 0.5,
+        opacity: 0,
         x: pathCells[0].j * cellSize,
         y: (pathCells[0].i-1) * cellSize,
         onFinish: function(){
             monsterArray[currentMonster].setAnimation(direction[0]);
-            monsterStepToNextCell(1, currentMonster);
+            monsterStepToNextCell(1, currentMonster, 0);
         }
     });
     return tween;
 }
 
-function monsterStepToNextCell(currentStep, currentMonster){
+function monsterStepToNextCell(currentStep, currentMonster,aOpacity){
     var i = currentStep;
     new Kinetic.Tween({
         node: monsterArray[currentMonster],
         duration: 0.5,
+        opacity: aOpacity,
         x: pathCells[i].j * cellSize,
         y: (pathCells[i].i-1) * cellSize,
         onFinish: function(){
@@ -281,9 +292,16 @@ function monsterStepToNextCell(currentStep, currentMonster){
                     console.log(currentMonster,i, direction[i]);
                     monsterArray[currentMonster].moveUp();
                 }
+                aOpacity = 1;
+                if(i >= pathCells.length-3){
+                    aOpacity = 0;
+                    if(i == pathCells.length-2){
+                        monsterArray[currentMonster].stop();
+                    }
+                }
 
                 i++;
-                monsterStepToNextCell(i,currentMonster);
+                monsterStepToNextCell(i,currentMonster,aOpacity);
             }
         }
     }).play();
@@ -291,10 +309,10 @@ function monsterStepToNextCell(currentStep, currentMonster){
 
 function monstersMove(currentMonsterTween){
     var currentMonsterTween = currentMonsterTween || 0;
-    monsterArray[currentMonsterTween].show();
+//    monsterArray[currentMonsterTween].show();
     monsterTweenArray[currentMonsterTween].play();
     currentMonsterTween++;
-    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 700);
+    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 1500);
 }
 /* -----------------------------Monster processing-------------------------*/
 
@@ -519,8 +537,10 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
     var indexI = ii;
     var indexJ = jj;
 
-    try{ map[indexI][indexJ+1].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ--; }
-    if(map[indexI][indexJ+1].x-1 == 2 && indexJ+1 !== stepBefore.j){
+    console.log(map[indexI][indexJ-1].TileType, map[indexI][indexJ+1].TileType, map[indexI-1][indexJ].TileType, map[indexI+1][indexJ].TileType);
+
+    try{ map[indexI][indexJ+1].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ--; }
+    if(map[indexI][indexJ+1].TileType == 6 && indexJ+1 !== stepBefore.j){
         if(first.i == ii && first.j == jj){
             pathCells.push({i: ii, j: jj-2});
             direction.push("goRight");
@@ -540,8 +560,8 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
             direction.push("goRight");
         }
     }else{
-        try{ map[indexI][indexJ-1].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ++; }
-        if(map[indexI][indexJ-1].x-1 == 2 && indexJ-1 !== stepBefore.j){
+        try{ map[indexI][indexJ-1].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ++; }
+        if(map[indexI][indexJ-1].TileType == 6 && indexJ-1 !== stepBefore.j){
             if(first.i == ii && first.j == jj){
                 pathCells.push({i: ii, j: jj+2});
                 direction.push("goLeft");
@@ -561,8 +581,8 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
                 direction.push("goLeft");
             }
         }else{
-            try{ map[indexI+1][indexJ].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexI--; }
-            if(map[indexI+1][indexJ].x-1 == 2 && indexI+1 !== stepBefore.i){
+            try{ map[indexI+1][indexJ].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexI--; }
+            if(map[indexI+1][indexJ].TileType == 6 && indexI+1 !== stepBefore.i){
                 if(first.i == ii && first.j == jj){
                     pathCells.push({i: ii-2, j: jj});
                     direction.push("goBottom");
@@ -582,8 +602,8 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
                     direction.push("goBottom");
                 }
             }else{
-                try{ map[indexI-1][indexJ].x; }catch(e){ stepBefore = { i: ii, j: jj }; indexI++; }
-                if(map[indexI-1][indexJ].x-1 == 2 && indexI-1 !== stepBefore.i){
+                try{ map[indexI-1][indexJ].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexI++; }
+                if(map[indexI-1][indexJ].TileType == 6 && indexI-1 !== stepBefore.i){
                     if(first.i == ii && first.j == jj){
                         pathCells.push({i: ii+2, j: jj});
                         direction.push("goTop");
