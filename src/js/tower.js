@@ -97,27 +97,28 @@ function Tower(image, x, y, type, damage, cost, width, height) {
         width: width || cellSize,
         height: height || cellSize
     });
-    this.bullet = new Kinetic.Circle({
-        x: x+5,
-        y: y+3,
-        fill: 'black',
-        width: 5,
-        height: 5,
-        visible: false
-    });
+    if (type != 'foundation') {
+        this.bullet = new Kinetic.Circle({
+            x: x+5,
+            y: y+3,
+            fill: 'black',
+            width: 5,
+            height: 5,
+            visible: false
+        });
+        this.bulletTween = new Kinetic.Tween({
+            node: this.bullet,
+            x: 420,
+            duration: 0.3,
+            easing: Kinetic.Easings.Linear,
+            onFinish: function() {
+                this.reset();
+            }
+        });
+        towersLayer.add(this.bullet);
+    }
     towersLayer.add(this.image);
-    towersLayer.add(this.bullet);
     towersLayer.draw();
-
-    this.bulletTween = new Kinetic.Tween({
-        node: this.bullet,
-        x: 420,
-        duration: 0.3,
-        easing: Kinetic.Easings.Linear,
-        onFinish: function() {
-            this.reset();
-        }
-    });
 }
 
 var towerType; //stores the type of tower build
@@ -165,24 +166,32 @@ var mobsPassedCounter = 0;
 
 /**-----------------------------Right-panel var-----------------------------*/
 var rightPanel = new Kinetic.Image({
-    x: 21 * cellSize,
+    x: 21*cellSize,
     y: 0,
     image: images.rightPanel,
     width: 128,
     height: 480
 });
 var goldDisplay = new Kinetic.Text({
-    x: 75,
-    y: 5,
+    x: 23*cellSize-5,
+    y: 2*cellSize+10,
     text: '100',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
 });
-var mobsPassedDisplay = new Kinetic.Text({
-    x: 215,
-    y: 5,
-    text: '0',
+var healthPoints = new Kinetic.Text({
+    x: 22*cellSize+12,
+    y: 1*cellSize+8,
+    text: '20',
+    fontSize: 12,
+    fontFamily: 'Calibri',
+    fill: 'white'
+});
+var waveNumber = new Kinetic.Text({
+    x: 23*cellSize,
+    y: 1*cellSize+8,
+    text: '1/20',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
@@ -211,7 +220,7 @@ function startGame(){
     //findPath(map3,mapBeginCell3,mapEndCell3);
 //    findPath(map3,mapEndCell3,mapBeginCell3);
 
-    afterBgCreating();
+    setTimeout(afterBgCreating, 50);
     //createMonsters();
     //createMonstersTweens();
     //monstersMove();
@@ -306,14 +315,17 @@ function monstersMove(currentMonsterTween){
 function afterBgCreating() { //run, after background is creating
     bgLayer.add(beingConstructedRect);
     bgLayer.add(beingConstructedTower);
-    bgLayer.add(goldDisplay);
-    bgLayer.add(mobsPassedDisplay);
     bgLayer.add(rightPanel);
+    bgLayer.add(goldDisplay);
+    bgLayer.add(healthPoints);
+    bgLayer.add(waveNumber);
+    
+    buildTowersMenu();
+    buildBases();
+    
     stage.add(bgLayer);
     stage.add(rightPanelLayer);
     stage.add(towersLayer);
-    buildTowersMenu();
-    buildBases();
     //setInterval(shoot, 100);
 }
 
@@ -378,10 +390,10 @@ bgLayer.on('mouseup', function(){
             towersArray.push(newTower);
             busyCells.push({x: mouseX, y: mouseY}); //add tower rectangle to busy cells array
 
-            /* test tween (temporary)*/
-            towersArray[towersArray.length-1].bullet.show();
-            towersArray[towersArray.length-1].bulletTween.play();
-
+            beingConstructedRect.hide();
+            beingConstructedTower.hide();
+            isBuildingNow = false;
+        } else {
             beingConstructedRect.hide();
             beingConstructedTower.hide();
             isBuildingNow = false;
