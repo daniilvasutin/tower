@@ -1,10 +1,14 @@
-.menuWindows {
-    background-image: url(../images/menubg.png);
+.container {
+	position: relative;
+	width: 160px;
+	height: 330px;
+	margin: auto;
+	background-image: url(../images/menubg.png);
     background-repeat: no-repeat;
     color: #ffffff;
+	padding: 42px 165px;
 }
 
 #indexButtons{
-    margin-left: 165px;
-    margin-top: 42px;
+
 }
