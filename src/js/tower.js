@@ -1,13 +1,17 @@
 /** ----------------------------Game var--------------------------------*/
 var images = {};
 var sources = {
-    bg_sprite: "../images/sprite_bg1.png",
+    bgSprite: "../images/sprite_bg.jpg",
+    rightPanel: "../images/panel.jpg",
     monsterImg: "../images/monster.png",
-    flameTowerIco: "../images/flame_tower_ico.png",
-    frostTowerIco: "../images/frost_tower_ico.png",
-    flameTower: "../images/flame_tower.png",
-    frostTower: "../images/frost_tower.png",
-    topPanel: "../images/top_panel.png"
+    towerFoundationIco: "../images/tower_foundation_ico.jpg",
+    puddleBlueIco: "../images/puddle_blue_ico.jpg",
+    puddleGreenIco: "../images/puddle_green_ico.jpg",
+    crystalGreenIco: "../images/crystal_green_ico.jpg",
+    crystalBlueIco: "../images/crystal_blue_ico.jpg",
+    crystalRedIco: "../images/crystal_red_ico.jpg",
+    towerFoundation: "../images/tower_foundation.png",
+    frostTower: "../images/frost_tower.png"
 };
 
 for(var src in sources) {
@@ -19,23 +23,28 @@ for(var src in sources) {
 /** ----------------------------Map var------------------------------------*/
 var backgroundImageArray = new Array(); //background by tiles
 var cellSize = 32; //size of tile in background
-var widthCellCount = 15; //canvas width in cells
-var heightCellCount = 10; //canvas height in cells
+var widthCellCount = 21; //canvas width in cells + 4 for panel
+var heightCellCount = 15; //canvas height in cells
 var busyCells = new Array(); //busy cells in map
 var pathCells = new Array()  //path cells in map
 
 var map1 = //Map by two-dimensional array
     [
-        [{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1},{x:4,y:1}], // 1ый ряд
-        [{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1},{x:5,y:1}], // 2ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 3ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1}], // 4ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 5ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1}], // 6ый ряд
-        [{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // 7ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}],  // 8ый ряд
-        [{x:1,y:1},{x:1,y:1},{x:2,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:3,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}], // row 9
-        [{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1},{x:1,y:1}] // row 10
+        [{x:2,y:2,busy:0,type:0},{x:7,y:2,busy:1,type:2},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:9,y:2,busy:1,type:2},{x:7,y:3,busy:1,type:3},{x:7,y:1,busy:1,type:4},{x:7,y:2,busy:1,type:1},{x:7,y:1,busy:1,type:4},{x:7,y:3,busy:1,type:3},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:1,busy:1,type:5},{x:11,y:1,busy:1,type:5},{x:12,y:1,busy:1,type:5},{x:2,y:2,busy:0,type:0}], // 1 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:2,busy:1,type:5},{x:11,y:2,busy:1,type:5},{x:12,y:2,busy:1,type:5},{x:2,y:2,busy:0,type:0}], // 2 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:10,y:3,busy:1,type:5},{x:11,y:3,busy:1,type:5},{x:12,y:3,busy:1,type:5},{x:2,y:2,busy:0,type:0}], //3 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:1,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:1,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //4 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //5 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //6 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //7 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //8 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:3,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //9 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //10 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:3,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //11 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:3,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:2,y:1,busy:1,type:6},{x:3,y:3,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:1,y:2,busy:1,type:6},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //12 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //13 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}], //14 row
+        [{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0},{x:2,y:2,busy:0,type:0}] //15 row
     ];
 var mapBeginCell1 = {i: 6, j: 0};
 var mapEndCell1 = {i: 5, j: 14};
@@ -84,15 +93,15 @@ function Tower(image, x, y, type, damage, cost, width, height) {
         x: x,
         y: y,
         image: image,
-        width: width,
-        height: height
+        width: width || cellSize,
+        height: height || cellSize
     });
     this.bullet = new Kinetic.Circle({
         x: x+5,
         y: y+3,
         fill: 'black',
-        width: 10,
-        height: 10,
+        width: 5,
+        height: 5,
         visible: false
     });
     towersLayer.add(this.image);
@@ -128,9 +137,9 @@ var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
 var beingConstructedTower = new Kinetic.Image({ //building tower image
     x: 0,
     y: 0,
-    image: images.flameTower,
-    width: 20,
-    height: 60,
+    image: images.towerFoundation,
+    width: cellSize+8,
+    height: cellSize+8,
     visible: false
 });
 /* ------------------------------------------------------------------------*/
@@ -153,13 +162,13 @@ var goldCounter = 100;
 var mobsPassedCounter = 0;
 /*--------------------------------------------------------------------------*/
 
-/**-----------------------------Top-panel var-----------------------------*/
-var topPanel = new Kinetic.Image({
-    x: 0,
+/**-----------------------------Right-panel var-----------------------------*/
+var rightPanel = new Kinetic.Image({
+    x: 21 * cellSize,
     y: 0,
-    image: images.topPanel,
-    width: 480,
-    height: 25
+    image: images.rightPanel,
+    width: 128,
+    height: 480
 });
 var goldDisplay = new Kinetic.Text({
     x: 75,
@@ -182,11 +191,12 @@ var mobsPassedDisplay = new Kinetic.Text({
 /** ----------------------------Need for run the game----------------------*/
 var stage = new Kinetic.Stage({
     container: 'container',
-    width: widthCellCount*cellSize,
+    width: (widthCellCount+4)*cellSize,
     height: heightCellCount*cellSize
 });
 
 var bgLayer = new Kinetic.Layer();
+var rightPanelLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
 
 function playBackgroundMusic(){
@@ -196,32 +206,23 @@ function playBackgroundMusic(){
 }
 
 function startGame(){
-    //buildBackground(map1);
-    //findPath(map1,mapBeginCell1,mapEndCell1);
-//    findPath(map1,mapEndCell1,mapBeginCell1);
-
-//    buildBackground(map2);
-//    findPath(map2,mapBeginCell2,mapEndCell2);
-//    findPath(map2,mapEndCell2,mapBeginCell2);
-//
-   buildBackground(map3);
-    findPath(map3,mapBeginCell3,mapEndCell3);
+   buildBackground(map1);
+    //findPath(map3,mapBeginCell3,mapEndCell3);
 //    findPath(map3,mapEndCell3,mapBeginCell3);
 
     afterBgCreating();
-    createMonsters();
-    createMonstersTweens();
-    monstersMove();
-    playBackgroundMusic();
-    setTimeout(function(){playSprite('monsterA');},3000);
-    setTimeout(function(){playSprite('monsterHa');},15000);
+    //createMonsters();
+    //createMonstersTweens();
+    //monstersMove();
+    //playBackgroundMusic();
+    //setTimeout(function(){playSprite('monsterA');},3000);
+    //setTimeout(function(){playSprite('monsterHa');},15000);
 }
 startGame();
 /* ------------------------------------------------------------------------*/
 
 
 
-/***************************************************************************/
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
 function createMonsters(){
@@ -298,27 +299,28 @@ function monstersMove(currentMonsterTween){
 
 
 
-/***************************************************************************/
+
 /***************************************************************************/
 /** ----------------------------Tower processing---------------------------*/
 function afterBgCreating() { //run, after background is creating
-    buildTowersMenu();
     bgLayer.add(beingConstructedRect);
     bgLayer.add(beingConstructedTower);
-    bgLayer.add(topPanel);
     bgLayer.add(goldDisplay);
     bgLayer.add(mobsPassedDisplay);
+    bgLayer.add(rightPanel);
     stage.add(bgLayer);
+    stage.add(rightPanelLayer);
     stage.add(towersLayer);
-    setInterval(shoot, 100);
+    buildTowersMenu();
+    //setInterval(shoot, 100);
 }
 
-function shoot() {
+/*function shoot() {
     for (var i = 0; i < towersArray.length; i++) {
         towersArray[i].bullet.show();
         towersArray[i].bulletTween.play();
     }
-}
+}*/
 
 /* Events */
 bgLayer.on('mousemove', function(){
@@ -329,20 +331,20 @@ bgLayer.on('mousemove', function(){
         for (var i = 0; i < busyCells.length; i++) {
             if ((busyCells[i].x != mouseX) || (busyCells[i].y != mouseY)) {
                 beingConstructedRect.setAttrs({
-                    x: mouseX * cellSize,
-                    y: mouseY * cellSize,
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
                     fill: "green",
                     visible: true
                 });
                 beingConstructedTower.setAttrs({
-                    x: mouseX * cellSize + 5,
-                    y: (mouseY-1) * cellSize,
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
                     visible: true
                 });
             } else {
                 beingConstructedRect.setAttrs({
-                    x: mouseX * cellSize,
-                    y: mouseY * cellSize,
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
                     fill: "red"
                 });
                 break;
@@ -358,14 +360,14 @@ bgLayer.on('mouseup', function(){
     if (isBuildingNow) {
         if (beingConstructedRect.attrs.fill != 'red') {
             switch(towerType) {
-                case 'frost':
-                    var newTower = new Tower(images.frostTower, mouseX * cellSize + 5, (mouseY-1) * cellSize, 'frost', 15, 100, 20, 60);
+                case 'foundation':
+                    var newTower = new Tower(images.towerFoundation, mouseX*cellSize, mouseY*cellSize, 'foundation', 15, 100, 40, 40);
                         goldCounter = goldCounter - 10;
                         goldDisplay.setText(goldCounter);
                         bgLayer.draw();
                     break;
                 case 'flame':
-                    var newTower = new Tower(images.flameTower, mouseX * cellSize + 5, (mouseY-1) * cellSize, 'flame', 15, 100, 20, 60);
+                    var newTower = new Tower(images.flameTower, mouseX*cellSize, mouseY*cellSize, 'flame', 15, 100);
                         goldCounter = goldCounter - 15;
                         goldDisplay.setText(goldCounter);
                         bgLayer.draw();
@@ -390,7 +392,6 @@ bgLayer.on('mouseup', function(){
 
 
 /***************************************************************************/
-/***************************************************************************/
 /** ----------------------------Map processing-----------------------------*/
 function buildBackground(map) {
     for (var i = 0; i < heightCellCount; i++) {
@@ -398,7 +399,7 @@ function buildBackground(map) {
             var tile = new Kinetic.Image({
                 x: j*cellSize,
                 y: i*cellSize,
-                image: images.bg_sprite,
+                image: images.bgSprite,
                 width: cellSize,
                 height: cellSize,
                 crop: [(map[i][j].x-1)*cellSize, (map[i][j].y-1)*cellSize, cellSize, cellSize]
@@ -418,36 +419,64 @@ function buildBackground(map) {
 }
 
 function buildTowersMenu() { //draw menu with towers
-    var frostTowerButton = new Kinetic.Image({
-        x: 12*cellSize,
-        y: 9*cellSize,
-        image: images.frostTowerIco,
+    var towerFoundationIco = new Kinetic.Image({
+        x: 22*cellSize,
+        y: 6*cellSize,
+        image: images.towerFoundationIco,
         width: cellSize,
         height: cellSize
     });
-    var flameTowerButton = new Kinetic.Image({
-        x: 13*cellSize,
-        y: 9*cellSize,
-        image: images.flameTowerIco,
+    var puddleBlueIco = new Kinetic.Image({
+        x: 22*cellSize,
+        y: 7*cellSize,
+        image: images.puddleBlueIco,
         width: cellSize,
         height: cellSize
     });
-
-    bgLayer.add(frostTowerButton);
-    bgLayer.add(flameTowerButton);
+    var puddleGreenIco = new Kinetic.Image({
+        x: 22*cellSize,
+        y: 8*cellSize,
+        image: images.puddleGreenIco,
+        width: cellSize,
+        height: cellSize
+    });
+    var crystalGreenIco = new Kinetic.Image({
+        x: 23*cellSize,
+        y: 6*cellSize,
+        image: images.crystalGreenIco,
+        width: cellSize,
+        height: cellSize
+    });
+    var crystalBlueIco = new Kinetic.Image({
+        x: 23*cellSize,
+        y: 7*cellSize,
+        image: images.crystalBlueIco,
+        width: cellSize,
+        height: cellSize
+    });
+    var crystalRedIco = new Kinetic.Image({
+        x: 23*cellSize,
+        y: 8*cellSize,
+        image: images.crystalRedIco,
+        width: cellSize,
+        height: cellSize
+    });
+    bgLayer.add(towerFoundationIco);
+    bgLayer.add(puddleBlueIco);
+    bgLayer.add(puddleGreenIco);
+    bgLayer.add(crystalGreenIco);
+    bgLayer.add(crystalBlueIco);
+    bgLayer.add(crystalRedIco);
 
     /* Towers menu events */
-    frostTowerButton.on('mousedown',  function() {
+    towerFoundationIco.on('mousedown',  function() {
         isBuildingNow = true;
-        towerType = 'frost';
+        towerType = 'foundation';
         beingConstructedTower.setAttrs({
-            image: images.frostTower
+            image: images.towerFoundation
         });
     });
-    frostTowerButton.on('mouseover',  function() {
-
-    });
-    flameTowerButton.on('mousedown',  function() {
+    puddleBlueIco.on('mousedown',  function() {
         isBuildingNow = true;
         towerType = 'flame';
         beingConstructedTower.setAttrs({
@@ -455,6 +484,7 @@ function buildTowersMenu() { //draw menu with towers
         });
     });
 }
+
 
 function findPath(map,mapBeginCell,mapEndCell) {
     var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
@@ -569,8 +599,6 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
 /* -----------------------------Map processing-----------------------------*/
 
 
-
-/***************************************************************************/
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
 
@@ -611,59 +639,3 @@ var playSprite = function(id) {          //play sprite according to the id
     }
 };
 /* ----------------------------Sound processing----------------------------*/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    console.log(this.node.attrs['x'], this.node.attrs['y'],direction[i], monster.getIndex());
-//    monsterArray[currentMonster].afterFrame(3, function(){
-//
-//    });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//function imagesOnload() { //run, when images loaded
-//    buildBackground(map1);
-//    setTimeout(afterBgCreating, 100)
-//}
-
-
-/* Classes */
-
-
-
-
-
-
