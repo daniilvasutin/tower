@@ -11,7 +11,8 @@ var sources = {
     crystalBlueIco: "../images/crystal_blue_ico.jpg",
     crystalRedIco: "../images/crystal_red_ico.jpg",
     towerFoundation: "../images/tower_foundation.png",
-    frostTower: "../images/frost_tower.png"
+    enemyBase: "../images/enemy_home.png",
+    ourBase: "../images/our_home.png"
 };
 
 for(var src in sources) {
@@ -312,6 +313,7 @@ function afterBgCreating() { //run, after background is creating
     stage.add(rightPanelLayer);
     stage.add(towersLayer);
     buildTowersMenu();
+    buildBases();
     //setInterval(shoot, 100);
 }
 
@@ -484,7 +486,24 @@ function buildTowersMenu() { //draw menu with towers
         });
     });
 }
-
+function buildBases() {
+    var enemyBase = new Kinetic.Image({
+        x: 3*cellSize,
+        y: 2.5*cellSize,
+        image: images.enemyBase,
+        width: 80,
+        height: 80
+    });
+    var ourBase = new Kinetic.Image({
+        x: 16.5*cellSize,
+        y: 11*cellSize,
+        image: images.ourBase,
+        width: 80,
+        height: 90
+    });
+    bgLayer.add(enemyBase);
+    bgLayer.add(ourBase);
+}
 
 function findPath(map,mapBeginCell,mapEndCell) {
     var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
