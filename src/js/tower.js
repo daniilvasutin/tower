@@ -1,4 +1,4 @@
-/** ----------------------------Game var--------------------------------*/
+﻿/** ----------------------------Game var--------------------------------*/
 var images = {};
 var sources = {
     bgSprite: "../images/sprite_bg.jpg",
@@ -30,7 +30,7 @@ var cellSize = 32; //size of tile in background
 var widthCellCount = 21; //canvas width in cells + 4 for panel
 var heightCellCount = 15; //canvas height in cells
 var busyCells = new Array(); //busy cells in map
-var pathCells = new Array()  //path cells in map
+var pathCells = new Array();  //path cells in map
 
 var map1 = //Map by two-dimensional array
     [
@@ -119,6 +119,10 @@ var towerType; //stores the type of tower build
 var towersArray = new Array(); //tower objects array
 var isBuildingFoundation = false; //is the tower foundation now under construction?
 var isBuildingCrystal = false; //is the crystal now under construction?
+var towerFoundationCost = 10;
+var blueCrystalCost = 15; //cost of crystal
+var redCrystalCost = 20;
+var greenCrystalCost = 25;
 
 var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     x: 0,
@@ -167,7 +171,7 @@ var goldCounter = 100;
 var mobsPassedCounter = 0;
 /*--------------------------------------------------------------------------*/
 
-/**-----------------------------Right-panel var-----------------------------*/
+/**-----------------------------Text vars-----------------------------*/
 var rightPanel = new Kinetic.Image({
     x: 21*cellSize,
     y: 0,
@@ -185,19 +189,27 @@ var goldDisplay = new Kinetic.Text({
 });
 var healthPoints = new Kinetic.Text({
     x: 22*cellSize+12,
-    y: 1*cellSize+8,
+    y: cellSize+8,
     text: '20',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
 });
 var waveNumber = new Kinetic.Text({
-    x: 23*cellSize,
-    y: 1*cellSize+8,
+    x: 23 * cellSize,
+    y: cellSize + 8,
     text: '1/20',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
+});
+var errorMessage = new Kinetic.Text({
+    x: 8 * cellSize,
+    y: cellSize + 8,
+    text: '',
+    fontSize: 18,
+    fontFamily: 'Calibri',
+    fill: 'yellow'
 });
 /*-------------------------------------------------------------------------*/
 
@@ -323,6 +335,7 @@ function afterBgCreating() { //run, after background is creating
     rightPanelLayer.add(goldDisplay);
     rightPanelLayer.add(healthPoints);
     rightPanelLayer.add(waveNumber);
+    rightPanelLayer.add(errorMessage);
 
     buildTowersMenu();
     buildBases();
@@ -435,12 +448,13 @@ towersLayer.on('mouseup', function(){
                         goldDisplay.setText(goldCounter);
                         rightPanelLayer.draw();
                     break;
+                default: break;
             }
             towersArray.push(newTower);
 
             beingConstructedCrystal.hide();
             isBuildingCrystal = false;
-        } 
+        }
     towersLayer.draw();
 });
 towersLayer.on('mousemove', function(){
@@ -543,32 +557,48 @@ function buildTowersMenu() { //draw menu with towers
 
     /* Towers menu events */
     towerFoundationIco.on('mousedown',  function() {
-        isBuildingFoundation = true;
-        towerType = 'foundation';
-        beingConstructedTower.setAttrs({
-            image: images.towerFoundation
-        });
+        if (goldCounter >= towerFoundationCost) {
+            isBuildingFoundation = true;
+            towerType = 'foundation';
+            beingConstructedTower.setAttrs({
+                image: images.towerFoundation
+            });
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
     });
     crystalBlueIco.on('mousedown',  function() {
-        isBuildingCrystal = true;
-        towerType = 'blueCrystal';
-        beingConstructedCrystal.setAttrs({
-            image: images.blueCrystal
-        });
+        if (goldCounter >= blueCrystalCost) {
+            isBuildingCrystal = true;
+            towerType = 'blueCrystal';
+            beingConstructedCrystal.setAttrs({
+                image: images.blueCrystal
+            });
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
     });
     crystalGreenIco.on('mousedown',  function() {
-        isBuildingCrystal = true;
-        towerType = 'greenCrystal';
-        beingConstructedCrystal.setAttrs({
-            image: images.greenCrystal
-        });
+        if (goldCounter >= greenCrystalCost) {
+            isBuildingCrystal = true;
+            towerType = 'greenCrystal';
+            beingConstructedCrystal.setAttrs({
+                image: images.greenCrystal
+            });
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
     });
     crystalRedIco.on('mousedown',  function() {
-        isBuildingCrystal = true;
-        towerType = 'redCrystal';
-        beingConstructedCrystal.setAttrs({
-            image: images.redCrystal
-        });
+        if (goldCounter >= greenCrystalCost) {
+            isBuildingCrystal = true;
+            towerType = 'redCrystal';
+            beingConstructedCrystal.setAttrs({
+                image: images.redCrystal
+            });
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
     });
 }
 
@@ -589,6 +619,17 @@ function buildBases() { //draw enemy's home and our home
     });
     bgLayer.add(enemyBase);
     bgLayer.add(ourBase);
+}
+
+function displayErrors(text) { //display errors
+    errorMessage.setText(text);
+    setTimeout(cleanErrorMessages, 1000);
+    rightPanelLayer.draw();
+}
+
+function cleanErrorMessages() { //clean errors
+    errorMessage.setText("");
+    rightPanelLayer.draw();
 }
 
 function findPath(map,mapBeginCell,mapEndCell) {
