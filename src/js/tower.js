@@ -10,6 +10,9 @@ var sources = {
     crystalGreenIco: "../images/crystal_green_ico.jpg",
     crystalBlueIco: "../images/crystal_blue_ico.jpg",
     crystalRedIco: "../images/crystal_red_ico.jpg",
+    redCrystal: "../images/red_crystal.png",
+    blueCrystal: "../images/blue_crystal.png",
+    greenCrystal: "../images/green_crystal.png",
     towerFoundation: "../images/tower_foundation.png",
     enemyBase: "../images/enemy_home.png",
     ourBase: "../images/our_home.png"
@@ -84,11 +87,11 @@ var mapEndCell3 = {i: 2, j: 14};
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
-function Tower(image, x, y, type, damage, cost, width, height) {
+function Tower(image, x, y, type, damage, cost, radius, width, height) {
     this.type = type;
     this.damage = damage;
     this.level = 1;
-    this.radius = 50;
+    this.radius = radius || 50;
     this.cost = cost;
     this.image = new Kinetic.Image({
         x: x,
@@ -106,15 +109,6 @@ function Tower(image, x, y, type, damage, cost, width, height) {
             height: 5,
             visible: false
         });
-        this.bulletTween = new Kinetic.Tween({
-            node: this.bullet,
-            x: 420,
-            duration: 0.3,
-            easing: Kinetic.Easings.Linear,
-            onFinish: function() {
-                this.reset();
-            }
-        });
         towersLayer.add(this.bullet);
     }
     towersLayer.add(this.image);
@@ -123,7 +117,8 @@ function Tower(image, x, y, type, damage, cost, width, height) {
 
 var towerType; //stores the type of tower build
 var towersArray = new Array(); //tower objects array
-var isBuildingNow = false; //is the tower now under construction?
+var isBuildingFoundation = false; //is the tower foundation now under construction?
+var isBuildingCrystal = false; //is the crystal now under construction?
 
 var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     x: 0,
@@ -142,6 +137,14 @@ var beingConstructedTower = new Kinetic.Image({ //building tower image
     image: images.towerFoundation,
     width: cellSize+8,
     height: cellSize+8,
+    visible: false
+});
+var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
+    x: 0,
+    y: 0,
+    image: images.redCrystal,
+    width: cellSize,
+    height: cellSize,
     visible: false
 });
 /* ------------------------------------------------------------------------*/
@@ -315,11 +318,12 @@ function monstersMove(currentMonsterTween){
 function afterBgCreating() { //run, after background is creating
     bgLayer.add(beingConstructedRect);
     bgLayer.add(beingConstructedTower);
-    bgLayer.add(rightPanel);
-    bgLayer.add(goldDisplay);
-    bgLayer.add(healthPoints);
-    bgLayer.add(waveNumber);
-    
+    bgLayer.add(beingConstructedCrystal);
+    rightPanelLayer.add(rightPanel); 
+    rightPanelLayer.add(goldDisplay);
+    rightPanelLayer.add(healthPoints);
+    rightPanelLayer.add(waveNumber);
+
     buildTowersMenu();
     buildBases();
     
@@ -336,12 +340,12 @@ function afterBgCreating() { //run, after background is creating
     }
 }*/
 
-/* Events */
+/**---------------------------Events---------------------------------------*/
 bgLayer.on('mousemove', function(){
     var mousePos = stage.getMousePosition();
     var mouseX = parseInt(mousePos.x/cellSize);
     var mouseY = parseInt(mousePos.y/cellSize);
-    if (isBuildingNow) {
+    if (isBuildingFoundation) {
         for (var i = 0; i < busyCells.length; i++) {
             if ((busyCells[i].x != mouseX) || (busyCells[i].y != mouseY)) {
                 beingConstructedRect.setAttrs({
@@ -365,26 +369,27 @@ bgLayer.on('mousemove', function(){
             }
         }
     }
+    if (isBuildingCrystal) {
+        beingConstructedCrystal.setAttrs({
+            x: mouseX*cellSize,
+            y: mouseY*cellSize,
+            visible: true
+        });
+    }
     bgLayer.draw();
 });
 bgLayer.on('mouseup', function(){
     var mousePos = stage.getMousePosition();
     var mouseX = parseInt(mousePos.x / cellSize);
     var mouseY = parseInt(mousePos.y / cellSize);
-    if (isBuildingNow) {
+    if (isBuildingFoundation) {
         if (beingConstructedRect.attrs.fill != 'red') {
             switch(towerType) {
                 case 'foundation':
-                    var newTower = new Tower(images.towerFoundation, mouseX*cellSize, mouseY*cellSize, 'foundation', 15, 100, 40, 40);
+                    var newTower = new Tower(images.towerFoundation, mouseX*cellSize, mouseY*cellSize, 'foundation', 15, 100, 0, 40, 40);
                         goldCounter = goldCounter - 10;
                         goldDisplay.setText(goldCounter);
-                        bgLayer.draw();
-                    break;
-                case 'flame':
-                    var newTower = new Tower(images.flameTower, mouseX*cellSize, mouseY*cellSize, 'flame', 15, 100);
-                        goldCounter = goldCounter - 15;
-                        goldDisplay.setText(goldCounter);
-                        bgLayer.draw();
+                        rightPanelLayer.draw();
                     break;
             }
             towersArray.push(newTower);
@@ -392,14 +397,68 @@ bgLayer.on('mouseup', function(){
 
             beingConstructedRect.hide();
             beingConstructedTower.hide();
-            isBuildingNow = false;
-        } else {
+            isBuildingFoundation = false;
+        } else { //if place is busy
             beingConstructedRect.hide();
             beingConstructedTower.hide();
-            isBuildingNow = false;
+            isBuildingFoundation = false;
         }
     }
+    if (isBuildingCrystal) { //if crystal is not on towerFoundation hide it
+        beingConstructedCrystal.hide();
+        isBuildingCrystal = false;
+    }
+    bgLayer.draw();
     towersLayer.draw();
+});
+towersLayer.on('mouseup', function(){
+    var mousePos = stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x / cellSize);
+    var mouseY = parseInt(mousePos.y / cellSize);
+    if (isBuildingCrystal) {
+            switch(towerType) {
+                case 'redCrystal':
+                    var newTower = new Tower(images.redCrystal, mouseX*cellSize, mouseY*cellSize, 'redCrystal', 15, 100, 60);
+                        goldCounter = goldCounter - 20;
+                        goldDisplay.setText(goldCounter);
+                        rightPanelLayer.draw();
+                    break;
+                case 'blueCrystal':
+                    var newTower = new Tower(images.blueCrystal, mouseX*cellSize, mouseY*cellSize, 'blueCrystal', 15, 100, 50);
+                        goldCounter = goldCounter - 15;
+                        goldDisplay.setText(goldCounter);
+                        rightPanelLayer.draw();
+                    break;
+                case 'greenCrystal':
+                    var newTower = new Tower(images.greenCrystal, mouseX*cellSize, mouseY*cellSize, 'greenCrystal', 15, 100, 70);
+                        goldCounter = goldCounter - 25;
+                        goldDisplay.setText(goldCounter);
+                        rightPanelLayer.draw();
+                    break;
+            }
+            towersArray.push(newTower);
+
+            beingConstructedCrystal.hide();
+            isBuildingCrystal = false;
+        } 
+    towersLayer.draw();
+});
+towersLayer.on('mousemove', function(){
+    var mousePos = stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x/cellSize);
+    var mouseY = parseInt(mousePos.y/cellSize);
+    if (isBuildingCrystal) {
+        beingConstructedCrystal.setAttrs({
+            x: mouseX*cellSize,
+            y: mouseY*cellSize,
+            visible: true
+        });
+    } else {
+        beingConstructedCrystal.hide();
+        isBuildingCrystal = false;
+    }
+    towersLayer.draw();
+    bgLayer.draw();
 });
 /* ----------------------------Tower processing----------------------------*/
 
@@ -407,7 +466,7 @@ bgLayer.on('mouseup', function(){
 
 /***************************************************************************/
 /** ----------------------------Map processing-----------------------------*/
-function buildBackground(map) {
+function buildBackground(map) { //draw background
     for (var i = 0; i < heightCellCount; i++) {
         for (var j = 0; j < widthCellCount; j++) {
             var tile = new Kinetic.Image({
@@ -475,30 +534,45 @@ function buildTowersMenu() { //draw menu with towers
         width: cellSize,
         height: cellSize
     });
-    bgLayer.add(towerFoundationIco);
-    bgLayer.add(puddleBlueIco);
-    bgLayer.add(puddleGreenIco);
-    bgLayer.add(crystalGreenIco);
-    bgLayer.add(crystalBlueIco);
-    bgLayer.add(crystalRedIco);
+    rightPanelLayer.add(towerFoundationIco);
+    rightPanelLayer.add(puddleBlueIco);
+    rightPanelLayer.add(puddleGreenIco);
+    rightPanelLayer.add(crystalGreenIco);
+    rightPanelLayer.add(crystalBlueIco);
+    rightPanelLayer.add(crystalRedIco);
 
     /* Towers menu events */
     towerFoundationIco.on('mousedown',  function() {
-        isBuildingNow = true;
+        isBuildingFoundation = true;
         towerType = 'foundation';
         beingConstructedTower.setAttrs({
             image: images.towerFoundation
         });
     });
-    puddleBlueIco.on('mousedown',  function() {
-        isBuildingNow = true;
-        towerType = 'flame';
-        beingConstructedTower.setAttrs({
-            image: images.flameTower
+    crystalBlueIco.on('mousedown',  function() {
+        isBuildingCrystal = true;
+        towerType = 'blueCrystal';
+        beingConstructedCrystal.setAttrs({
+            image: images.blueCrystal
+        });
+    });
+    crystalGreenIco.on('mousedown',  function() {
+        isBuildingCrystal = true;
+        towerType = 'greenCrystal';
+        beingConstructedCrystal.setAttrs({
+            image: images.greenCrystal
+        });
+    });
+    crystalRedIco.on('mousedown',  function() {
+        isBuildingCrystal = true;
+        towerType = 'redCrystal';
+        beingConstructedCrystal.setAttrs({
+            image: images.redCrystal
         });
     });
 }
-function buildBases() {
+
+function buildBases() { //draw enemy's home and our home
     var enemyBase = new Kinetic.Image({
         x: 3*cellSize,
         y: 2.5*cellSize,
