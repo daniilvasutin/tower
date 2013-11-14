@@ -1,14 +1,21 @@
-.container {
-	position: relative;
-	width: 160px;
-	height: 330px;
-	margin: auto;
-	background-image: url(../images/menubg.png);
+.menuWindows {
+    background-image: url(../images/menubg.png);
     background-repeat: no-repeat;
+    weight: 800px;
+    height: 480px;
+    background-position: center;
+    text-align: center;
+}
+.otherWindows{
+    background-image: url(../images/menubg.png);
+    background-repeat: no-repeat;
+    weight: 800px;
+    height: 480px;
+    background-position: center top;
+    text-align: center;
     color: #ffffff;
-	padding: 42px 165px;
 }
 
-#indexButtons{
-
+#bgame{
+    margin-top: 75px;
 }

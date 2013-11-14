@@ -26,7 +26,7 @@
       <file leaf-file-name="tower.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/tower.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="150" column="66" selection-start="15209" selection-end="15209" vertical-scroll-proportion="0.62478775">
+            <state line="432" column="38" selection-start="23604" selection-end="23604" vertical-scroll-proportion="0.62308997">
               <folding />
             </state>
           </provider>
@@ -81,6 +81,8 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Favorites" />
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -101,8 +103,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
-      <pane id="Favorites" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -197,7 +197,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/tower.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="150" column="66" selection-start="15209" selection-end="15209" vertical-scroll-proportion="0.62478775">
+        <state line="432" column="38" selection-start="23604" selection-end="23604" vertical-scroll-proportion="0.62308997">
           <folding />
         </state>
       </provider>
