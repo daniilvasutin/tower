@@ -121,11 +121,19 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         visible: false
     });
     this.bullet = new Kinetic.Circle({
-        x: x+5,
-        y: y+3,
+        x: x * cellSize + 5,
+        y: y * cellSize + 3,
         fill: 'black',
         width: 5,
         height: 5,
+        visible: false
+    });
+    this.circle = new Kinetic.Circle({
+        x: x * cellSize + cellSize / 2,
+        y: y * cellSize + cellSize / 2,
+        radius: this.radius,
+        stroke: 'white',
+        strokeWidth: 2,
         visible: false
     });
     this.destroy = function() {
@@ -133,31 +141,49 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         self.bullet.remove();
         self.sale.remove();
         self.up.remove();
+        self.circle.remove();
         self = null;
         towersLayer.draw();
         bgLayer.draw();
     }
 
     towersLayer.add(this.bullet);
+    towersLayer.add(this.circle);
     towersLayer.add(this.image);
     towersLayer.add(this.up);
     towersLayer.add(this.sale);
     towersLayer.draw();
 
-    this.image.on('click', function() { //event for click to tower
+    this.image.on('click', function() { //event for click to crystal
         for (var i = 0; i < towersArray.length; i++) {
             towersArray[i].up.hide();
             towersArray[i].sale.hide();
+            towersArray[i].circle.hide();
         }
+        self.circle.show();
         self.up.show();
         self.sale.show();
         towersLayer.draw();
     });
-    this.sale.on('click', function() {
+    this.sale.on('click', function() { //event for click to sale crystal image
         goldCounter = goldCounter + Math.round(self.cost/2);
-        self.destroy();
         goldDisplay.setText(goldCounter);
+        self.destroy();
         rightPanelLayer.draw();
+    });
+    this.up.on('click', function() { //event for click to up crystal lvl image
+        var lvlCost = self.level * 15;
+        if (goldCounter >= lvlCost) {
+            goldCounter = goldCounter - lvlCost;
+            self.level++;
+            self.radius = self.radius + 5;
+            self.circle.setAttrs({radius: self.radius});
+            goldDisplay.setText(goldCounter);
+            rightPanelLayer.draw();
+            towersLayer.draw();
+        } else {
+            displayErrors('Недостаточно золота!');
+        }
     });
 }
 
@@ -178,7 +204,7 @@ var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     height: cellSize,
     fill: 'green',
     stroke: 'black',
-    opacity: 0.5,
+    opacity: 0.7,
     strokeWidth: 2,
     visible: false
 });
