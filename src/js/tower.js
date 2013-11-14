@@ -105,16 +105,16 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         height: height || cellSize
     });
     this.up = new Kinetic.Image({
-        x: x-20,
-        y: y+5,
+        x: x * cellSize - 20,
+        y: y * cellSize + 5,
         image: images.upTower,
         width: 20,
         height: 19,
         visible: false
     });
     this.sale = new Kinetic.Image({
-        x: x+35,
-        y: y+5,
+        x: x * cellSize + 35,
+        y: y * cellSize + 5,
         image: images.saleTower,
         width: 20,
         height: 19,
@@ -128,7 +128,16 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         height: 5,
         visible: false
     });
-    
+    this.destroy = function() {
+        self.image.remove();
+        self.bullet.remove();
+        self.sale.remove();
+        self.up.remove();
+        self = null;
+        towersLayer.draw();
+        bgLayer.draw();
+    }
+
     towersLayer.add(this.bullet);
     towersLayer.add(this.image);
     towersLayer.add(this.up);
@@ -142,6 +151,13 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         }
         self.up.show();
         self.sale.show();
+        towersLayer.draw();
+    });
+    this.sale.on('click', function() {
+        goldCounter = goldCounter + Math.round(self.cost/2);
+        self.destroy();
+        goldDisplay.setText(goldCounter);
+        rightPanelLayer.draw();
     });
 }
 
@@ -181,46 +197,6 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
     width: cellSize,
     height: cellSize,
     visible: false
-});
-beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to foundation
-        var mousePos = stage.getMousePosition();
-        var mouseX = parseInt(mousePos.x / cellSize);
-        var mouseY = parseInt(mousePos.y / cellSize);
-        if (isBuildingCrystal) {
-            for (var i = 0; i < foundationsArray.length; i++) {
-                if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
-                    switch(towerType) {
-                        case 'redCrystal':
-                            var newTower = new Crystal(images.redCrystal, mouseX, mouseY, 'redCrystal', 15, 100, 60);
-                                goldCounter = goldCounter - 20;
-                                goldDisplay.setText(goldCounter);
-                                rightPanelLayer.draw();
-                            break;
-                        case 'blueCrystal':
-                            var newTower = new Crystal(images.blueCrystal, mouseX, mouseY, 'blueCrystal', 15, 100, 50);
-                                goldCounter = goldCounter - 15;
-                                goldDisplay.setText(goldCounter);
-                                rightPanelLayer.draw();
-                            break;
-                        case 'greenCrystal':
-                            var newTower = new Crystal(images.greenCrystal, mouseX, mouseY, 'greenCrystal', 15, 100, 70);
-                                goldCounter = goldCounter - 25;
-                                goldDisplay.setText(goldCounter);
-                                rightPanelLayer.draw();
-                            break;
-                        default: break;
-                    }
-                    towersArray.push(newTower);
-
-                    beingConstructedCrystal.hide();
-                    isBuildingCrystal = false;
-                    break;
-                }
-            }
-            beingConstructedCrystal.hide();
-            isBuildingCrystal = false;
-        }
-        towersLayer.draw();
 });
 /* ------------------------------------------------------------------------*/
 
@@ -288,6 +264,30 @@ var bgLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
 var rightPanelLayer = new Kinetic.Layer();
 
+function afterBgCreating() { //run, after background is creating
+    var rightPanel = new Kinetic.Image({
+        x: 21*cellSize,
+        y: 0,
+        image: images.rightPanel,
+        width: 128,
+        height: 480
+    });
+    bgLayer.add(beingConstructedRect);
+    bgLayer.add(beingConstructedTower);
+    bgLayer.add(beingConstructedCrystal);
+    rightPanelLayer.add(rightPanel);
+    rightPanelLayer.add(goldDisplay);
+    rightPanelLayer.add(healthPoints);
+    rightPanelLayer.add(waveNumber);
+    rightPanelLayer.add(errorMessage);
+
+    buildTowersMenu();
+    buildBases();
+
+    stage.add(bgLayer);
+    stage.add(rightPanelLayer);
+    stage.add(towersLayer);
+}
 
 function playBackgroundMusic(){
     var audio1 = document.getElementById('aTsIwR');
@@ -417,41 +417,6 @@ function monstersMove(currentMonsterTween){
 
 
 /***************************************************************************/
-/** ----------------------------Tower processing---------------------------*/
-function afterBgCreating() { //run, after background is creating
-    var rightPanel = new Kinetic.Image({
-        x: 21*cellSize,
-        y: 0,
-        image: images.rightPanel,
-        width: 128,
-        height: 480
-    });
-    bgLayer.add(beingConstructedRect);
-    bgLayer.add(beingConstructedTower);
-    bgLayer.add(beingConstructedCrystal);
-    rightPanelLayer.add(rightPanel); 
-    rightPanelLayer.add(goldDisplay);
-    rightPanelLayer.add(healthPoints);
-    rightPanelLayer.add(waveNumber);
-    rightPanelLayer.add(errorMessage);
-
-    buildTowersMenu();
-    buildBases();
-    
-    stage.add(bgLayer);
-    stage.add(rightPanelLayer);
-    stage.add(towersLayer);
-
-    //setInterval(shoot, 100);
-}
-
-/*function shoot() {
-    for (var i = 0; i < towersArray.length; i++) {
-        towersArray[i].bullet.show();
-        towersArray[i].bulletTween.play();
-    }
-}*/
-
 /**---------------------------Events---------------------------------------*/
 bgLayer.on('mousemove', function(){
     var mousePos = stage.getMousePosition();
@@ -526,7 +491,46 @@ bgLayer.on('mouseup', function(){
     bgLayer.draw();
     towersLayer.draw();
 });
+beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to foundation
+        var mousePos = stage.getMousePosition();
+        var mouseX = parseInt(mousePos.x / cellSize);
+        var mouseY = parseInt(mousePos.y / cellSize);
+        if (isBuildingCrystal) {
+            for (var i = 0; i < foundationsArray.length; i++) {
+                if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
+                    switch(towerType) {
+                        case 'redCrystal':
+                            var newTower = new Crystal(images.redCrystal, mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60);
+                                goldCounter = goldCounter - redCrystalCost;
+                                goldDisplay.setText(goldCounter);
+                                rightPanelLayer.draw();
+                            break;
+                        case 'blueCrystal':
+                            var newTower = new Crystal(images.blueCrystal, mouseX, mouseY, 'blueCrystal', 15, blueCrystalCost, 50);
+                                goldCounter = goldCounter - blueCrystalCost;
+                                goldDisplay.setText(goldCounter);
+                                rightPanelLayer.draw();
+                            break;
+                        case 'greenCrystal':
+                            var newTower = new Crystal(images.greenCrystal, mouseX, mouseY, 'greenCrystal', 15, greenCrystalCost, 70);
+                                goldCounter = goldCounter - greenCrystalCost;
+                                goldDisplay.setText(goldCounter);
+                                rightPanelLayer.draw();
+                            break;
+                        default: break;
+                    }
+                    towersArray.push(newTower);
 
+                    beingConstructedCrystal.hide();
+                    isBuildingCrystal = false;
+                    break;
+                }
+            }
+            beingConstructedCrystal.hide();
+            isBuildingCrystal = false;
+        }
+        towersLayer.draw();
+});
 
 /* ----------------------------Tower processing----------------------------*/
 
