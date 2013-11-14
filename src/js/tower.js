@@ -15,13 +15,28 @@ var sources = {
     greenCrystal: "../images/green_crystal.png",
     towerFoundation: "../images/tower_foundation.png",
     enemyBase: "../images/enemy_home.png",
-    ourBase: "../images/our_home.png"
+    ourBase: "../images/our_home.png",
+    saleTower: "../images/sale.png",
+    upTower: "../images/up.png"
 };
 
-for(var src in sources) {
-    images[src] = new Image();
-    images[src].src = sources[src];
+function loadImages(sources, callback) {
+    var loadedImages = 0;
+    var numImages = 0;
+    for (var src in sources) {
+        numImages++;
+    }
+    for (var src in sources) {
+        images[src] = new Image();
+        images[src].onload = function() {
+            if (++loadedImages >= numImages) {
+                callback();
+            }
+        };
+        images[src].src = sources[src];
+    }
 }
+
 /* -----------------------------------------------------------------------*/
 
 /** ----------------------------Map var------------------------------------*/
@@ -88,6 +103,7 @@ var mapEndCell3 = {i: 2, j: 14};
 
 /** ----------------------------Towers var--------------------------------*/
 function Tower(image, x, y, type, damage, cost, radius, width, height) {
+    var self = this;
     this.type = type;
     this.damage = damage;
     this.level = 1;
@@ -99,6 +115,22 @@ function Tower(image, x, y, type, damage, cost, radius, width, height) {
         image: image,
         width: width || cellSize,
         height: height || cellSize
+    });
+    this.up = new Kinetic.Image({
+        x: x-20,
+        y: y+5,
+        image: images.upTower,
+        width: 20,
+        height: 19,
+        visible: false
+    });
+    this.sale = new Kinetic.Image({
+        x: x+35,
+        y: y+5,
+        image: images.saleTower,
+        width: 20,
+        height: 19,
+        visible: false
     });
     if (type != 'foundation') {
         this.bullet = new Kinetic.Circle({
@@ -112,7 +144,18 @@ function Tower(image, x, y, type, damage, cost, radius, width, height) {
         towersLayer.add(this.bullet);
     }
     towersLayer.add(this.image);
+    towersLayer.add(this.up);
+    towersLayer.add(this.sale);
     towersLayer.draw();
+
+    this.image.on('click', function() { //event for click to tower
+        for (var i = 0; i < towersArray.length; i++) {
+            towersArray[i].up.hide();
+            towersArray[i].sale.hide();
+        }
+        self.up.show();
+        self.sale.show();
+    });
 }
 
 var towerType; //stores the type of tower build
@@ -172,13 +215,6 @@ var mobsPassedCounter = 0;
 /*--------------------------------------------------------------------------*/
 
 /**-----------------------------Text vars-----------------------------*/
-var rightPanel = new Kinetic.Image({
-    x: 21*cellSize,
-    y: 0,
-    image: images.rightPanel,
-    width: 128,
-    height: 480
-});
 var goldDisplay = new Kinetic.Text({
     x: 23*cellSize-5,
     y: 2*cellSize+10,
@@ -221,8 +257,9 @@ var stage = new Kinetic.Stage({
 });
 
 var bgLayer = new Kinetic.Layer();
-var rightPanelLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
+var rightPanelLayer = new Kinetic.Layer();
+
 
 function playBackgroundMusic(){
     var audio1 = document.getElementById('aTsIwR');
@@ -235,7 +272,7 @@ function startGame(){
     //findPath(map3,mapBeginCell3,mapEndCell3);
 //    findPath(map3,mapEndCell3,mapBeginCell3);
 
-    setTimeout(afterBgCreating, 50);
+    setTimeout(afterBgCreating, 10);
     //createMonsters();
     //createMonstersTweens();
     //monstersMove();
@@ -243,7 +280,7 @@ function startGame(){
     //setTimeout(function(){playSprite('monsterA');},3000);
     //setTimeout(function(){playSprite('monsterHa');},15000);
 }
-startGame();
+loadImages(sources, startGame);
 /* ------------------------------------------------------------------------*/
 
 
@@ -328,6 +365,13 @@ function monstersMove(currentMonsterTween){
 /***************************************************************************/
 /** ----------------------------Tower processing---------------------------*/
 function afterBgCreating() { //run, after background is creating
+    var rightPanel = new Kinetic.Image({
+        x: 21*cellSize,
+        y: 0,
+        image: images.rightPanel,
+        width: 128,
+        height: 480
+    });
     bgLayer.add(beingConstructedRect);
     bgLayer.add(beingConstructedTower);
     bgLayer.add(beingConstructedCrystal);
@@ -343,6 +387,7 @@ function afterBgCreating() { //run, after background is creating
     stage.add(bgLayer);
     stage.add(rightPanelLayer);
     stage.add(towersLayer);
+
     //setInterval(shoot, 100);
 }
 
