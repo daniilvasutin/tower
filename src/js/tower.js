@@ -323,12 +323,14 @@ function playBackgroundMusic(){
 
 function startGame(){
     buildBackground(map1);
-    //findPath(map1,mapBeginCell1,mapEndCell1);
+    findPath(map1,mapBeginCell1,mapEndCell1);
 
-    //createMonsters();
-    //createMonstersTweens();
-    //monstersMove();
+//    createMonsters();
+//    createMonstersTweens();
+//    monstersMove();
     setTimeout(afterBgCreating, 100);
+    createMonsters();
+    newMonstersMove();
 
     //playBackgroundMusic();
     //setTimeout(function(){playSprite('monsterA');},3000);
@@ -342,7 +344,145 @@ loadImages(sources, startGame);
 
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
-function Monster (image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
+//function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
+//    var self = this;
+//    this.x = x;
+//    this.y = y;
+//    this.opacity = opacity;
+//    this.type = type;
+//    this.hp = hp;
+//    this.name = name;
+//    this.image = image;
+//    this.animations = animations;
+//    this.frameRate = frameRate;
+//    this.moveSpeed = moveSpeed;
+//    this.sprite = new Kinetic.Sprite({
+//        x: this.x,
+//        y: this.y,
+//        image: this.image,
+//        animation: 'goRight',
+//        animations: this.animations,
+//        frameRate: this.frameRate,
+//        index: 0,
+//        opacity:self.opacity
+//    });
+//    this.currentStep = 0;
+//    this.index = index;
+//
+//    function stuff(){
+//        var step = self.moveSpeed * 0.05/*frame.timeDiff / 1000*/;
+//        var eps = step+5;
+//        var nextStep = self.currentStep+1;
+//        if(self.currentStep < pathCells.length-1){
+////            if(frame.time < 2000) {
+////                var op = self.sprite.getOpacity() + 0.02;
+////                self.sprite.setOpacity(op);
+////            }
+////            if(self.currentStep == pathCells.length-4){
+////                new Kinetic.Tween({
+////                    node: self.sprite,
+////                    duration: 1,
+////                    opacity: 0,
+////                    onFinish: function(){
+////                        self.sprite.moveToBottom();
+////                        self.sprite.stop();
+////                        self.anim.stop();
+////                        this.destroy();
+////                    }
+////                }).play();
+////            }
+//            if(direction[self.currentStep] !== direction[nextStep]){
+//                self.sprite.setAnimation(direction[nextStep]);
+//            }
+//            if(direction[self.currentStep] === "goRight"){
+//                self.sprite.move(step, 0);
+//                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+//                    self.currentStep++;
+//                }
+//            }else if(direction[self.currentStep] === "goBottom"){
+//                self.sprite.moveUp();
+//                self.sprite.move(0, step);
+//                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+//                    self.currentStep++;
+//                }
+//            }else if(direction[self.currentStep] === "goLeft" ){
+//                self.sprite.move((-1)*step, 0);
+//                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+//                    self.currentStep++;
+//                }
+//            }else if(direction[self.currentStep] === "goTop" ){
+//                self.sprite.move(0, (-1)*step);
+//                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+//                    self.currentStep++;
+//                }
+//            }
+//        }
+//        console.log(self.index, self.sprite.getX(), self.sprite.getY());
+//        bgLayer.draw();
+//    }
+//
+//    this.newanim = function(){
+//        stuff();
+//        setTimeout(self.newanim, 1000/16);
+//    }
+////    this.anim = new Kinetic.Animation(function(frame) {
+////        var step = self.moveSpeed * frame.timeDiff / 1000;
+////        var eps = step+5;
+////        var nextStep = self.currentStep+1;
+////        if(self.currentStep < pathCells.length-1){
+////            if(frame.time < 2000) {
+////                var op = self.sprite.getOpacity() + 0.02;
+////                self.sprite.setOpacity(op);
+////            }
+////            if(self.currentStep == pathCells.length-4){
+////                new Kinetic.Tween({
+////                    node: self.sprite,
+////                    duration: 1,
+////                    opacity: 0,
+////                     onFinish: function(){
+////                         self.sprite.moveToBottom();
+////                         self.sprite.stop();
+////                         self.anim.stop();
+////                    this.destroy();
+////                }
+////                }).play();
+////            }
+////            if(direction[self.currentStep] !== direction[nextStep]){
+////                self.sprite.setAnimation(direction[nextStep]);
+////            }
+////            if(direction[self.currentStep] === "goRight"){
+////                self.sprite.move(step, 0);
+////                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+////                    self.currentStep++;
+////                }
+////            }else if(direction[self.currentStep] === "goBottom"){
+////                self.sprite.moveUp();
+////                self.sprite.move(0, step);
+////                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+////                    self.currentStep++;
+////                }
+////            }else if(direction[self.currentStep] === "goLeft" ){
+////                self.sprite.move((-1)*step, 0);
+////                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+////                    self.currentStep++;
+////                }
+////            }else if(direction[self.currentStep] === "goTop" ){
+////                self.sprite.move(0, (-1)*step);
+////                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+////                    self.currentStep++;
+////                }
+////            }
+////        }
+//////        console.log(frame.timeDiff);
+////    }, bgLayer);
+//
+//    bgLayer.add(this.sprite);
+//    this.sprite.start();
+//    bgLayer.draw();
+//}
+    //v 1.6
+function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
+    var self = this;
     this.x = x;
     this.y = y;
     this.opacity = opacity;
@@ -361,17 +501,255 @@ function Monster (image, x, y, type, hp, name, moveSpeed,frameRate,animations, o
         animations: this.animations,
         frameRate: this.frameRate,
         index: 0,
-        opacity:this.opacity
+        opacity:self.opacity
     });
+    this.currentStep = 0;
+    this.index = index;
+    this.anim = new Kinetic.Animation(function(frame) {
+        var step = self.moveSpeed * frame.timeDiff / 1000;
+        var eps = step+5;
+        var nextStep = self.currentStep+1;
+        if(self.currentStep < pathCells.length-1){
+            if(frame.time < 2000) {
+                var op = self.sprite.getOpacity() + 0.02;
+                self.sprite.setOpacity(op);
+            }
+            if(self.currentStep == pathCells.length-4){
+                new Kinetic.Tween({
+                    node: self.sprite,
+                    duration: 1,
+                    opacity: 0,
+                    onFinish: function(){
+                        self.sprite.moveToBottom();
+                        self.sprite.stop();
+                        self.anim.stop();
+                        this.destroy();
+                    }
+                }).play();
+            }
+            if(direction[self.currentStep] !== direction[nextStep]){
+                self.sprite.setAnimation(direction[nextStep]);
+            }
+            if(direction[self.currentStep] === "goRight"){
+                self.sprite.move(step, 0);
+                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+                    self.currentStep++;
+                }
+            }else if(direction[self.currentStep] === "goBottom"){
+                self.sprite.moveUp();
+                self.sprite.move(0, step);
+                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+                    self.currentStep++;
+                }
+            }else if(direction[self.currentStep] === "goLeft" ){
+                self.sprite.move((-1)*step, 0);
+                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+                    self.currentStep++;
+                }
+            }else if(direction[self.currentStep] === "goTop" ){
+                self.sprite.move(0, (-1)*step);
+                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+                    self.currentStep++;
+                }
+            }
+        }
+//        console.log(frame.timeDiff);
+    }, bgLayer);
 
     bgLayer.add(this.sprite);
     this.sprite.start();
     bgLayer.draw();
 }
 
+
+    //v1.5
+
+
+function newMonstersMove(currentMonster){
+    var currentMonster = currentMonster || 0;
+//    monsterArray[currentMonsterTween].show();
+    monsterArray[currentMonster].anim.start();
+    currentMonster++;
+    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 700);
+}
+
+  //v 1.4   work
+//function move(){
+//    var currentStep = 0;
+//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 65, 6,animations, 1);
+//    var anim = new Kinetic.Animation(function(frame) {
+//
+//        var step = monster.moveSpeed * frame.timeDiff / 1000;
+//        var eps = step+5;
+//        var nextStep = currentStep+1;
+//
+//        if(direction[currentStep] !== direction[nextStep]){
+//            monster.sprite.setAnimation(direction[nextStep]);
+//        }
+//
+//        if(direction[currentStep] === "goRight"){
+//            monster.sprite.move(step, 0);
+//            if(Math.abs(monster.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }else
+//        if(direction[currentStep] === "goBottom"){
+//            monster.sprite.move(0, step);
+//            if(Math.abs(monster.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }else
+//        if(direction[currentStep] === "goLeft" ){
+//            monster.sprite.move((-1)*step, 0);
+//            if(Math.abs(monster.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }else
+//        if(direction[currentStep] === "goTop" ){
+//            monster.sprite.move(0, (-1)*step);
+//            if(Math.abs(monster.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }
+////        console.log("end",step, Math.round(monster.sprite.getX()));
+//    }, bgLayer);
+//
+//    anim.start();
+//}
+//v1.3
+//function move(){
+//    var currentStep = 0;
+//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
+//    var anim = new Kinetic.Animation(function(frame) {
+//
+//
+//        var eps = Math.ceil(frame.timeDiff / 1000 * monster.moveSpeed);
+//        if(direction[currentStep+1] === "goRight" /*&&*/
+//        /*(pathCells[currentStep].i == pathCells[currentStep+1].i)*/){
+//            monster.sprite.move(eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/, 0);
+//            if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) <= eps){
+//                currentStep++;
+//            }
+////        if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) > 9){
+////            alert();
+////        }
+//        }
+//        if(direction[currentStep+1] === "goBottom" /*&&
+//         (pathCells[currentStep].j == pathCells[currentStep+1].j)*/){
+//            monster.sprite.move(0, eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/);
+//            if(Math.abs(Math.round(monster.sprite.getY()) - (pathCells[currentStep+1].i-1)*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }
+//        if(direction[currentStep+1] === "goLeft" /*&&
+//         (pathCells[currentStep].i == pathCells[currentStep+1].i)*/){
+//            monster.sprite.move((-1)*eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/, 0);
+//            if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }
+//        if(direction[currentStep+1] === "goTop" /*&&
+//         (pathCells[currentStep].j == pathCells[currentStep+1].j)*/){
+//            monster.sprite.move(0, (-1)*eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/);
+//            if(Math.abs(Math.round(monster.sprite.getY()) - (pathCells[currentStep+1].i-1)*cellSize) <= eps){
+//                currentStep++;
+//            }
+//        }
+//        console.log(eps ,monster.moveSpeed * 0.02/*(*//*frame.timeDiff / 1000*//*)*/, Math.round(monster.sprite.getX()));
+//
+//    }, bgLayer);
+//
+//    anim.start();
+//
+//}
+     //v1.2
+//function move(){
+//    var currentStep = 0;
+//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
+//    var anim = new Kinetic.Animation(function(frame) {
+//
+//
+////        if(((pathCells[currentStep].i-1) - (pathCells[currentStep+1].i-1)) == 0){
+////            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
+////            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
+////                currentStep++;
+////            }
+////        }
+//
+//        if((pathCells[currentStep].j < pathCells[currentStep+1].j) &&
+//            (pathCells[currentStep].i == pathCells[currentStep+1].i)){
+////            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
+//            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
+//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
+//                currentStep++;
+//            }
+//        }
+//        if((pathCells[currentStep].i < pathCells[currentStep+1].i) &&
+//            (pathCells[currentStep].j == pathCells[currentStep+1].j)){
+//            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
+//            if(Math.round(monster.sprite.getY()) == (pathCells[currentStep+1].i-1)*cellSize){
+//                currentStep++;
+//            }
+//        }
+//        if((pathCells[currentStep].j > pathCells[currentStep+1].j) &&
+//            (pathCells[currentStep].i == pathCells[currentStep+1].i)){
+//            monster.sprite.move((-1)*monster.moveSpeed * (frame.timeDiff / 1000), 0);
+//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
+//                currentStep++;
+//            }
+//        }
+//
+//
+////    monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000),);
+//
+////    if(hexagon.getX() <= 400){
+////        hexagon.move(100 * (frame.timeDiff / 1000),0);
+////    }
+////    if(hexagon.getX() >= 400){
+////        hexagon.move(0,100 * (frame.timeDiff / 1000));
+////    }
+//    }, bgLayer);
+//
+//    anim.start();
+//
+//}
+      //v1.1
+//function move(){
+//    var currentStep = 0;
+//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
+//    var anim = new Kinetic.Animation(function(frame) {
+//
+//
+//        if(((pathCells[currentStep].i-1) - (pathCells[currentStep+1].i-1)) == 0){
+//            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
+//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
+//                currentStep++;
+//            }
+//        }
+//        if((pathCells[currentStep].j - pathCells[currentStep+1].j) == 0){
+//            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
+//            if(Math.round(monster.sprite.getY()) == (pathCells[currentStep+1].i-1)*cellSize){
+//                currentStep++;
+//            }
+//        }
+////    monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000),);
+//
+////    if(hexagon.getX() <= 400){
+////        hexagon.move(100 * (frame.timeDiff / 1000),0);
+////    }
+////    if(hexagon.getX() >= 400){
+////        hexagon.move(0,100 * (frame.timeDiff / 1000));
+////    }
+//    }, bgLayer);
+//
+//    anim.start();
+//
+//}
+
+
 function createMonsters(){
     for (var i=0; i < 10; i++) {
-        var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 0.5, 6,animations, 0.001);
+        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 65, 6,animations, 1);
         monsterArray.push(monster);
     }
 }
@@ -412,7 +790,7 @@ function monsterStepToNextCell(currentStep, currentMonster,aOpacity){
                     monsterArray[currentMonster].sprite.setAnimation(direction[i+1]);
                 }
                 if(direction[i] === "goBottom"){
-                    console.log(currentMonster,i, direction[i]);
+//                    console.log(currentMonster,i, direction[i]);
                     monsterArray[currentMonster].sprite.moveUp();
                 }
                 aOpacity = 1;
@@ -730,7 +1108,7 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
     var indexI = ii;
     var indexJ = jj;
 
-    console.log(map[indexI][indexJ-1].TileType, map[indexI][indexJ+1].TileType, map[indexI-1][indexJ].TileType, map[indexI+1][indexJ].TileType);
+//    console.log(map[indexI][indexJ-1].TileType, map[indexI][indexJ+1].TileType, map[indexI-1][indexJ].TileType, map[indexI+1][indexJ].TileType);
 
     try{ map[indexI][indexJ+1].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ--; }
     if(map[indexI][indexJ+1].TileType == 6 && indexJ+1 !== stepBefore.j){
