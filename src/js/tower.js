@@ -121,11 +121,11 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         visible: false
     });
     this.bullet = new Kinetic.Circle({
-        x: x * cellSize + 5,
-        y: y * cellSize + 3,
+        x: x * cellSize + 16,
+        y: y * cellSize + 5,
         fill: 'black',
-        width: 5,
-        height: 5,
+        width: 10,
+        height: 10,
         visible: false
     });
     this.circle = new Kinetic.Circle({
@@ -136,6 +136,7 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         strokeWidth: 2,
         visible: false
     });
+    this.mob = 0;
     this.destroy = function() {
         self.image.remove();
         self.bullet.remove();
@@ -146,6 +147,26 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         towersLayer.draw();
         bgLayer.draw();
     }
+    this.bulletAnim = new Kinetic.Animation(function(frame) {
+        if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) < 0) {
+            self.bullet.setX(self.bullet.getX() + 3);
+        } else if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) > 3) {
+            self.bullet.setX(self.bullet.getX() - 3);
+        }
+        if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) < 0) {
+            self.bullet.setY(self.bullet.getY() + 3);
+        } else if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) > 3) {
+            self.bullet.setY(self.bullet.getY() - 3);
+        }
+        if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) >= 0
+                             && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) <= 3
+                             && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) >= 0
+                             && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) <= 3) {
+            this.stop();
+            self.bullet.hide();
+            self.bullet.setAttrs({x: self.x + 16, y: self.y + 5});
+        }
+    }, towersLayer);
 
     towersLayer.add(this.bullet);
     towersLayer.add(this.circle);
@@ -168,6 +189,12 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
     this.sale.on('click', function() { //event for click to sale crystal image
         goldCounter = goldCounter + Math.round(self.cost/2);
         goldDisplay.setText(goldCounter);
+        for (var i = 0; i < towersArray.length; i++) {
+            if (self.x == towersArray[i].x) {
+                towersArray.splice(i,1);
+                break;
+            }
+        }
         self.destroy();
         rightPanelLayer.draw();
     });
@@ -344,142 +371,7 @@ loadImages(sources, startGame);
 
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
-//function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
-//    var self = this;
-//    this.x = x;
-//    this.y = y;
-//    this.opacity = opacity;
-//    this.type = type;
-//    this.hp = hp;
-//    this.name = name;
-//    this.image = image;
-//    this.animations = animations;
-//    this.frameRate = frameRate;
-//    this.moveSpeed = moveSpeed;
-//    this.sprite = new Kinetic.Sprite({
-//        x: this.x,
-//        y: this.y,
-//        image: this.image,
-//        animation: 'goRight',
-//        animations: this.animations,
-//        frameRate: this.frameRate,
-//        index: 0,
-//        opacity:self.opacity
-//    });
-//    this.currentStep = 0;
-//    this.index = index;
-//
-//    function stuff(){
-//        var step = self.moveSpeed * 0.05/*frame.timeDiff / 1000*/;
-//        var eps = step+5;
-//        var nextStep = self.currentStep+1;
-//        if(self.currentStep < pathCells.length-1){
-////            if(frame.time < 2000) {
-////                var op = self.sprite.getOpacity() + 0.02;
-////                self.sprite.setOpacity(op);
-////            }
-////            if(self.currentStep == pathCells.length-4){
-////                new Kinetic.Tween({
-////                    node: self.sprite,
-////                    duration: 1,
-////                    opacity: 0,
-////                    onFinish: function(){
-////                        self.sprite.moveToBottom();
-////                        self.sprite.stop();
-////                        self.anim.stop();
-////                        this.destroy();
-////                    }
-////                }).play();
-////            }
-//            if(direction[self.currentStep] !== direction[nextStep]){
-//                self.sprite.setAnimation(direction[nextStep]);
-//            }
-//            if(direction[self.currentStep] === "goRight"){
-//                self.sprite.move(step, 0);
-//                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-//                    self.currentStep++;
-//                }
-//            }else if(direction[self.currentStep] === "goBottom"){
-//                self.sprite.moveUp();
-//                self.sprite.move(0, step);
-//                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-//                    self.currentStep++;
-//                }
-//            }else if(direction[self.currentStep] === "goLeft" ){
-//                self.sprite.move((-1)*step, 0);
-//                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-//                    self.currentStep++;
-//                }
-//            }else if(direction[self.currentStep] === "goTop" ){
-//                self.sprite.move(0, (-1)*step);
-//                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-//                    self.currentStep++;
-//                }
-//            }
-//        }
-//        console.log(self.index, self.sprite.getX(), self.sprite.getY());
-//        bgLayer.draw();
-//    }
-//
-//    this.newanim = function(){
-//        stuff();
-//        setTimeout(self.newanim, 1000/16);
-//    }
-////    this.anim = new Kinetic.Animation(function(frame) {
-////        var step = self.moveSpeed * frame.timeDiff / 1000;
-////        var eps = step+5;
-////        var nextStep = self.currentStep+1;
-////        if(self.currentStep < pathCells.length-1){
-////            if(frame.time < 2000) {
-////                var op = self.sprite.getOpacity() + 0.02;
-////                self.sprite.setOpacity(op);
-////            }
-////            if(self.currentStep == pathCells.length-4){
-////                new Kinetic.Tween({
-////                    node: self.sprite,
-////                    duration: 1,
-////                    opacity: 0,
-////                     onFinish: function(){
-////                         self.sprite.moveToBottom();
-////                         self.sprite.stop();
-////                         self.anim.stop();
-////                    this.destroy();
-////                }
-////                }).play();
-////            }
-////            if(direction[self.currentStep] !== direction[nextStep]){
-////                self.sprite.setAnimation(direction[nextStep]);
-////            }
-////            if(direction[self.currentStep] === "goRight"){
-////                self.sprite.move(step, 0);
-////                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-////                    self.currentStep++;
-////                }
-////            }else if(direction[self.currentStep] === "goBottom"){
-////                self.sprite.moveUp();
-////                self.sprite.move(0, step);
-////                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-////                    self.currentStep++;
-////                }
-////            }else if(direction[self.currentStep] === "goLeft" ){
-////                self.sprite.move((-1)*step, 0);
-////                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-////                    self.currentStep++;
-////                }
-////            }else if(direction[self.currentStep] === "goTop" ){
-////                self.sprite.move(0, (-1)*step);
-////                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-////                    self.currentStep++;
-////                }
-////            }
-////        }
-//////        console.log(frame.timeDiff);
-////    }, bgLayer);
-//
-//    bgLayer.add(this.sprite);
-//    this.sprite.start();
-//    bgLayer.draw();
-//}
+
     //v 1.6
 function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
     var self = this;
@@ -514,19 +406,6 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 var op = self.sprite.getOpacity() + 0.02;
                 self.sprite.setOpacity(op);
             }
-            if(self.currentStep == pathCells.length-4){
-                new Kinetic.Tween({
-                    node: self.sprite,
-                    duration: 1,
-                    opacity: 0,
-                    onFinish: function(){
-                        self.sprite.moveToBottom();
-                        self.sprite.stop();
-                        self.anim.stop();
-                        this.destroy();
-                    }
-                }).play();
-            }
             if(direction[self.currentStep] !== direction[nextStep]){
                 self.sprite.setAnimation(direction[nextStep]);
             }
@@ -552,8 +431,36 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                     self.currentStep++;
                 }
             }
+            if(self.currentStep == pathCells.length-4){
+/*                new Kinetic.Tween({
+                    node: self.sprite,
+                    duration: 1,
+                    opacity: 0,
+                    onFinish: function(){
+                        self.sprite.moveToBottom();
+                        self.sprite.stop();
+                        self.anim.stop();
+                        this.destroy();
+                    }
+                }).play();*/
+            }
         }
-//        console.log(frame.timeDiff);
+        //damage mobs
+        for (var i = 0; i < towersArray.length; i++) {
+            var mobPositionRadius = Math.sqrt(Math.pow(towersArray[i].x + cellSize / 2 - self.sprite.attrs.x, 2)
+                                              + Math.pow(towersArray[i].y + cellSize / 2  - self.sprite.attrs.y, 2)); //is mob in tower radius
+            if (mobPositionRadius <= towersArray[i].radius) {
+                if (towersArray[i].mob == 0) {
+                    towersArray[i].mob = self; //tower sooting in this mob
+                }
+                towersArray[i].bullet.show();
+                towersArray[i].bulletAnim.start();
+            } else if (towersArray[i].mob == self) { //mob is not in tower radius
+                towersArray[i].mob = 0;
+                towersArray[i].bullet.hide();
+                towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
+            }
+        }
     }, bgLayer);
 
     bgLayer.add(this.sprite);
@@ -570,7 +477,7 @@ function newMonstersMove(currentMonster){
 //    monsterArray[currentMonsterTween].show();
     monsterArray[currentMonster].anim.start();
     currentMonster++;
-    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 700);
+    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 5000);
 }
 
   //v 1.4   work
@@ -749,17 +656,17 @@ function newMonstersMove(currentMonster){
 
 function createMonsters(){
     for (var i=0; i < 10; i++) {
-        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 65, 6,animations, 1);
+        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 35, 6,animations, 1);
         monsterArray.push(monster);
     }
 }
 
-function createMonstersTweens(){
+/*function createMonstersTweens(){
     for (var i=0; i < 10; i++) {
         var monsterTween = createMonsterTween(i);
         monsterTweenArray.push(monsterTween);
     }
-}
+}*/
 
 function createMonsterTween(currentMonster){
     var tween = new Kinetic.Tween({
