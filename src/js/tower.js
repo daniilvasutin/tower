@@ -267,7 +267,7 @@ var animations = {
 
 /**-----------------------Counters vars-------------------------------------*/
 var goldCounter = 100;
-var hpCounter = 20;
+var hpCounter = 5;
 /*--------------------------------------------------------------------------*/
 
 /**-----------------------------Text vars-----------------------------*/
@@ -282,7 +282,7 @@ var goldDisplay = new Kinetic.Text({
 var healthPoints = new Kinetic.Text({
     x: 22*cellSize+12,
     y: cellSize+8,
-    text: '20',
+    text: '5',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
@@ -447,7 +447,7 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
             }
         }
-        if(self.currentStep == pathCells.length-3){
+        if (self.hp <= 0) { //if mob is dead, delete it
             self.anim.stop();
             self.sprite.remove();
             for (var i = 0; i < monsterArray.length; i++) {
@@ -457,7 +457,24 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 }
             }
             self = null;
-
+        } else if (self.currentStep == pathCells.length-3) { //if mob come to our base
+            self.anim.stop();
+            self.sprite.remove();
+            for (var i = 0; i < monsterArray.length; i++) {
+                if (self.sprite == monsterArray[i].sprite) {
+                    monsterArray.splice(i,1);
+                    break;
+                }
+            }
+            self = null;
+            hpCounter--; //deduct health points
+            healthPoints.setText(hpCounter);
+            rightPanelLayer.draw();
+            if (hpCounter <= 0) {
+                if (confirm("You loose!!! Ahahhaha!!!")) {
+                    window.location.reload();
+                }
+            }
 /*                new Kinetic.Tween({
                 node: self.sprite,
                 duration: 1,
@@ -486,7 +503,7 @@ function newMonstersMove(currentMonster){
 //    monsterArray[currentMonsterTween].show();
     monsterArray[currentMonster].anim.start();
     currentMonster++;
-    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 5000);
+    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 1000);
 }
 
   //v 1.4   work
