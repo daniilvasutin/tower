@@ -3,22 +3,16 @@ var images = {};
 var sources = {
     bgSprite: "../images/sprite_bg.jpg",
     rightPanel: "../images/panel.jpg",
-//    monsterImg: "../images/mfly.png",
     monsterImg: "../images/monster.png",
     towerFoundationIco: "../images/tower_foundation_ico.jpg",
-    puddleBlueIco: "../images/puddle_blue_ico.jpg",
-    puddleGreenIco: "../images/puddle_green_ico.jpg",
-    crystalGreenIco: "../images/crystal_green_ico.jpg",
-    crystalBlueIco: "../images/crystal_blue_ico.jpg",
-    crystalRedIco: "../images/crystal_red_ico.jpg",
-    redCrystal: "../images/red_crystal.png",
-    blueCrystal: "../images/blue_crystal.png",
-    greenCrystal: "../images/green_crystal.png",
+    crystalsIcons: "../images/crystals_icons.jpg",
+    crystals: "../images/crystals.png",
     towerFoundation: "../images/tower_foundation.png",
     enemyBase: "../images/enemy_home.png",
     ourBase: "../images/our_home.png",
     saleTower: "../images/sale.png",
-    upTower: "../images/up.png"
+    upTower: "../images/up.png",
+    bullets: "../images/bullets.png"
 };
 
 function loadImages(sources, callback) {
@@ -88,7 +82,7 @@ function Foundation(image, x, y, width, height) {
     bgLayer.draw();
 }
 
-function Crystal(image, x, y, type, damage, cost, radius, width, height) {
+function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, width, height) {
     var self = this;
     this.x = x * cellSize;
     this.y = y * cellSize;
@@ -100,7 +94,8 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
     this.image = new Kinetic.Image({
         x: x * cellSize,
         y: y * cellSize,
-        image: image,
+        image: images.crystals,
+        crop: [crystCropX, 0, 32, 32],
         width: width || cellSize,
         height: height || cellSize
     });
@@ -120,10 +115,11 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
         height: 19,
         visible: false
     });
-    this.bullet = new Kinetic.Circle({
+    this.bullet = new Kinetic.Image({
         x: x * cellSize + 16,
         y: y * cellSize + 5,
-        fill: 'black',
+        image: images.bullets,
+        crop: [bulletCropX, 0, 15, 15],
         width: 10,
         height: 10,
         visible: false
@@ -138,6 +134,7 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
     });
     this.mob = 0;
     this.destroy = function() {
+        self.bulletAnim.stop();
         self.image.remove();
         self.bullet.remove();
         self.sale.remove();
@@ -162,6 +159,7 @@ function Crystal(image, x, y, type, damage, cost, radius, width, height) {
                              && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) <= 3
                              && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) >= 0
                              && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) <= 3) {
+            self.mob.hp -= self.damage; //damage mob
             this.stop();
             self.bullet.hide();
             self.bullet.setAttrs({x: self.x + 16, y: self.y + 5});
@@ -246,7 +244,8 @@ var beingConstructedTower = new Kinetic.Image({ //building tower image
 var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
     x: 0,
     y: 0,
-    image: images.redCrystal,
+    image: images.crystals,
+    crop: [0, 0, 32, 32],
     width: cellSize,
     height: cellSize,
     visible: false
@@ -268,7 +267,7 @@ var animations = {
 
 /**-----------------------Counters vars-------------------------------------*/
 var goldCounter = 100;
-var mobsPassedCounter = 0;
+var hpCounter = 20;
 /*--------------------------------------------------------------------------*/
 
 /**-----------------------------Text vars-----------------------------*/
@@ -431,19 +430,6 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                     self.currentStep++;
                 }
             }
-            if(self.currentStep == pathCells.length-4){
-/*                new Kinetic.Tween({
-                    node: self.sprite,
-                    duration: 1,
-                    opacity: 0,
-                    onFinish: function(){
-                        self.sprite.moveToBottom();
-                        self.sprite.stop();
-                        self.anim.stop();
-                        this.destroy();
-                    }
-                }).play();*/
-            }
         }
         //damage mobs
         for (var i = 0; i < towersArray.length; i++) {
@@ -460,6 +446,29 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 towersArray[i].bullet.hide();
                 towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
             }
+        }
+        if(self.currentStep == pathCells.length-3){
+            self.anim.stop();
+            self.sprite.remove();
+            for (var i = 0; i < monsterArray.length; i++) {
+                if (self.sprite == monsterArray[i].sprite) {
+                    monsterArray.splice(i,1);
+                    break;
+                }
+            }
+            self = null;
+
+/*                new Kinetic.Tween({
+                node: self.sprite,
+                duration: 1,
+                opacity: 0,
+                onFinish: function(){
+                    self.sprite.moveToBottom();
+                    self.sprite.stop();
+                    self.anim.stop();
+                    this.destroy();
+                }
+            }).play();*/
         }
     }, bgLayer);
 
@@ -811,19 +820,19 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                 if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
                     switch(towerType) {
                         case 'redCrystal':
-                            var newTower = new Crystal(images.redCrystal, mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60);
+                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30);
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'blueCrystal':
-                            var newTower = new Crystal(images.blueCrystal, mouseX, mouseY, 'blueCrystal', 15, blueCrystalCost, 50);
+                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 15, blueCrystalCost, 50, 32, 15);
                                 goldCounter = goldCounter - blueCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'greenCrystal':
-                            var newTower = new Crystal(images.greenCrystal, mouseX, mouseY, 'greenCrystal', 15, greenCrystalCost, 70);
+                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 15, greenCrystalCost, 70, 0, 0);
                                 goldCounter = goldCounter - greenCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
@@ -878,42 +887,48 @@ function buildTowersMenu() { //draw menu with towers
     var towerFoundationIco = new Kinetic.Image({
         x: 22*cellSize,
         y: 6*cellSize,
-        image: images.towerFoundationIco,
+        image: images.crystalsIcons,
+        crop: [0, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
     var puddleBlueIco = new Kinetic.Image({
         x: 22*cellSize,
         y: 7*cellSize,
-        image: images.puddleBlueIco,
+        image: images.crystalsIcons,
+        crop: [32, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
     var puddleGreenIco = new Kinetic.Image({
         x: 22*cellSize,
         y: 8*cellSize,
-        image: images.puddleGreenIco,
+        image: images.crystalsIcons,
+        crop: [64, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
     var crystalGreenIco = new Kinetic.Image({
         x: 23*cellSize,
         y: 6*cellSize,
-        image: images.crystalGreenIco,
+        image: images.crystalsIcons,
+        crop: [96, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
     var crystalBlueIco = new Kinetic.Image({
         x: 23*cellSize,
         y: 7*cellSize,
-        image: images.crystalBlueIco,
+        image: images.crystalsIcons,
+        crop: [128, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
     var crystalRedIco = new Kinetic.Image({
         x: 23*cellSize,
         y: 8*cellSize,
-        image: images.crystalRedIco,
+        image: images.crystalsIcons,
+        crop: [160, 0, cellSize, cellSize],
         width: cellSize,
         height: cellSize
     });
@@ -941,7 +956,8 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'blueCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.blueCrystal
+                image: images.crystals,
+                cropX: 32
             });
         } else {
             displayErrors("Недостаточно золота!");
@@ -952,7 +968,8 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'greenCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.greenCrystal
+                image: images.crystals,
+                cropX: 0
             });
         } else {
             displayErrors("Недостаточно золота!");
@@ -963,7 +980,8 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'redCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.redCrystal
+                image: images.crystals,
+                cropX: 64
             });
         } else {
             displayErrors("Недостаточно золота!");
