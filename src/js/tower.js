@@ -10,6 +10,7 @@ var sources = {
     towerFoundation: "../images/tower_foundation.png",
     enemyBase: "../images/enemy_home.png",
     ourBase: "../images/our_home.png",
+    aura: "../images/aura.png",
     saleTower: "../images/sale.png",
     upTower: "../images/up.png",
     bullets: "../images/bullets.png"
@@ -65,6 +66,17 @@ var mapEndCell1 = {i: 11, j: 17};
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
+var towerType; //stores the type of tower build
+var towersArray = new Array(); //tower objects array
+var foundationsArray = new Array(); //tower objects array
+var isBuildingFoundation = false; //is the tower foundation now under construction?
+var isBuildingCrystal = false; //is the crystal now under construction?
+var towerFoundationCost = 10;
+var blueCrystalCost = 15; //cost of crystal
+var redCrystalCost = 20;
+var greenCrystalCost = 25;
+var auraAnimation = {lighting: [{x: 0, y: 0, width: 160, height: 168}, {x: 165, y: 0, width: 160, height: 168}, {x: 330, y: 0, width: 160, height: 168}]};
+
 function Foundation(image, x, y, width, height) {
     var self = this;
     this.complete = false;
@@ -146,26 +158,26 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
     }
     this.bulletAnim = new Kinetic.Animation(function(frame) {
         if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) < 0) {
-            self.bullet.setX(self.bullet.getX() + 3);
+            self.bullet.setX(self.bullet.getX() + 2);
         } else if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) > 3) {
-            self.bullet.setX(self.bullet.getX() - 3);
+            self.bullet.setX(self.bullet.getX() - 2);
         }
         if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) < 0) {
-            self.bullet.setY(self.bullet.getY() + 3);
+            self.bullet.setY(self.bullet.getY() + 2);
         } else if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) > 3) {
-            self.bullet.setY(self.bullet.getY() - 3);
+            self.bullet.setY(self.bullet.getY() - 2);
         }
         if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) >= 0
                              && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) <= 3
                              && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) >= 0
                              && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) <= 3) {
             self.mob.hp -= self.damage; //damage mob
+            if (self.mob.hp <= 0) self.mob = 0; //if mob is dead free tower
             this.stop();
             self.bullet.hide();
             self.bullet.setAttrs({x: self.x + 16, y: self.y + 5});
         }
     }, towersLayer);
-
     towersLayer.add(this.bullet);
     towersLayer.add(this.circle);
     towersLayer.add(this.image);
@@ -212,16 +224,6 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
     });
 }
 
-var towerType; //stores the type of tower build
-var towersArray = new Array(); //tower objects array
-var foundationsArray = new Array(); //tower objects array
-var isBuildingFoundation = false; //is the tower foundation now under construction?
-var isBuildingCrystal = false; //is the crystal now under construction?
-var towerFoundationCost = 10;
-var blueCrystalCost = 15; //cost of crystal
-var redCrystalCost = 20;
-var greenCrystalCost = 25;
-
 var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     x: 0,
     y: 0,
@@ -257,6 +259,7 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 var monsterArray = new Array();
 var monsterTweenArray = new Array();
 var direction = new Array();
+var currentMonster = 0;
 var animations = {
     goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
     goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
@@ -307,7 +310,7 @@ var errorMessage = new Kinetic.Text({
 
 /** ----------------------------Need for run the game----------------------*/
 var stage = new Kinetic.Stage({
-    container: 'container',
+    container: 'game',
     width: (widthCellCount+4)*cellSize,
     height: heightCellCount*cellSize
 });
@@ -363,7 +366,6 @@ function startGame(){
     //setTimeout(function(){playSprite('monsterHa');},25000);
 
 }
-loadImages(sources, startGame);
 /* ------------------------------------------------------------------------*/
 
 
@@ -457,6 +459,7 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 }
             }
             self = null;
+            currentMonster--; //change number of monster to move
         } else if (self.currentStep == pathCells.length-3) { //if mob come to our base
             self.anim.stop();
             self.sprite.remove();
@@ -467,10 +470,11 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                 }
             }
             self = null;
+            currentMonster--; //change number of monster to move
             hpCounter--; //deduct health points
             healthPoints.setText(hpCounter);
             rightPanelLayer.draw();
-            if (hpCounter <= 0) {
+            if (hpCounter <= 0) { //CHANGE THEM!!!!
                 if (confirm("You loose!!! Ahahhaha!!!")) {
                     window.location.reload();
                 }
@@ -498,187 +502,12 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
     //v1.5
 
 
-function newMonstersMove(currentMonster){
-    var currentMonster = currentMonster || 0;
+function newMonstersMove(){
 //    monsterArray[currentMonsterTween].show();
     monsterArray[currentMonster].anim.start();
     currentMonster++;
-    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove(currentMonster)}, 1000);
+    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove()}, 2000);
 }
-
-  //v 1.4   work
-//function move(){
-//    var currentStep = 0;
-//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 65, 6,animations, 1);
-//    var anim = new Kinetic.Animation(function(frame) {
-//
-//        var step = monster.moveSpeed * frame.timeDiff / 1000;
-//        var eps = step+5;
-//        var nextStep = currentStep+1;
-//
-//        if(direction[currentStep] !== direction[nextStep]){
-//            monster.sprite.setAnimation(direction[nextStep]);
-//        }
-//
-//        if(direction[currentStep] === "goRight"){
-//            monster.sprite.move(step, 0);
-//            if(Math.abs(monster.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }else
-//        if(direction[currentStep] === "goBottom"){
-//            monster.sprite.move(0, step);
-//            if(Math.abs(monster.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }else
-//        if(direction[currentStep] === "goLeft" ){
-//            monster.sprite.move((-1)*step, 0);
-//            if(Math.abs(monster.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }else
-//        if(direction[currentStep] === "goTop" ){
-//            monster.sprite.move(0, (-1)*step);
-//            if(Math.abs(monster.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }
-////        console.log("end",step, Math.round(monster.sprite.getX()));
-//    }, bgLayer);
-//
-//    anim.start();
-//}
-//v1.3
-//function move(){
-//    var currentStep = 0;
-//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
-//    var anim = new Kinetic.Animation(function(frame) {
-//
-//
-//        var eps = Math.ceil(frame.timeDiff / 1000 * monster.moveSpeed);
-//        if(direction[currentStep+1] === "goRight" /*&&*/
-//        /*(pathCells[currentStep].i == pathCells[currentStep+1].i)*/){
-//            monster.sprite.move(eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/, 0);
-//            if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) <= eps){
-//                currentStep++;
-//            }
-////        if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) > 9){
-////            alert();
-////        }
-//        }
-//        if(direction[currentStep+1] === "goBottom" /*&&
-//         (pathCells[currentStep].j == pathCells[currentStep+1].j)*/){
-//            monster.sprite.move(0, eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/);
-//            if(Math.abs(Math.round(monster.sprite.getY()) - (pathCells[currentStep+1].i-1)*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }
-//        if(direction[currentStep+1] === "goLeft" /*&&
-//         (pathCells[currentStep].i == pathCells[currentStep+1].i)*/){
-//            monster.sprite.move((-1)*eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/, 0);
-//            if(Math.abs(Math.round(monster.sprite.getX()) - pathCells[currentStep+1].j*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }
-//        if(direction[currentStep+1] === "goTop" /*&&
-//         (pathCells[currentStep].j == pathCells[currentStep+1].j)*/){
-//            monster.sprite.move(0, (-1)*eps/*monster.moveSpeed * (*//*0.02*//*frame.timeDiff / 1000)*/);
-//            if(Math.abs(Math.round(monster.sprite.getY()) - (pathCells[currentStep+1].i-1)*cellSize) <= eps){
-//                currentStep++;
-//            }
-//        }
-//        console.log(eps ,monster.moveSpeed * 0.02/*(*//*frame.timeDiff / 1000*//*)*/, Math.round(monster.sprite.getX()));
-//
-//    }, bgLayer);
-//
-//    anim.start();
-//
-//}
-     //v1.2
-//function move(){
-//    var currentStep = 0;
-//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
-//    var anim = new Kinetic.Animation(function(frame) {
-//
-//
-////        if(((pathCells[currentStep].i-1) - (pathCells[currentStep+1].i-1)) == 0){
-////            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
-////            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
-////                currentStep++;
-////            }
-////        }
-//
-//        if((pathCells[currentStep].j < pathCells[currentStep+1].j) &&
-//            (pathCells[currentStep].i == pathCells[currentStep+1].i)){
-////            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
-//            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
-//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
-//                currentStep++;
-//            }
-//        }
-//        if((pathCells[currentStep].i < pathCells[currentStep+1].i) &&
-//            (pathCells[currentStep].j == pathCells[currentStep+1].j)){
-//            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
-//            if(Math.round(monster.sprite.getY()) == (pathCells[currentStep+1].i-1)*cellSize){
-//                currentStep++;
-//            }
-//        }
-//        if((pathCells[currentStep].j > pathCells[currentStep+1].j) &&
-//            (pathCells[currentStep].i == pathCells[currentStep+1].i)){
-//            monster.sprite.move((-1)*monster.moveSpeed * (frame.timeDiff / 1000), 0);
-//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
-//                currentStep++;
-//            }
-//        }
-//
-//
-////    monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000),);
-//
-////    if(hexagon.getX() <= 400){
-////        hexagon.move(100 * (frame.timeDiff / 1000),0);
-////    }
-////    if(hexagon.getX() >= 400){
-////        hexagon.move(0,100 * (frame.timeDiff / 1000));
-////    }
-//    }, bgLayer);
-//
-//    anim.start();
-//
-//}
-      //v1.1
-//function move(){
-//    var currentStep = 0;
-//    var monster = new Monster(images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 50, 6,animations, 1);
-//    var anim = new Kinetic.Animation(function(frame) {
-//
-//
-//        if(((pathCells[currentStep].i-1) - (pathCells[currentStep+1].i-1)) == 0){
-//            monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000), 0);
-//            if(Math.round(monster.sprite.getX()) == pathCells[currentStep+1].j*cellSize){
-//                currentStep++;
-//            }
-//        }
-//        if((pathCells[currentStep].j - pathCells[currentStep+1].j) == 0){
-//            monster.sprite.move(0, monster.moveSpeed * (frame.timeDiff / 1000));
-//            if(Math.round(monster.sprite.getY()) == (pathCells[currentStep+1].i-1)*cellSize){
-//                currentStep++;
-//            }
-//        }
-////    monster.sprite.move(monster.moveSpeed * (frame.timeDiff / 1000),);
-//
-////    if(hexagon.getX() <= 400){
-////        hexagon.move(100 * (frame.timeDiff / 1000),0);
-////    }
-////    if(hexagon.getX() >= 400){
-////        hexagon.move(0,100 * (frame.timeDiff / 1000));
-////    }
-//    }, bgLayer);
-//
-//    anim.start();
-//
-//}
-
 
 function createMonsters(){
     for (var i=0; i < 10; i++) {
@@ -687,59 +516,6 @@ function createMonsters(){
     }
 }
 
-/*function createMonstersTweens(){
-    for (var i=0; i < 10; i++) {
-        var monsterTween = createMonsterTween(i);
-        monsterTweenArray.push(monsterTween);
-    }
-}*/
-
-function createMonsterTween(currentMonster){
-    var tween = new Kinetic.Tween({
-        node: monsterArray[currentMonster].sprite,
-        duration: monsterArray[currentMonster].moveSpeed,
-        opacity: monsterArray[currentMonster].opacity,
-        x: monsterArray[currentMonster].x,
-        y: monsterArray[currentMonster].y,
-        onFinish: function(){
-            monsterArray[currentMonster].sprite.setAnimation(direction[0]);
-            monsterStepToNextCell(1, currentMonster, 0);
-        }
-    });
-    return tween;
-}
-
-function monsterStepToNextCell(currentStep, currentMonster,aOpacity){
-    var i = currentStep;
-    new Kinetic.Tween({
-        node: monsterArray[currentMonster].sprite,
-        duration: monsterArray[currentMonster].moveSpeed,
-        opacity: aOpacity,
-        x: pathCells[i].j * cellSize,
-        y: (pathCells[i].i-1) * cellSize,
-        onFinish: function(){
-            if(i < pathCells.length-1){
-                if(direction[i] !== direction[i+1]){
-                    monsterArray[currentMonster].sprite.setAnimation(direction[i+1]);
-                }
-                if(direction[i] === "goBottom"){
-//                    console.log(currentMonster,i, direction[i]);
-                    monsterArray[currentMonster].sprite.moveUp();
-                }
-                aOpacity = 1;
-                if(i >= pathCells.length-3){
-                    aOpacity = 0;
-                    if(i == pathCells.length-2){
-                        monsterArray[currentMonster].sprite.stop();
-                    }
-                }
-
-                i++;
-                monsterStepToNextCell(i,currentMonster,aOpacity);
-            }
-        }
-    }).play();
-}
 
 function monstersMove(currentMonsterTween){
     var currentMonsterTween = currentMonsterTween || 0;
@@ -825,6 +601,11 @@ bgLayer.on('mouseup', function(){
         beingConstructedCrystal.hide();
         isBuildingCrystal = false;
     }
+    for (var i = 0; i < towersArray.length; i++) {
+        towersArray[i].up.hide();
+        towersArray[i].sale.hide();
+        towersArray[i].circle.hide();
+    }
     bgLayer.draw();
     towersLayer.draw();
 });
@@ -837,19 +618,19 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                 if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
                     switch(towerType) {
                         case 'redCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30);
+                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 30, redCrystalCost, 60, 64, 30);
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'blueCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 15, blueCrystalCost, 50, 32, 15);
+                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 35, blueCrystalCost, 50, 32, 15);
                                 goldCounter = goldCounter - blueCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'greenCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 15, greenCrystalCost, 70, 0, 0);
+                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 30, greenCrystalCost, 70, 0, 0);
                                 goldCounter = goldCounter - greenCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
