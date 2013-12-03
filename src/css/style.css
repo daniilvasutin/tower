@@ -19,7 +19,7 @@ li { text-align: left; }
 
 p { text-align: left; }
 
-#game { display: none; margin: 5% auto; width: 840px;  }
+#game { display: none; margin: 5% auto; width: 832px; border: #00e778 groove 10px;  }
 
 .main_menu {
     position: relative;
