@@ -260,14 +260,14 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 var monsterArray = new Array();
 //var monsterTweenArray = new Array();
 //var direction = new Array();
-//var currentMonster = 0;
-//var aminationMob = [
-//    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
-//    [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
-//    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}],
-//    [{x: 20,y: 0, width: 21, height: 13},{x: 22,y: 28, width: 18, height: 13}],
-//    [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 23}]
-//];
+var currentMonster = 0;
+var aminationMob = [
+    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
+    [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
+    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}],
+    [{x: 20,y: 0, width: 21, height: 13},{x: 22,y: 28, width: 18, height: 13}],
+    [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 23}]
+];
 //var animations = {
 //    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
 //    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
@@ -520,7 +520,7 @@ var mobAnim = new Kinetic.Animation(function(frame) {
         monsterArray[i].applyBehaviors(monsterArray,path);
         if(monsterArray[i].run())
         {
-            monsterArray[i].poly.remove();
+            monsterArray[i].sprite.remove();
             monsterArray.splice(i,1);
         }
     }
@@ -541,28 +541,28 @@ function createMonsters(){
 //    }
 }
 
-//function spawnMonster(currentWave){
-////    monsterArray[currentMonsterTween].show();
-//    // monsterArray[currentMonster].anim.start();
-//    currentMonster++;
-//    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
-//    var maxforce = 0.01;
-//    var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
-//    var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
-//    monsterArray.push(new Monster(new PVector(x,y),maxspeed,maxforce,pathCells[pathCells.length-1],images.monsterImg, aminationMob,currentWave));
-//    if(currentMonster < 20) {
-//        setTimeout(function(){
-//            spawnMonster(currentWave)
-//        }, Math.random()*1000 + 1000);
-//    }else {
-//        if(currentWave < 4){
-//            currentMonster=0;
-//            currentWave++;
-//            setTimeout(function(){spawnMonster(currentWave)},20000);
-//        }
-//    }
-//
-//}
+function spawnMonster(currentWave){
+//    monsterArray[currentMonsterTween].show();
+    // monsterArray[currentMonster].anim.start();
+    currentMonster++;
+    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
+    var maxforce = 0.01;
+    var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+    var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+    monsterArray.push(new Monster(new PVector(x,y),maxspeed,maxforce,pathCells[pathCells.length-1],images.monsterImg, aminationMob,currentWave));
+    if(currentMonster < 20) {
+        setTimeout(function(){
+            spawnMonster(currentWave)
+        }, Math.random()*1000 + 1000);
+    }else {
+        if(currentWave < 4){
+            currentMonster=0;
+            currentWave++;
+            setTimeout(function(){spawnMonster(currentWave)},20000);
+        }
+    }
+
+}
 
 
 function monstersMove(currentMonsterTween){

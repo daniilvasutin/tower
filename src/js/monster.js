@@ -10,7 +10,7 @@ function max(a,b) {
 	return b;
 }
 
-function Monster(l, ms, mf,target/*,image,animations,currentWave*/) {
+function Monster(l, ms, mf,target,image,animations,currentWave) {
 
 var locat = l;
 var r = 5.0;
@@ -21,7 +21,7 @@ var velocity = new PVector(maxspeed, 0);
 var theta = velocity.heading2D() + Math.PI/2;
 var angle_change = false;
 var target_point = target;
-//    var image = image;
+    var image = image;
 
 //this.image = new Kinetic.Image({
 //    x: 0,
@@ -31,26 +31,26 @@ var target_point = target;
 //    height: mobCrop.height,
 //    crop: [mobCrop.x, mobCrop.y, mobCrop.width, mobCrop.height]
 //});
-//this.sprite = new Kinetic.Sprite({
-//    x: 0,
-//    y: 0,
-//    image: image,
-//    animation: currentWave,
-//    animations: animations,
-//    frameRate: 4,
-//    index: 0,
-//    opacity:1
-//});
-
-this.poly = new Kinetic.Polygon({
-	points: [0, -r*2, -r, r*2, r, r*2],
-	fill: '#00D2FF',
-	stroke: 'black',
-	strokeWidth: 1
+this.sprite = new Kinetic.Sprite({
+    x: 0,
+    y: 0,
+    image: image,
+    animation: currentWave,
+    animations: animations,
+    frameRate: 4,
+    index: 0,
+    opacity:1
 });
 
-monstersLayer.add(this.poly);
-//    this.sprite.start();
+//this.poly = new Kinetic.Polygon({
+//	points: [0, -r*2, -r, r*2, r, r*2],
+//	fill: '#00D2FF',
+//	stroke: 'black',
+//	strokeWidth: 1
+//});
+
+monstersLayer.add(this.sprite);
+    this.sprite.start();
 
 this.run = function() {
 	this.update();
@@ -258,10 +258,11 @@ this.render = function() {
 //    this.image.x = locat.x;
 //    this.image.y = locat.y;
 
-//    this.sprite.setX(locat.x);
-//	this.sprite.setY(locat.y);
-    this.poly.setX(locat.x);
-    this.poly.setY(locat.y);
+    this.sprite.setX(locat.x);
+	this.sprite.setY(locat.y);
+
+//    this.poly.setX(locat.x);
+//    this.poly.setY(locat.y);
 
 //    this.image.setRotation(Math.random()*10 + (3.14/2));
 
