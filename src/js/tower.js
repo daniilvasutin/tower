@@ -3,7 +3,7 @@ var images = {};
 var sources = {
     bgSprite: "../images/sprite_bg.jpg",
     rightPanel: "../images/panel.jpg",
-    monsterImg: "../images/monster.png",
+    monsterImg: "../images/mobs_sprite.png",
     towerFoundationIco: "../images/tower_foundation_ico.jpg",
     crystalsIcons: "../images/crystals_icons.jpg",
     crystals: "../images/crystals.png",
@@ -41,7 +41,7 @@ var cellSize = 32; //size of tile in background
 var widthCellCount = 22; //canvas width in cells + 4 for panel
 var heightCellCount = 15; //canvas height in cells
 var busyCells = new Array(); //busy cells in map
-var pathCells = new Array();  //path cells in map
+//var pathCells = new Array();  //path cells in map
 
 var map1 = //Map by two-dimensional array
         [         //0                           1                           2                             3                           4                           5                            6                           7                             8                          9                            10                            11                          12                         13                           14                             15                          16                            17                      18                      19                      20
@@ -60,9 +60,10 @@ var map1 = //Map by two-dimensional array
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:1,busy:1,TileType:4},{x:11,y:1,busy:1,TileType:4},{x:12,y:1,busy:1,TileType:4},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //13 row
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:2,busy:1,TileType:4},{x:11,y:2,busy:1,TileType:4},{x:12,y:2,busy:1,TileType:4},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:7,y:3,busy:1,TileType:5},{x:7,y:1,busy:1,TileType:9}, {x:7,y:2,busy:1,TileType:2}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:7,y:2,busy:1,TileType:2},{x:2,y:2,busy:0,TileType:0},{x:1,y:4,busy:1,TileType:1},{x:2,y:4,busy:1,TileType:1},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //14 row
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:3,busy:1,TileType:4},{x:11,y:3,busy:1,TileType:4},{x:12,y:3,busy:1,TileType:4},{x:7,y:3,busy:1,TileType:5},{x:7,y:2,busy:1,TileType:2},{x:9,y:3,busy:1,TileType:7},{x:9,y:2,busy:1,TileType:10},{x:8,y:2,busy:1,TileType:12},{x:7,y:1,busy:1,TileType:9}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:5,busy:1,TileType:1},{x:2,y:5,busy:1,TileType:1},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}] //15 row
-    ];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  //17F
-var mapBeginCell1 = {i: 3, j: 5};
-var mapEndCell1 = {i: 11, j: 17};
+    ];
+//var monsters = new Array();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //17F
+var path;
+var pathCells = [{x:4,y:3},{x:8,y:3},{x:8,y:8},{x:3,y:8},{x:3,y:11},{x:12,y:11},{x:12,y:3},{x:17,y:3},{x:17,y:12}];
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
@@ -257,15 +258,22 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
-var monsterTweenArray = new Array();
-var direction = new Array();
-var currentMonster = 0;
-var animations = {
-    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
-    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
-    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
-    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
-};
+//var monsterTweenArray = new Array();
+//var direction = new Array();
+//var currentMonster = 0;
+//var aminationMob = [
+//    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
+//    [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
+//    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}],
+//    [{x: 20,y: 0, width: 21, height: 13},{x: 22,y: 28, width: 18, height: 13}],
+//    [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 23}]
+//];
+//var animations = {
+//    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
+//    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
+//    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
+//    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
+//};
 /* ------------------------------------------------------------------------*/
 
 /**-----------------------Counters vars-------------------------------------*/
@@ -318,6 +326,7 @@ var stage = new Kinetic.Stage({
 var bgLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
 var rightPanelLayer = new Kinetic.Layer();
+var monstersLayer = new Kinetic.Layer();
 
 function afterBgCreating() { //run, after background is creating
     var rightPanel = new Kinetic.Image({
@@ -340,6 +349,7 @@ function afterBgCreating() { //run, after background is creating
     buildBases();
 
     stage.add(bgLayer);
+    stage.add(monstersLayer);
     stage.add(rightPanelLayer);
     stage.add(towersLayer);
 }
@@ -352,11 +362,15 @@ function playBackgroundMusic(){
 
 function startGame(){
     buildBackground(map1);
-    findPath(map1,mapBeginCell1,mapEndCell1);
+
+    buidPath();
+//    findPath(map1,mapBeginCell1,mapEndCell1);
 
     setTimeout(afterBgCreating, 100);
-    createMonsters();
-    newMonstersMove();
+    spawnMonster(0);
+    mobAnim.start();
+//    createMonsters();
+//    newMonstersMove();
 
     //playBackgroundMusic();
     //setTimeout(function(){playSprite('monsterA');},3000);
@@ -371,7 +385,7 @@ function startGame(){
 /** ----------------------------Monster processing-------------------------*/
 
     //v 1.6
-function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
+/*function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
     var self = this;
     this.x = x;
     this.y = y;
@@ -476,6 +490,7 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                     window.location.reload();
                 }
             }
+*/
 /*                new Kinetic.Tween({
                 node: self.sprite,
                 duration: 1,
@@ -487,39 +502,75 @@ function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animati
                     this.destroy();
                 }
             }).play();*/
+/*
         }
     }, bgLayer);
 
     bgLayer.add(this.sprite);
     this.sprite.start();
     bgLayer.draw();
-}
+}*/
 
 
     //v1.5
 
+var mobAnim = new Kinetic.Animation(function(frame) {
+    for(var i = 0; i < monsterArray.length; i++) {
+        //console.log(1);
+        monsterArray[i].applyBehaviors(monsterArray,path);
+        if(monsterArray[i].run())
+        {
+            monsterArray[i].poly.remove();
+            monsterArray.splice(i,1);
+        }
+    }
+//hexagon.setX(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerX);
+}, monstersLayer);
 
-function newMonstersMove(){
-//    monsterArray[currentMonsterTween].show();
-    monsterArray[currentMonster].anim.start();
-    currentMonster++;
-    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove()}, 2000);
-}
+//function newMonstersMove(){
+////    monsterArray[currentMonsterTween].show();
+//    monsterArray[currentMonster].anim.start();
+//    currentMonster++;
+//    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove()}, 2000);
+//}
 
 function createMonsters(){
-    for (var i=0; i < 10; i++) {
-        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 35, 6,animations, 1);
-        monsterArray.push(monster);
-    }
+//    for (var i=0; i < 10; i++) {
+//        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 35, 6,animations, 1);
+//        monsterArray.push(monster);
+//    }
 }
+
+//function spawnMonster(currentWave){
+////    monsterArray[currentMonsterTween].show();
+//    // monsterArray[currentMonster].anim.start();
+//    currentMonster++;
+//    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
+//    var maxforce = 0.01;
+//    var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+//    var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+//    monsterArray.push(new Monster(new PVector(x,y),maxspeed,maxforce,pathCells[pathCells.length-1],images.monsterImg, aminationMob,currentWave));
+//    if(currentMonster < 20) {
+//        setTimeout(function(){
+//            spawnMonster(currentWave)
+//        }, Math.random()*1000 + 1000);
+//    }else {
+//        if(currentWave < 4){
+//            currentMonster=0;
+//            currentWave++;
+//            setTimeout(function(){spawnMonster(currentWave)},20000);
+//        }
+//    }
+//
+//}
 
 
 function monstersMove(currentMonsterTween){
-    var currentMonsterTween = currentMonsterTween || 0;
-//    monsterArray[currentMonsterTween].show();
-    monsterTweenArray[currentMonsterTween].play();
-    currentMonsterTween++;
-    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 1000);
+//    var currentMonsterTween = currentMonsterTween || 0;
+////    monsterArray[currentMonsterTween].show();
+//    monsterTweenArray[currentMonsterTween].play();
+//    currentMonsterTween++;
+//    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 1000);
 }
 /* -----------------------------Monster processing-------------------------*/
 
@@ -582,7 +633,7 @@ bgLayer.on('mouseup', function(){
                     rightPanelLayer.draw();
                 foundationsArray.push(newFoundationTower);
                 busyCells.push({x: mouseX, y: mouseY}); //add tower rectangle to busy cells array
-    
+
                 beingConstructedRect.hide();
                 beingConstructedTower.hide();
                 isBuildingFoundation = false;
@@ -815,7 +866,27 @@ function cleanErrorMessages() { //clean errors
     rightPanelLayer.draw();
 }
 
-function findPath(map,mapBeginCell,mapEndCell) {
+
+
+function buidPath() {
+
+    path = new Path();
+
+    for(var i = 0; i < pathCells.length; i++) {
+        path.addPoint(pathCells[i].x*cellSize + cellSize/2,pathCells[i].y*cellSize + cellSize/2);
+    }
+
+    path.createLine();
+
+    /*path.addPoint(offset,offset);
+     path.addPoint(width-offset,offset);
+     path.addPoint(width-offset,height-offset);
+     path.addPoint(width/2,height-offset*3);
+     path.addPoint(offset,height-offset);*/
+
+}
+
+/*function findPath(map,mapBeginCell,mapEndCell) {
     var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
     var first = {i: mapBeginCell.i, j: mapBeginCell.j};
     var last = {i: mapEndCell.i, j: mapEndCell.j};
@@ -928,7 +999,7 @@ function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
     }
     delete map1; //!!!!!
     map1 = null;
-}
+}*/
 /* -----------------------------Map processing-----------------------------*/
 
 
