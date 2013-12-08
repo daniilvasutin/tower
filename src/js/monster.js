@@ -12,6 +12,7 @@ function max(a,b) {
 
 function Monster(l, ms, mf,target,image,animations,currentWave) {
 
+var self = this;
 var locat = l;
 var r = 5.0;
 var maxspeed = ms;
@@ -21,26 +22,86 @@ var velocity = new PVector(maxspeed, 0);
 var theta = velocity.heading2D() + Math.PI/2;
 var angle_change = false;
 var target_point = target;
-    var image = image;
+var image = image;
+var frameRate = waveCharacteris[currentWave][0].frameRate;
 
-//this.image = new Kinetic.Image({
-//    x: 0,
-//    y: 0,
-//    image: image,
-//    width: mobCrop.width,
-//    height: mobCrop.height,
-//    crop: [mobCrop.x, mobCrop.y, mobCrop.width, mobCrop.height]
-//});
+this.hp = waveCharacteris[currentWave][0].hp;
+this.name = waveCharacteris[currentWave][0].name;
+
 this.sprite = new Kinetic.Sprite({
     x: 0,
     y: 0,
     image: image,
     animation: currentWave,
     animations: animations,
-    frameRate: 4,
+    frameRate: frameRate,
     index: 0,
     opacity:1
 });
+
+    this.anim = new Kinetic.Animation(function(frame) {
+
+        //damage mobs
+        for (var i = 0; i < towersArray.length; i++) {
+            var mobPositionRadius = Math.sqrt(Math.pow(towersArray[i].x + cellSize / 2 - self.sprite.attrs.x, 2)
+                + Math.pow(towersArray[i].y + cellSize / 2 - self.sprite.attrs.y, 2)); //is mob in tower radius
+            if (mobPositionRadius <= towersArray[i].radius) {
+                if (towersArray[i].mob == 0) {
+                    towersArray[i].mob = self; //tower sooting in this mob
+                }
+                towersArray[i].bullet.show();
+                towersArray[i].bulletAnim.start();
+            } else if (towersArray[i].mob == self) { //mob is not in tower radius
+                towersArray[i].mob = 0;
+                towersArray[i].bullet.hide();
+                towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
+            }
+        }
+        if (self.hp <= 0) { //if mob is dead, delete it
+            self.anim.stop();
+            self.sprite.remove();
+            for (var i = 0; i < monsterArray.length; i++) {
+                if (self.sprite == monsterArray[i].sprite) {
+                    monsterArray.splice(i,1);
+                    break;
+                }
+            }
+            self = null;
+//            currentMonster--; //change number of monster to move
+        } /*else if (self.currentStep == pathCells.length-3) { //if mob come to our base
+            self.anim.stop();
+            self.sprite.remove();
+            for (var i = 0; i < monsterArray.length; i++) {
+                if (self.sprite == monsterArray[i].sprite) {
+                    monsterArray.splice(i,1);
+                    break;
+                }
+            }
+            self = null;
+            currentMonster--; //change number of monster to move
+            hpCounter--; //deduct health points
+            healthPoints.setText(hpCounter);
+            rightPanelLayer.draw();
+            if (hpCounter <= 0) { //CHANGE THEM!!!!
+                if (confirm("You loose!!! Ahahhaha!!!")) {
+                    window.location.reload();
+                }
+            }
+            *//* new Kinetic.Tween({
+             node: self.sprite,
+             duration: 1,
+             opacity: 0,
+             onFinish: function(){
+             self.sprite.moveToBottom();
+             self.sprite.stop();
+             self.anim.stop();
+             this.destroy();
+             }
+             }).play();*//*
+        }*/
+    }, bgLayer);
+
+    this.anim.start();
 
 //this.poly = new Kinetic.Polygon({
 //	points: [0, -r*2, -r, r*2, r, r*2],
@@ -50,7 +111,7 @@ this.sprite = new Kinetic.Sprite({
 //});
 
 monstersLayer.add(this.sprite);
-    this.sprite.start();
+this.sprite.start();
 
 this.run = function() {
 	this.update();
@@ -255,16 +316,11 @@ this.seek = function(target) {
 }
 
 this.render = function() {
-//    this.image.x = locat.x;
-//    this.image.y = locat.y;
-
     this.sprite.setX(locat.x);
 	this.sprite.setY(locat.y);
 
 //    this.poly.setX(locat.x);
 //    this.poly.setY(locat.y);
-
-//    this.image.setRotation(Math.random()*10 + (3.14/2));
 
 	if(angle_change) {
 		angle_change = false;
