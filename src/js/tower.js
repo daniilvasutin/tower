@@ -1,19 +1,19 @@
 ﻿/** ----------------------------Game var--------------------------------*/
 var images = {};
 var sources = {
-    bgSprite: "../images/sprite_bg.jpg",
-    rightPanel: "../images/panel.jpg",
-    monsterImg: "../images/monster.png",
-    towerFoundationIco: "../images/tower_foundation_ico.jpg",
-    crystalsIcons: "../images/crystals_icons.jpg",
-    crystals: "../images/crystals.png",
-    towerFoundation: "../images/tower_foundation.png",
-    enemyBase: "../images/enemy_home.png",
-    ourBase: "../images/our_home.png",
-    aura: "../images/aura.png",
-    saleTower: "../images/sale.png",
-    upTower: "../images/up.png",
-    bullets: "../images/bullets.png"
+    bgSprite: "images/sprite_bg.jpg",
+    rightPanel: "images/panel.jpg",
+    monsterImg: "images/monster.png",
+    towerFoundationIco: "images/tower_foundation_ico.jpg",
+    crystalsIcons: "images/crystals_icons.jpg",
+    crystals: "images/crystals.png",
+    towerFoundation: "images/tower_foundation.png",
+    enemyBase: "images/enemy_home.png",
+    ourBase: "images/our_home.png",
+    aura: "images/aura.png",
+    saleTower: "images/sale.png",
+    upTower: "images/up.png",
+    bullets: "images/bullets.png"
 };
 
 function loadImages(sources, callback) {

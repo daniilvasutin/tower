@@ -19,14 +19,29 @@ li { text-align: left; }
 
 p { text-align: left; }
 
-#game { display: none; margin: 5% auto; width: 832px; border: #00e778 groove 10px;  }
+#game {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: none;
+    margin: auto;
+    width: 832px;
+    height: 480px;
+    border: #00e778 groove 10px;
+}
 
 .main_menu {
-    position: relative;
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
     width: 200px;
-    height: 250px;
+    height: 320px;
     padding: 10px;
-    margin: 10% auto;
+    margin: auto;
 }
 
 .button {
