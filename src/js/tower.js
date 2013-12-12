@@ -258,11 +258,11 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 70, frameRate: 4}],
-    [{name: "wave2", hp: 50, frameRate: 4}],
-    [{name: "wave3", hp: 80, frameRate: 4}],
-    [{name: "wave4", hp: 60, frameRate: 4}],
-    [{name: "wave5", hp: 130, frameRate: 4}]
+    [{name: "wave1", hp: 70, frameRate: 4, type: 'land'}],
+    [{name: "wave2", hp: 50, frameRate: 4, type: 'land'}],
+    [{name: "wave3", hp: 80, frameRate: 4, type: 'land'}],
+    [{name: "wave4", hp: 60, frameRate: 4, type: 'fly'}],
+    [{name: "wave5", hp: 130, frameRate: 4, type: 'land'}]
 ];
 var currentMonster = 0;
 var aminationMob = [
@@ -352,12 +352,6 @@ function afterBgCreating() { //run, after background is creating
     stage.add(towersLayer);
 }
 
-function playBackgroundMusic(){
-    var audio1 = document.getElementById('aTsIwR');
-    audio1.volume = 0.2;
-    audio1.play();
-}
-
 function startGame(){
     buildBackground(map1);
 
@@ -367,10 +361,10 @@ function startGame(){
     spawnMonster(0);
     mobAnim.start();
 
-    //playBackgroundMusic();
-    //setTimeout(function(){playSprite('monsterA');},3000);
-    //setTimeout(function(){playSprite('monsterHa');},25000);
-
+//    soundManager.play('effectSprite');
+    playBackgroundMusic('gameMusic');
+    setTimeout(function(){playSprite('monsterA');},3000);
+    setTimeout(function(){playSprite('monsterHa');},25000);
 }
 /* ------------------------------------------------------------------------*/
 
@@ -527,12 +521,19 @@ function spawnMonster(currentWave){
     if(currentMonster < 20) {
         setTimeout(function(){
             spawnMonster(currentWave)
-        }, Math.random()*1000 + 1000);
+        }, Math.random()*1000/* + 1000*/);
     }else {
         if(currentWave < 4){
             currentMonster=0;
             currentWave++;
-            setTimeout(function(){spawnMonster(currentWave)},20000);
+            setTimeout(function(){
+                playSprite('newWave');
+                if(waveCharacteris[currentWave][0].type === "fly"){
+                    playSprite("flyMonster")
+//                    setTimeout(function(){;},2500);
+                }
+                spawnMonster(currentWave)
+            },500);
         }
     }
 
@@ -853,8 +854,138 @@ function buidPath() {
 /* -----------------------------Map processing-----------------------------*/
 
 
+///***************************************************************************/
+///** ----------------------------Sound processing---------------------------*/
+//function playBackgroundMusic(audioId){
+//    setVolume(audioId, 0.1);
+//    playLoop(audioId);
+//}
+//
+//function setVolume(audioId, volume){
+//    var audio = document.getElementById(audioId);
+//    audio.volume = volume;
+//}
+//
+//function playLoop(audioId){
+//    var myAudio = document.getElementById(audioId);
+//    myAudio.addEventListener('ended', function() {
+//        this.currentTime = 0;
+//        this.play();
+//    }, false);
+//    myAudio.play();
+//}
+//
+//function stopMusic(audioId){
+//    var myAudio = document.getElementById(audioId);
+//    myAudio.pause();
+//    myAudio.currentTime = 0;
+//}
+//
+//var audioSprite = document.getElementById('effects');
+//
+//// sprite data
+//var spriteData = {
+//    monsterA: {
+//        start: 0.1,
+//        length: 2.4
+//    },
+//    arrow: {
+//        start: 3.0,
+//        length: 2.0
+//    },
+//    monsterHa:{
+//        start: 8.5,
+//        length: 1.5
+//    },
+//    buttonHover: {
+//        start: 10.4,
+//        length: 0.2
+//    },
+//    buttonClick: {
+//        start: 11.0,
+//        length: 2.0
+//    },
+//    newWave: {
+//        start: 14.0,
+//        length: 2.5
+//    },
+//    flyMonster: {
+//        start: 16.8,
+//        length: 1.0
+//    }
+//};
+//
+//// current sprite being played
+//var spriteStack = new Array();
+//
+//var currentSprite = {};
+//
+//// time update handler to ensure we stop when a sprite is complete
+////var onTimeUpdate = function() {
+////    if (this.currentTime >= spriteStack[0].start + spriteStack[0].length) {
+////        this.pause();
+//////        spriteStack.splice(0,1);
+////    }
+////};
+////audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+//
+//var playSprite = function(id) {          //play sprite according to the id
+//
+//    var onTimeUpdate = function() {
+////        console.log(spriteStack[0].start);
+//        if(spriteStack[0].start !== undefined){
+//            if (this.currentTime >= spriteStack[0].start + spriteStack[0].length) {
+//                this.pause();
+//                spriteStack.splice(0,1);
+//            }
+//        }
+//
+//    };
+//
+//    audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+//    if (spriteData[id] && spriteData[id].length) {
+//        spriteStack.push(spriteData[id]);
+//
+////        currentSprite = spriteData[id];
+//        audioSprite.currentTime = spriteStack[0].start;
+//
+//
+////        audioSprite.currentTime = currentSprite.start;
+//        audioSprite.play();
+//    }
+//
+//
+//
+//
+//};
+///* ----------------------------Sound processing----------------------------*/
+
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
+function playBackgroundMusic(audioId){
+    setVolume(audioId, 0.7);
+    playLoop(audioId);
+}
+
+function setVolume(audioId, volume){
+    var audio = document.getElementById(audioId);
+    audio.volume = volume;
+}
+
+function playLoop(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    myAudio.play();
+}
+
+function stopMusic(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.pause();
+    myAudio.currentTime = 0;
+}
 
 var audioSprite = document.getElementById('effects');
 
@@ -869,8 +1000,24 @@ var spriteData = {
         length: 2.0
     },
     monsterHa:{
-        start: 8.1,
-        length: 9.5
+        start: 8.5,
+        length: 1.5
+    },
+    buttonHover: {
+        start: 10.4,
+        length: 0.2
+    },
+    buttonClick: {
+        start: 11.0,
+        length: 2.0
+    },
+    newWave: {
+        start: 14.0,
+        length: 2.5
+    },
+    flyMonster: {
+        start: 16.8,
+        length: 1.0
     }
 };
 
@@ -892,4 +1039,84 @@ var playSprite = function(id) {          //play sprite according to the id
         audioSprite.play();
     }
 };
+
+
+
+/////////////////////////////////
+
+
+
+
+//var sound = new Howl({
+//    urls: ['../music/effectSprite.mp3'],
+//    sprite: {
+//        monsterA: [100,2400],
+//        arrow: [3000,2000],
+//        monsterHa:[8500,1500],
+//        buttonHover: [10600,300],
+//        buttonClick:[11000,2000],
+//        newWave: [14000,2500],
+//        flyMonster: [16800,1000]
+//    }
+//});
+//
+//sound.play('buttonHover');
+//////////////////////////////////////////
+
+////********************************************
+//function createSoundMandager(){
+//    soundManager.setup({
+//        onready: function() {
+//            soundManager.createSound({
+//                id: 'effectSprite',
+//                url: '../music/effectSprite.mp3'
+//            });
+//        }
+//    });
+//}
+
+//soundManager.onready(function(){
+//    soundManager.createSound({
+//                id: 'effectSprite',
+//                url: '../music/effectSprite.mp3'
+//            });
+//});
+
+//soundManager.onready(function(){soundManager.play('effectSprite')});
+
+
+function createSoundMandager(){
+    soundManager.createSound({
+        id: 'effectSprite',
+        url: '../music/effectSprite.mp3'
+    });
+    soundManager.createSound({
+        id: 'menuMusic',
+        url: '../music/menuMusic.mp3'
+    });
+    soundManager.createSound({
+        id: 'gameMusic',
+        url: '../music/gameMusic.mp3'
+    });
+
+}
+
+//function playsome(){
+//    soundManager.play('effectSprite');
+//}
+//function
+
+
+
+
+
+//var mySound = soundManager.createSound({
+//    url: '../music/effectSprite.mp3'
+//});
+//mySound.play();
+
+////********************************************
+
+
+
 /* ----------------------------Sound processing----------------------------*/
