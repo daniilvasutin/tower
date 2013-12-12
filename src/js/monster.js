@@ -58,7 +58,7 @@ this.sprite = new Kinetic.Sprite({
             }
         }
         if (self.hp <= 0) { //if mob is dead, delete it
-            playSprite('moneyShot');
+            playSprite('moneyShot',15);
             self.anim.stop();
             self.sprite.remove();
             for (var i = 0; i < monsterArray.length; i++) {

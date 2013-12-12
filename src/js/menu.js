@@ -1,31 +1,12 @@
 $(document).on('ready', function() {
-
-//    soundManager.onready(function(){
-//        createSoundMandager();
-//        soundManager.setVolume('menuMusic',100);
-//        soundManager.play('menuMusic');
-
-//        myplaySprite('monsterA');
-
-        //soundManager.play('effectSprite');
-
-        setVolume('menuMusic',1);
+        setVolume('menuMusic',30);
         playBackgroundMusic('menuMusic');
 
-        $('.button').hover(function(){
-//            soundManager.play('');
-//            myplaySprite('buttonHover');
-//            myplaySprite('buttonHover');
-//            sound.play('buttonHover');
+        $('.button').hover(function(){         
            playSprite('buttonHover');
-//           playSprite('monsterA');
-//            effectSprite.stop();
-        },function(){
-//			effectSprite.stop();
-		});
+        },function(){});
 
         $('.button').click(function(){
-//            myplaySprite('buttonHover');
             playSprite('buttonClick');
         });
 
@@ -34,7 +15,6 @@ $(document).on('ready', function() {
             $('#game').slideDown();
             loadImages(sources, startGame);
             stopMusic('menuMusic');
-//            soundManager.stop('menuMusic');
         });
         $('#help_btn').on('click', function() {
             $('#main').slideUp();

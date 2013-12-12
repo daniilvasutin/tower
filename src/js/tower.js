@@ -365,13 +365,9 @@ function startGame(){
     setTimeout(afterBgCreating, 100);
     spawnMonster(0);
     mobAnim.start();
-
-//    soundManager.play('effectSprite');
-//    soundManager.setVolume('gameMusic', 20);
-    setVolume('gameMusic', 10);
+	
+    setVolume('gameMusic', 50);
     playBackgroundMusic('gameMusic');
-//    setTimeout(function(){myplaySprite('monsterA');},3000);
-//    setTimeout(function(){myplaySprite('monsterHa');},25000);
 }
 /* ------------------------------------------------------------------------*/
 
@@ -379,134 +375,6 @@ function startGame(){
 
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
-
-    //v 1.6
-/*function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
-    var self = this;
-    this.x = x;
-    this.y = y;
-    this.opacity = opacity;
-    this.type = type;
-    this.hp = hp;
-    this.name = name;
-    this.image = image;
-    this.animations = animations;
-    this.frameRate = frameRate;
-    this.moveSpeed = moveSpeed;
-    this.sprite = new Kinetic.Sprite({
-        x: this.x,
-        y: this.y,
-        image: this.image,
-        animation: 'goRight',
-        animations: this.animations,
-        frameRate: this.frameRate,
-        index: 0,
-        opacity:self.opacity
-    });
-    this.currentStep = 0;
-    this.index = index;
-    this.anim = new Kinetic.Animation(function(frame) {
-        var step = self.moveSpeed * frame.timeDiff / 1000;
-        var eps = step+5;
-        var nextStep = self.currentStep+1;
-        if(self.currentStep < pathCells.length-1){
-            if(frame.time < 2000) {
-                var op = self.sprite.getOpacity() + 0.02;
-                self.sprite.setOpacity(op);
-            }
-            if(direction[self.currentStep] !== direction[nextStep]){
-                self.sprite.setAnimation(direction[nextStep]);
-            }
-            if(direction[self.currentStep] === "goRight"){
-                self.sprite.move(step, 0);
-                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goBottom"){
-                self.sprite.moveUp();
-                self.sprite.move(0, step);
-                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goLeft" ){
-                self.sprite.move((-1)*step, 0);
-                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goTop" ){
-                self.sprite.move(0, (-1)*step);
-                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }
-        }
-        //damage mobs
-        for (var i = 0; i < towersArray.length; i++) {
-            var mobPositionRadius = Math.sqrt(Math.pow(towersArray[i].x + cellSize / 2 - self.sprite.attrs.x, 2)
-                                              + Math.pow(towersArray[i].y + cellSize / 2  - self.sprite.attrs.y, 2)); //is mob in tower radius
-            if (mobPositionRadius <= towersArray[i].radius) {
-                if (towersArray[i].mob == 0) {
-                    towersArray[i].mob = self; //tower sooting in this mob
-                }
-                towersArray[i].bullet.show();
-                towersArray[i].bulletAnim.start();
-            } else if (towersArray[i].mob == self) { //mob is not in tower radius
-                towersArray[i].mob = 0;
-                towersArray[i].bullet.hide();
-                towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
-            }
-        }
-        if (self.hp <= 0) { //if mob is dead, delete it
-            self.anim.stop();
-            self.sprite.remove();
-            for (var i = 0; i < monsterArray.length; i++) {
-                if (self.sprite == monsterArray[i].sprite) {
-                    monsterArray.splice(i,1);
-                    break;
-                }
-            }
-            self = null;
-            currentMonster--; //change number of monster to move
-        } else if (self.currentStep == pathCells.length-3) { //if mob come to our base
-            self.anim.stop();
-            self.sprite.remove();
-            for (var i = 0; i < monsterArray.length; i++) {
-                if (self.sprite == monsterArray[i].sprite) {
-                    monsterArray.splice(i,1);
-                    break;
-                }
-            }
-            self = null;
-            currentMonster--; //change number of monster to move
-            hpCounter--; //deduct health points
-            healthPoints.setText(hpCounter);
-            rightPanelLayer.draw();
-            if (hpCounter <= 0) { //CHANGE THEM!!!!
-                if (confirm("You loose!!! Ahahhaha!!!")) {
-                    window.location.reload();
-                }
-            }
-*/
-/*                new Kinetic.Tween({
-                node: self.sprite,
-                duration: 1,
-                opacity: 0,
-                onFinish: function(){
-                    self.sprite.moveToBottom();
-                    self.sprite.stop();
-                    self.anim.stop();
-                    this.destroy();
-                }
-            }).play();*/
-/*
-        }
-    }, bgLayer);
-
-    bgLayer.add(this.sprite);
-    this.sprite.start();
-    bgLayer.draw();
-}*/
-
 var mobAnim = new Kinetic.Animation(function(frame) {
     for(var i = 0; i < monsterArray.length; i++) {
         monsterArray[i].applyBehaviors(monsterArray,path);
@@ -610,7 +478,7 @@ bgLayer.on('mouseup', function(){
                 beingConstructedTower.hide();
                 isBuildingFoundation = false;
                 beingConstructedCrystal.moveToTop(); //draw being constructed crystal over foundation
-                playSprite('towerBuild',70);
+                playSprite('towerBuild',60);
             }
         } else { //if place is busy
             playSprite('note');
@@ -766,7 +634,7 @@ function buildTowersMenu() { //draw menu with towers
     /* Towers menu events */
     towerFoundationIco.on('mousedown',  function() {
         if (goldCounter >= towerFoundationCost) {
-            playSprite('towerClicked',20);
+            playSprite('towerClicked',10);
             isBuildingFoundation = true;
             towerType = 'foundation';
             beingConstructedTower.setAttrs({
@@ -871,113 +739,6 @@ function buidPath() {
 
 }
 /* -----------------------------Map processing-----------------------------*/
-
-
-///***************************************************************************/
-///** ----------------------------Sound processing---------------------------*/
-//function playBackgroundMusic(audioId){
-//    setVolume(audioId, 0.1);
-//    playLoop(audioId);
-//}
-//
-//function setVolume(audioId, volume){
-//    var audio = document.getElementById(audioId);
-//    audio.volume = volume;
-//}
-//
-//function playLoop(audioId){
-//    var myAudio = document.getElementById(audioId);
-//    myAudio.addEventListener('ended', function() {
-//        this.currentTime = 0;
-//        this.play();
-//    }, false);
-//    myAudio.play();
-//}
-//
-//function stopMusic(audioId){
-//    var myAudio = document.getElementById(audioId);
-//    myAudio.pause();
-//    myAudio.currentTime = 0;
-//}
-//
-//var audioSprite = document.getElementById('effects');
-//
-//// sprite data
-//var spriteData = {
-//    monsterA: {
-//        start: 0.1,
-//        length: 2.4
-//    },
-//    arrow: {
-//        start: 3.0,
-//        length: 2.0
-//    },
-//    monsterHa:{
-//        start: 8.5,
-//        length: 1.5
-//    },
-//    buttonHover: {
-//        start: 10.4,
-//        length: 0.2
-//    },
-//    buttonClick: {
-//        start: 11.0,
-//        length: 2.0
-//    },
-//    newWave: {
-//        start: 14.0,
-//        length: 2.5
-//    },
-//    flyMonster: {
-//        start: 16.8,
-//        length: 1.0
-//    }
-//};
-//
-//// current sprite being played
-//var spriteStack = new Array();
-//
-//var currentSprite = {};
-//
-//// time update handler to ensure we stop when a sprite is complete
-////var onTimeUpdate = function() {
-////    if (this.currentTime >= spriteStack[0].start + spriteStack[0].length) {
-////        this.pause();
-//////        spriteStack.splice(0,1);
-////    }
-////};
-////audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
-//
-//var myplaySprite = function(id) {          //play sprite according to the id
-//
-//    var onTimeUpdate = function() {
-////        console.log(spriteStack[0].start);
-//        if(spriteStack[0].start !== undefined){
-//            if (this.currentTime >= spriteStack[0].start + spriteStack[0].length) {
-//                this.pause();
-//                spriteStack.splice(0,1);
-//            }
-//        }
-//
-//    };
-//
-//    audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
-//    if (spriteData[id] && spriteData[id].length) {
-//        spriteStack.push(spriteData[id]);
-//
-////        currentSprite = spriteData[id];
-//        audioSprite.currentTime = spriteStack[0].start;
-//
-//
-////        audioSprite.currentTime = currentSprite.start;
-//        audioSprite.play();
-//    }
-//
-//
-//
-//
-//};
-///* ----------------------------Sound processing----------------------------*/
 
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
@@ -1087,109 +848,3 @@ var playSprite = function(id,volume) {          //play sprite according to the i
         audioSprite.play();
     }
 };
-
-
-
-/////////////////////////////////
-
-
-
-
-//var sound = new Howl({
-//    urls: ['../music/effectSprite.mp3'],
-//    sprite: {
-//        monsterA: [100,2400],
-//        arrow: [3000,2000],
-//        monsterHa:[8500,1500],
-//        buttonHover: [10600,300],
-//        buttonClick:[11000,2000],
-//        newWave: [14000,2500],
-//        flyMonster: [16800,1000]
-//    }
-//});
-//
-//sound.play('buttonHover');
-//////////////////////////////////////////
-
-////********************************************
-//function createSoundMandager(){
-//    soundManager.setup({
-//        onready: function() {
-//            soundManager.createSound({
-//                id: 'effectSprite',
-//                url: '../music/effectSprite.mp3'
-//            });
-//        }
-//    });
-//}
-
-//soundManager.onready(function(){
-//    soundManager.createSound({
-//                id: 'effectSprite',
-//                url: '../music/effectSprite.mp3'
-//            });
-//});
-
-//soundManager.onready(function(){soundManager.play('effectSprite')});
-
-//var effectSprite;
-//var effectSpriteArray = {
-//    monsterA:   {begin: 1100, end: 3000},
-//    arrow:      {begin: 3000, end: 5000},
-//    monsterHa:  {begin: 8500, end: 10000},
-//    buttonHover:{begin: 10400, end: 11000},
-//    buttonClick:{begin: 11300, end: 13000},
-//    newWave:    {begin: 14000, end: 16500},
-//    flyMonster: {begin: 16800, end: 17800}
-//};
-//
-//function createSoundMandager(){
-//    effectSprite = soundManager.createSound({
-//        id: 'effectSprite',
-//        url: '../music/effectSprite.mp3'/*,
-//        multiShotEvents: true*/
-//    });
-//    soundManager.createSound({
-//        id: 'menuMusic',
-//        url: '../music/menuMusic.mp3',
-//        onfinish: function(){
-//            this.play();
-//        }
-//    });
-//    soundManager.createSound({
-//        id: 'gameMusic',
-//        url: '../music/gameMusic.mp3',
-//        onfinish: function(){
-//            this.play();
-//        }
-//    });
-//
-//}
-//
-//function playFromTo(nFrom, nTo) {
-//    effectSprite.stop();
-//    effectSprite.play({
-//        from: nFrom,
-//        to: nTo,
-//         onstop: function() {
-//             			effectSprite.stop();
-//             soundManager._writeDebug('sound stopped at position ' + this.position);
-//         }
-//    });
-//}
-//
-//
-//
-//function myplaySprite(effect) {
-//    playFromTo(effectSpriteArray[effect]['begin'], effectSpriteArray[effect]['end']);
-//}
-//
-//function playBackgroundMusic(){
-//    soundManager.play('gameMusic');
-//}
-
-////********************************************
-
-
-
-/* ----------------------------Sound processing----------------------------*/
