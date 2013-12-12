@@ -191,6 +191,8 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
             towersArray[i].sale.hide();
             towersArray[i].circle.hide();
         }
+
+        playSprite('towerBuild',30);
         self.circle.show();
         self.up.show();
         self.sale.show();
@@ -205,6 +207,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
                 break;
             }
         }
+        playSprite('moneyLong');
         self.destroy();
         rightPanelLayer.draw();
     });
@@ -218,7 +221,9 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
             goldDisplay.setText(goldCounter);
             rightPanelLayer.draw();
             towersLayer.draw();
+            playSprite('upTowerLevel');
         } else {
+            playSprite('note');
             displayErrors('Недостаточно золота!');
         }
     });
@@ -362,10 +367,11 @@ function startGame(){
     mobAnim.start();
 
 //    soundManager.play('effectSprite');
-    soundManager.setVolume('gameMusic', 20);
-    playBackgroundMusic();
-//    setTimeout(function(){playSprite('monsterA');},3000);
-//    setTimeout(function(){playSprite('monsterHa');},25000);
+//    soundManager.setVolume('gameMusic', 20);
+    setVolume('gameMusic', 10);
+    playBackgroundMusic('gameMusic');
+//    setTimeout(function(){myplaySprite('monsterA');},3000);
+//    setTimeout(function(){myplaySprite('monsterHa');},25000);
 }
 /* ------------------------------------------------------------------------*/
 
@@ -522,16 +528,15 @@ function spawnMonster(currentWave){
     if(currentMonster < 20) {
         setTimeout(function(){
             spawnMonster(currentWave)
-        }, Math.random()*1000/* + 1000*/);
+        }, Math.random()*1000 + 1000);
     }else {
         if(currentWave < 4){
             currentMonster=0;
             currentWave++;
             setTimeout(function(){
-//                playSprite('newWave');
+                playSprite('newWave');
                 if(waveCharacteris[currentWave][0].type === "fly"){
-//                    playSprite("flyMonster")
-//                    setTimeout(function(){;},2500);
+                    setTimeout(function(){playSprite("flyMonster");},2500);
                 }
                 spawnMonster(currentWave)
             },500);
@@ -605,14 +610,17 @@ bgLayer.on('mouseup', function(){
                 beingConstructedTower.hide();
                 isBuildingFoundation = false;
                 beingConstructedCrystal.moveToTop(); //draw being constructed crystal over foundation
+                playSprite('towerBuild',70);
             }
         } else { //if place is busy
+            playSprite('note');
             beingConstructedRect.hide();
             beingConstructedTower.hide();
             isBuildingFoundation = false;
         }
     }
     if (isBuildingCrystal) { //if crystal is not on towerFoundation hide it
+        playSprite('note');
         beingConstructedCrystal.hide();
         isBuildingCrystal = false;
     }
@@ -637,6 +645,7 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
+
                             break;
                         case 'blueCrystal':
                             var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 35, blueCrystalCost, 50, 32, 15);
@@ -652,6 +661,7 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                             break;
                         default: break;
                     }
+                    playSprite('crystalDing');
                     towersArray.push(newTower);
 
                     beingConstructedCrystal.hide();
@@ -756,17 +766,20 @@ function buildTowersMenu() { //draw menu with towers
     /* Towers menu events */
     towerFoundationIco.on('mousedown',  function() {
         if (goldCounter >= towerFoundationCost) {
+            playSprite('towerClicked',20);
             isBuildingFoundation = true;
             towerType = 'foundation';
             beingConstructedTower.setAttrs({
                 image: images.towerFoundation
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalBlueIco.on('mousedown',  function() {
         if (goldCounter >= blueCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'blueCrystal';
             beingConstructedCrystal.setAttrs({
@@ -774,11 +787,13 @@ function buildTowersMenu() { //draw menu with towers
                 cropX: 32
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalGreenIco.on('mousedown',  function() {
         if (goldCounter >= greenCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'greenCrystal';
             beingConstructedCrystal.setAttrs({
@@ -786,11 +801,13 @@ function buildTowersMenu() { //draw menu with towers
                 cropX: 0
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalRedIco.on('mousedown',  function() {
         if (goldCounter >= greenCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'redCrystal';
             beingConstructedCrystal.setAttrs({
@@ -798,6 +815,7 @@ function buildTowersMenu() { //draw menu with towers
                 cropX: 64
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
@@ -930,7 +948,7 @@ function buidPath() {
 ////};
 ////audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
 //
-//var playSprite = function(id) {          //play sprite according to the id
+//var myplaySprite = function(id) {          //play sprite according to the id
 //
 //    var onTimeUpdate = function() {
 ////        console.log(spriteStack[0].start);
@@ -963,83 +981,112 @@ function buidPath() {
 
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
-//function playBackgroundMusic(audioId){
-//    setVolume(audioId, 0.7);
-//    playLoop(audioId);
-//}
-//
-//function setVolume(audioId, volume){
-//    var audio = document.getElementById(audioId);
-//    audio.volume = volume;
-//}
-//
-//function playLoop(audioId){
-//    var myAudio = document.getElementById(audioId);
-//    myAudio.addEventListener('ended', function() {
-//        this.currentTime = 0;
-//        this.play();
-//    }, false);
-//    myAudio.play();
-//}
-//
-//function stopMusic(audioId){
-//    var myAudio = document.getElementById(audioId);
-//    myAudio.pause();
-//    myAudio.currentTime = 0;
-//}
-//
-//var audioSprite = document.getElementById('effects');
-//
-//// sprite data
-//var spriteData = {
-//    monsterA: {
-//        start: 0.1,
-//        length: 2.4
-//    },
-//    arrow: {
-//        start: 3.0,
-//        length: 2.0
-//    },
-//    monsterHa:{
-//        start: 8.5,
-//        length: 1.5
-//    },
-//    buttonHover: {
-//        start: 10.4,
-//        length: 0.2
-//    },
-//    buttonClick: {
-//        start: 11.0,
-//        length: 2.0
-//    },
-//    newWave: {
-//        start: 14.0,
-//        length: 2.5
-//    },
-//    flyMonster: {
-//        start: 16.8,
-//        length: 1.0
-//    }
-//};
-//
-//// current sprite being played
-//var currentSprite = {};
-//
-//// time update handler to ensure we stop when a sprite is complete
-//var onTimeUpdate = function() {
-//    if (this.currentTime >= currentSprite.start + currentSprite.length) {
-//        this.pause();
-//    }
-//};
-//audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
-//
-//var playSprite = function(id) {          //play sprite according to the id
-//    if (spriteData[id] && spriteData[id].length) {
-//        currentSprite = spriteData[id];
-//        audioSprite.currentTime = currentSprite.start;
-//        audioSprite.play();
-//    }
-//};
+function playBackgroundMusic(audioId){
+    playLoop(audioId);
+}
+
+function setVolume(audioId, volume){
+    var audio = document.getElementById(audioId);
+    audio.volume = volume/100;
+}
+
+function playLoop(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    myAudio.play();
+}
+
+function stopMusic(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.pause();
+    myAudio.currentTime = 0;
+}
+
+var audioSprite = document.getElementById('effects');
+
+// sprite data
+var spriteData = {
+    monsterA: {
+        start: 0.1,
+        length: 2.4
+    },
+    arrow: {
+        start: 3.0,
+        length: 2.0
+    },
+    monsterHa:{
+        start: 8.5,
+        length: 1.5
+    },
+    buttonHover: {
+        start: 10.8,
+        length: 0.2
+    },
+    buttonClick: {
+        start: 11.0,
+        length: 2.0
+    },
+    newWave: {
+        start: 14.0,
+        length: 2.5
+    },
+    flyMonster: {
+        start: 16.8,
+        length: 1.0
+    },
+    towerClicked: {
+        start: 18.6,
+        length: 0.4
+    },
+    towerBuild: {
+        start: 19.6,
+        length: 0.5
+    },
+    moneyLong: {
+        start: 20.5,
+        length: 0.8
+    },
+    moneyShot: {
+        start: 21.7,
+        length: 0.7
+    },
+    note: {
+        start: 22.7,
+        length: 0.8
+    },
+    crystalDing: {
+        start: 24.1,
+        length: 0.5
+    },
+    upTowerLevel: {
+        start: 24.9,
+        length: 0.8
+    }
+};
+
+// current sprite being played
+var currentSprite = {};
+
+// time update handler to ensure we stop when a sprite is complete
+var onTimeUpdate = function() {
+    if (this.currentTime >= currentSprite.start + currentSprite.length) {
+        this.pause();
+    }
+};
+audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+
+var playSprite = function(id,volume) {          //play sprite according to the id
+    if (spriteData[id] && spriteData[id].length) {
+        currentSprite = spriteData[id];
+        audioSprite.currentTime = currentSprite.start;
+        var volume = volume || 100;
+        setVolume('effects',volume);
+        audioSprite.play();
+    }
+};
 
 
 
@@ -1048,20 +1095,20 @@ function buidPath() {
 
 
 
-var sound = new Howl({
-    urls: ['../music/effectSprite.mp3'],
-    sprite: {
-        monsterA: [100,2400],
-        arrow: [3000,2000],
-        monsterHa:[8500,1500],
-        buttonHover: [10600,300],
-        buttonClick:[11000,2000],
-        newWave: [14000,2500],
-        flyMonster: [16800,1000]
-    }
-});
-
-sound.play('buttonHover');
+//var sound = new Howl({
+//    urls: ['../music/effectSprite.mp3'],
+//    sprite: {
+//        monsterA: [100,2400],
+//        arrow: [3000,2000],
+//        monsterHa:[8500,1500],
+//        buttonHover: [10600,300],
+//        buttonClick:[11000,2000],
+//        newWave: [14000,2500],
+//        flyMonster: [16800,1000]
+//    }
+//});
+//
+//sound.play('buttonHover');
 //////////////////////////////////////////
 
 ////********************************************
@@ -1087,10 +1134,10 @@ sound.play('buttonHover');
 
 //var effectSprite;
 //var effectSpriteArray = {
-//    monsterA:   {begin: 100, end: 2400},
+//    monsterA:   {begin: 1100, end: 3000},
 //    arrow:      {begin: 3000, end: 5000},
 //    monsterHa:  {begin: 8500, end: 10000},
-//    buttonHover:{begin: 10600, end: 11000},
+//    buttonHover:{begin: 10400, end: 11000},
 //    buttonClick:{begin: 11300, end: 13000},
 //    newWave:    {begin: 14000, end: 16500},
 //    flyMonster: {begin: 16800, end: 17800}
@@ -1104,32 +1151,36 @@ sound.play('buttonHover');
 //    });
 //    soundManager.createSound({
 //        id: 'menuMusic',
-//        url: '../music/menuMusic.mp3'/*,
+//        url: '../music/menuMusic.mp3',
 //        onfinish: function(){
 //            this.play();
-//        }*/
+//        }
 //    });
 //    soundManager.createSound({
 //        id: 'gameMusic',
-//        url: '../music/gameMusic.mp3'/*,
+//        url: '../music/gameMusic.mp3',
 //        onfinish: function(){
 //            this.play();
-//        }*/
+//        }
 //    });
 //
 //}
 //
 //function playFromTo(nFrom, nTo) {
-////    effectSprite.stop();
+//    effectSprite.stop();
 //    effectSprite.play({
 //        from: nFrom,
-//        to: nTo/*,
+//        to: nTo,
 //         onstop: function() {
-//         }*/
+//             			effectSprite.stop();
+//             soundManager._writeDebug('sound stopped at position ' + this.position);
+//         }
 //    });
 //}
 //
-//function playSprite(effect) {
+//
+//
+//function myplaySprite(effect) {
 //    playFromTo(effectSpriteArray[effect]['begin'], effectSpriteArray[effect]['end']);
 //}
 //

@@ -14,7 +14,7 @@ function Monster(l, ms, mf,target,image,animations,currentWave) {
 
 var self = this;
 var locat = l;
-var r = 5.0;
+var r = 8.0;
 var maxspeed = ms;
 var maxforce = mf;
 var acceleration = new PVector(0, 0);
@@ -58,6 +58,7 @@ this.sprite = new Kinetic.Sprite({
             }
         }
         if (self.hp <= 0) { //if mob is dead, delete it
+            playSprite('moneyShot');
             self.anim.stop();
             self.sprite.remove();
             for (var i = 0; i < monsterArray.length; i++) {

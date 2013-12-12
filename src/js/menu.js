@@ -2,27 +2,39 @@ $(document).on('ready', function() {
 
 //    soundManager.onready(function(){
 //        createSoundMandager();
-//        soundManager.setVolume('menuMusic',10);
+//        soundManager.setVolume('menuMusic',100);
 //        soundManager.play('menuMusic');
 
+//        myplaySprite('monsterA');
+
+        //soundManager.play('effectSprite');
+
+        setVolume('menuMusic',1);
+        playBackgroundMusic('menuMusic');
 
         $('.button').hover(function(){
 //            soundManager.play('');
-//            playSprite('buttonHover');
-//            playSprite('buttonHover');
-            sound.play('buttonHover');
-        },function(){});
+//            myplaySprite('buttonHover');
+//            myplaySprite('buttonHover');
+//            sound.play('buttonHover');
+           playSprite('buttonHover');
+//           playSprite('monsterA');
+//            effectSprite.stop();
+        },function(){
+//			effectSprite.stop();
+		});
 
         $('.button').click(function(){
-//            playSprite('buttonHover');
-//            playSprite('buttonClick');
+//            myplaySprite('buttonHover');
+            playSprite('buttonClick');
         });
 
         $('#new_game_btn').on('click', function() {
             $('#main').slideUp();
             $('#game').slideDown();
             loadImages(sources, startGame);
-            soundManager.stop('menuMusic');
+            stopMusic('menuMusic');
+//            soundManager.stop('menuMusic');
         });
         $('#help_btn').on('click', function() {
             $('#main').slideUp();
