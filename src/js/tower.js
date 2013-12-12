@@ -212,7 +212,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
           frameRate: 6,
           index: 0
         });
-        towersLayer.add(this.aura);
+        towersAuraLayer.add(this.aura);
         this.aura.start();
     } else {
         this.bullet = new Bullet(x * cellSize, y * cellSize, bulletCropX);
@@ -220,8 +220,10 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
     }
     
     this.mob = null;
+    this.mobsArray = [];
 
     this.destroy = function() {
+        self.aoeDamageAnim.stop();
         self.shootingAnim.stop();
         self.bulletAnim.stop();
         self.image.remove();
@@ -232,21 +234,32 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
         if (self.aura != null) self.aura.remove();
         self = null;
         towersLayer.draw();
+        towersAuraLayer.draw();
         bgLayer.draw();
     }
     
     this.shootingAnim = new Kinetic.Animation(function(frame) {
-        if (self.damageInterval != null) {
-            if (frame.time >= (lastTime + self.damageInterval)) {
-                self.bulletAnim.start();
-                self.bullet.image.show();
-                lastTime = frame.time;
-            }
-        } else {
-            self.shootingAnim.stop();
+        if (frame.time >= (lastTime + self.damageInterval)) {
+            self.bulletAnim.start();
+            self.bullet.image.show();
+            lastTime = frame.time;
         }
     }, towersLayer);
 
+    this.aoeDamageAnim = new Kinetic.Animation(function(frame) {
+        if (frame.time >= (lastTime + self.damageInterval)) {
+            for (var i = 0; i < self.mobsArray.length; i++) {
+                self.mobsArray[i].hp -= self.damage;
+                if (self.mobsArray[i].hp <= 0) {
+                    self.mobsArray.splice(i,1);
+                }
+            }
+            if (self.mobsArray.length == 0) {
+                self.aoeDamageAnim.stop();
+            }
+            lastTime = frame.time;
+        }
+    }, towersLayer);
 
     this.bulletAnim = new Kinetic.Animation(function(frame) {
         if (self.mob != null) {
@@ -420,9 +433,11 @@ var stage = new Kinetic.Stage({
 });
 
 var bgLayer = new Kinetic.Layer();
+var towersAuraLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
 var rightPanelLayer = new Kinetic.Layer();
 var monstersLayer = new Kinetic.Layer();
+var basesLayer = new Kinetic.Layer();
 
 function afterBgCreating() { //run, after background is creating
     var rightPanel = new Kinetic.Image({
@@ -445,9 +460,12 @@ function afterBgCreating() { //run, after background is creating
     buildBases();
 
     stage.add(bgLayer);
-    stage.add(monstersLayer);
     stage.add(rightPanelLayer);
+    stage.add(towersAuraLayer);
+    stage.add(monstersLayer);
     stage.add(towersLayer);
+    stage.add(basesLayer);
+
 }
 
 function playBackgroundMusic(){
@@ -556,6 +574,48 @@ bgLayer.on('mousemove touchmove', function(){
     }
     bgLayer.draw();
 });
+towersAuraLayer.on('mousemove touchmove', function(){
+    var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x/cellSize);
+    var mouseY = parseInt(mousePos.y/cellSize);
+    if (isBuildingFoundation) {
+        for (var i = 0; i < busyCells.length; i++) {
+            if ((busyCells[i].x != mouseX) || (busyCells[i].y != mouseY)) {
+                beingConstructedRect.setAttrs({
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
+                    fill: "green",
+                    visible: true
+                });
+                beingConstructedTower.setAttrs({
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
+                    visible: true
+                });
+            } else {
+                beingConstructedRect.setAttrs({
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize,
+                    fill: "red"
+                });
+                beingConstructedTower.setAttrs({
+                    x: mouseX*cellSize,
+                    y: mouseY*cellSize
+                });
+                break;
+            }
+        }
+    }
+    if (isBuildingCrystal) {
+        beingConstructedCrystal.setAttrs({
+            x: mouseX*cellSize,
+            y: mouseY*cellSize,
+            visible: true
+        });
+    }
+    towersAuraLayer.draw();
+    bgLayer.draw();
+});
 bgLayer.on('mouseup touchend', function(){
     var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
     var mouseX = parseInt(mousePos.x / cellSize);
@@ -593,6 +653,69 @@ bgLayer.on('mouseup touchend', function(){
     bgLayer.draw();
     towersLayer.draw();
 });
+towersAuraLayer.on('mouseup touchend', function(){
+    var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
+    var mouseX = parseInt(mousePos.x / cellSize);
+    var mouseY = parseInt(mousePos.y / cellSize);
+    if (isBuildingFoundation) {
+        if (beingConstructedRect.attrs.fill != 'red') {
+            if (towerType == 'foundation') {
+                var newFoundationTower = new Foundation(images.towerFoundation, mouseX, mouseY, 40, 40);
+                    goldCounter = goldCounter - 10;
+                    goldDisplay.setText(goldCounter);
+                    rightPanelLayer.draw();
+                foundationsArray.push(newFoundationTower);
+                busyCells.push({x: mouseX, y: mouseY}); //add tower rectangle to busy cells array
+
+                beingConstructedRect.hide();
+                beingConstructedTower.hide();
+                isBuildingFoundation = false;
+                beingConstructedCrystal.moveToTop(); //draw being constructed crystal over foundation
+            }
+        } else { //if place is busy
+            beingConstructedRect.hide();
+            beingConstructedTower.hide();
+            isBuildingFoundation = false;
+        }
+    }
+    if (isBuildingCrystal) {
+        for (var i = 0; i < foundationsArray.length; i++) {
+            if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
+                switch(towerType) {
+                    case 'redCrystal':
+                        var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30, 1500);
+                            goldCounter = goldCounter - redCrystalCost;
+                            goldDisplay.setText(goldCounter);
+                            rightPanelLayer.draw();
+                        break;
+                    case 'blueCrystal':
+                        var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 20, blueCrystalCost, 65, 32, 15, 1000);
+                            goldCounter = goldCounter - blueCrystalCost;
+                            goldDisplay.setText(goldCounter);
+                            rightPanelLayer.draw();
+                        break;
+                    case 'greenCrystal':
+                        var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 10, greenCrystalCost, 80, 0, 0, 500);
+                            goldCounter = goldCounter - greenCrystalCost;
+                            goldDisplay.setText(goldCounter);
+                            rightPanelLayer.draw();
+                        break;
+                    default: break;
+                }
+                towersArray.push(newTower);
+
+                beingConstructedCrystal.hide();
+                isBuildingCrystal = false;
+                break;
+            }
+        }
+        beingConstructedCrystal.hide();
+        isBuildingCrystal = false;
+    }
+    towersAuraLayer.draw();
+    towersLayer.draw();
+    bgLayer.draw();
+});
 beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal put to foundation
         var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
         var mouseX = parseInt(mousePos.x / cellSize);
@@ -602,7 +725,7 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
                 if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
                     switch(towerType) {
                         case 'redCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30);
+                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30, 1500);
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
@@ -787,8 +910,8 @@ function buildBases() { //draw enemy's home and our home
         width: 80,
         height: 90
     });
-    bgLayer.add(enemyBase);
-    bgLayer.add(ourBase);
+    basesLayer.add(enemyBase);
+    basesLayer.add(ourBase);
 }
 
 function displayErrors(text) { //display errors

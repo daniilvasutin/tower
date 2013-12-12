@@ -45,18 +45,44 @@ function Monster(l, ms, mf,target,image,animations,currentWave) {
             var mobPositionRadius = Math.sqrt(Math.pow(towersArray[i].x + cellSize / 2 - self.sprite.attrs.x, 2)
                 + Math.pow(towersArray[i].y + cellSize / 2 - self.sprite.attrs.y, 2)); //is mob in tower radius
             if (mobPositionRadius <= towersArray[i].radius) {
-                if (towersArray[i].mob == null && self.hp > 0) {
-                    towersArray[i].mob = self; //tower sooting in this mob
-                    if (towersArray[i].type != 'redCrystal') {
-                        towersArray[i].bullet.image.show();
-                        towersArray[i].shootingAnim.start();
+                if (towersArray[i].type != 'redCrystal') { //not AOE tower
+                    if (towersArray[i].mob == null && self.hp > 0) {
+                        towersArray[i].mob = self; //tower sooting in this mob
+                        if (towersArray[i].type != 'redCrystal') {
+                            towersArray[i].bullet.image.show();
+                            towersArray[i].shootingAnim.start();
+                        }
+                    }
+                } else {
+                    var isset = false;
+                    for (var j = 0; j < towersArray[i].mobsArray.length; j++) {
+                        if (towersArray[i].mobsArray[j] == self) {
+                            isset = true;
+                        }
+                    }
+                    if (!isset) {
+                        towersArray[i].mobsArray.push(self);
+                        towersArray[i].aoeDamageAnim.start();
                     }
                 }
-            } else if (towersArray[i].mob == self) { //mob is not in tower radius
-                towersArray[i].mob = null;
+            } else {
                 if (towersArray[i].type != 'redCrystal') {
-                    towersArray[i].bullet.restore();
-                    towersArray[i].bulletAnim.stop();
+                    if (towersArray[i].mob == self) { //mob is not in tower radius
+                        towersArray[i].mob = null;
+                        if (towersArray[i].type != 'redCrystal') {
+                            towersArray[i].bullet.restore();
+                            towersArray[i].bulletAnim.stop();
+                        }
+                    }
+                } else {
+                    for (var j = 0; j < towersArray[i].mobsArray.length; j++) {
+                        if (towersArray[i].mobsArray[j] == self) {
+                            towersArray[i].mobsArray.splice(j,1);
+                        }
+                        if (towersArray[i].mobsArray.length == 0) {
+                            towersArray[i].aoeDamageAnim.stop();
+                        }
+                    }
                 }
             }
         }
