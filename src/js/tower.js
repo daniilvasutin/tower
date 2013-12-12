@@ -72,9 +72,9 @@ var foundationsArray = new Array(); //tower objects array
 var isBuildingFoundation = false; //is the tower foundation now under construction?
 var isBuildingCrystal = false; //is the crystal now under construction?
 var towerFoundationCost = 10;
-var blueCrystalCost = 15; //cost of crystal
-var redCrystalCost = 20;
-var greenCrystalCost = 25;
+var blueCrystalCost = 30; //cost of crystal
+var redCrystalCost = 40;
+var greenCrystalCost = 20;
 var auraAnimation = {lighting: [{x: 0, y: 0, width: 180, height: 185}, {x: 180, y: 0, width: 180, height: 185}, {x: 360, y: 0, width: 180, height: 185}, {x: 540, y: 0, width: 180, height: 185}]};
 
 function Foundation(image, x, y, width, height) {
@@ -236,10 +236,14 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
     }
     
     this.shootingAnim = new Kinetic.Animation(function(frame) {
-        if (frame.time >= (lastTime + self.damageInterval)) {
-            self.bulletAnim.start();
-            self.bullet.image.show();
-            lastTime = frame.time;
+        if (self.damageInterval != null) {
+            if (frame.time >= (lastTime + self.damageInterval)) {
+                self.bulletAnim.start();
+                self.bullet.image.show();
+                lastTime = frame.time;
+            }
+        } else {
+            self.shootingAnim.stop();
         }
     }, towersLayer);
 
@@ -271,7 +275,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
     towersLayer.add(this.sale);
     towersLayer.draw();
 
-    this.image.on('click', function() { //event for click to crystal
+    this.image.on('click tap', function() { //event for click to crystal
         for (var i = 0; i < towersArray.length; i++) {
             towersArray[i].up.hide();
             towersArray[i].sale.hide();
@@ -282,7 +286,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
         self.sale.show();
         towersLayer.draw();
     });
-    this.sale.on('click', function() { //event for click to sale crystal image
+    this.sale.on('click tap', function() { //event for click to sale crystal image
         goldCounter = goldCounter + Math.round(self.cost * self.level/2);
         goldDisplay.setText(goldCounter);
         for (var i = 0; i < towersArray.length; i++) {
@@ -294,7 +298,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
         self.destroy();
         rightPanelLayer.draw();
     });
-    this.up.on('click', function() { //event for click to up crystal lvl image
+    this.up.on('click tap', function() { //event for click to up crystal lvl image
         var lvlCost = self.level * self.cost * 0.8;
         if (goldCounter >= lvlCost) {
             goldCounter = goldCounter - lvlCost;
@@ -349,11 +353,13 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 70, frameRate: 4, cost: 5}],
-    [{name: "wave2", hp: 50, frameRate: 4, cost: 7}],
-    [{name: "wave3", hp: 80, frameRate: 4, cost: 10}],
-    [{name: "wave4", hp: 60, frameRate: 4, cost: 12}],
-    [{name: "wave5", hp: 130, frameRate: 4, cost: 15}]
+    [{name: "wave1", hp: 50, frameRate: 4, cost: 5}],
+    [{name: "wave2", hp: 70, frameRate: 4, cost: 7}],
+    [{name: "wave3", hp: 90, frameRate: 4, cost: 10}],
+    [{name: "wave4", hp: 120, frameRate: 4, cost: 12}],
+    [{name: "wave5", hp: 150, frameRate: 4, cost: 15}],
+    [{name: "wave6", hp: 180, frameRate: 4, cost: 17}]
+
 ];
 var currentMonster = 0;
 var aminationMob = [
@@ -361,7 +367,8 @@ var aminationMob = [
     [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
     [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 25}],
     [{x: 20,y: 0, width: 21, height: 13},{x: 20,y: 28, width: 21, height: 13}],
-    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}]
+    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}],
+    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}]
 ];
 /* ------------------------------------------------------------------------*/
 
@@ -508,8 +515,8 @@ function spawnMonster(currentWave){
 
 /***************************************************************************/
 /**---------------------------Events---------------------------------------*/
-bgLayer.on('mousemove', function(){
-    var mousePos = stage.getMousePosition();
+bgLayer.on('mousemove touchmove', function(){
+    var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
     var mouseX = parseInt(mousePos.x/cellSize);
     var mouseY = parseInt(mousePos.y/cellSize);
     if (isBuildingFoundation) {
@@ -549,8 +556,8 @@ bgLayer.on('mousemove', function(){
     }
     bgLayer.draw();
 });
-bgLayer.on('mouseup', function(){
-    var mousePos = stage.getMousePosition();
+bgLayer.on('mouseup touchend', function(){
+    var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
     var mouseX = parseInt(mousePos.x / cellSize);
     var mouseY = parseInt(mousePos.y / cellSize);
     if (isBuildingFoundation) {
@@ -586,8 +593,8 @@ bgLayer.on('mouseup', function(){
     bgLayer.draw();
     towersLayer.draw();
 });
-beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to foundation
-        var mousePos = stage.getMousePosition();
+beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal put to foundation
+        var mousePos = stage.getPointerPosition()? stage.getPointerPosition() : stage.getMousePosition();
         var mouseX = parseInt(mousePos.x / cellSize);
         var mouseY = parseInt(mousePos.y / cellSize);
         if (isBuildingCrystal) {
@@ -595,19 +602,19 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                 if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
                     switch(towerType) {
                         case 'redCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 30, redCrystalCost, 60, 64, 30);
+                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30);
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'blueCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 35, blueCrystalCost, 65, 32, 15, 1000);
+                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 20, blueCrystalCost, 65, 32, 15, 1000);
                                 goldCounter = goldCounter - blueCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'greenCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 30, greenCrystalCost, 80, 0, 0, 500);
+                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 10, greenCrystalCost, 80, 0, 0, 500);
                                 goldCounter = goldCounter - greenCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
@@ -716,7 +723,7 @@ function buildTowersMenu() { //draw menu with towers
     rightPanelLayer.add(crystalRedIco);
 
     /* Towers menu events */
-    towerFoundationIco.on('mousedown',  function() {
+    towerFoundationIco.on('mousedown touchstart',  function() {
         if (goldCounter >= towerFoundationCost) {
             isBuildingFoundation = true;
             towerType = 'foundation';
@@ -727,7 +734,7 @@ function buildTowersMenu() { //draw menu with towers
             displayErrors("Недостаточно золота!");
         }
     });
-    crystalBlueIco.on('mousedown',  function() {
+    crystalBlueIco.on('mousedown touchstart',  function() {
         if (goldCounter >= blueCrystalCost) {
             isBuildingCrystal = true;
             towerType = 'blueCrystal';
@@ -739,7 +746,7 @@ function buildTowersMenu() { //draw menu with towers
             displayErrors("Недостаточно золота!");
         }
     });
-    crystalGreenIco.on('mousedown',  function() {
+    crystalGreenIco.on('mousedown touchstart',  function() {
         if (goldCounter >= greenCrystalCost) {
             isBuildingCrystal = true;
             towerType = 'greenCrystal';
@@ -751,7 +758,7 @@ function buildTowersMenu() { //draw menu with towers
             displayErrors("Недостаточно золота!");
         }
     });
-    crystalRedIco.on('mousedown',  function() {
+    crystalRedIco.on('mousedown touchstart',  function() {
         if (goldCounter >= greenCrystalCost) {
             isBuildingCrystal = true;
             towerType = 'redCrystal';

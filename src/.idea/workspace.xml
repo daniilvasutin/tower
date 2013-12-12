@@ -26,7 +26,7 @@
       <file leaf-file-name="tower.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/tower.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="308" column="66" selection-start="19963" selection-end="19963" vertical-scroll-proportion="0.70458406">
+            <state line="596" column="105" selection-start="29376" selection-end="29376" vertical-scroll-proportion="-4.8336163">
               <folding />
             </state>
           </provider>
@@ -44,7 +44,7 @@
       <file leaf-file-name="monster.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/monster.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="15" column="12" selection-start="234" selection-end="235" vertical-scroll-proportion="0.0">
+            <state line="41" column="55" selection-start="1013" selection-end="1013" vertical-scroll-proportion="0.0">
               <folding />
             </state>
           </provider>
@@ -297,14 +297,14 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/js/monster.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="15" column="12" selection-start="234" selection-end="235" vertical-scroll-proportion="0.0">
+        <state line="41" column="55" selection-start="1013" selection-end="1013" vertical-scroll-proportion="0.0">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/js/tower.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="308" column="66" selection-start="19963" selection-end="19963" vertical-scroll-proportion="0.70458406">
+        <state line="596" column="105" selection-start="29376" selection-end="29376" vertical-scroll-proportion="-4.8336163">
           <folding />
         </state>
       </provider>
