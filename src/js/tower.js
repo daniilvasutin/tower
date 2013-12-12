@@ -72,10 +72,13 @@ var towersArray = new Array(); //tower objects array
 var foundationsArray = new Array(); //tower objects array
 var isBuildingFoundation = false; //is the tower foundation now under construction?
 var isBuildingCrystal = false; //is the crystal now under construction?
+var isBuildingPuddle = false; //is the puddle now under construction?
 var towerFoundationCost = 10;
 var blueCrystalCost = 30; //cost of crystal
 var redCrystalCost = 40;
 var greenCrystalCost = 20;
+var bluePuddleCost = 50;
+var greenPuddleCost = 50;
 var auraAnimation = {lighting: [{x: 0, y: 0, width: 122, height: 125}, {x: 122, y: 0, width: 122, height: 126}, {x: 244, y: 0, width: 122, height: 126}, {x: 366, y: 0, width: 122, height: 126}]};
 
 function Foundation(image, x, y, width, height) {
@@ -333,6 +336,26 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
     });
 }
 
+function Puddle(x, y, type, damage, cost, radius) {
+    var self = this;
+    var lastTime = 0;
+
+    this.x = x * cellSize;
+    this.y = y * cellSize;
+    this.type = type;
+    this.damage = damage;
+    this.radius = radius || 32;
+    this.cost = cost;
+    this.image = new Kinetic.Image({
+        x: x * cellSize,
+        y: y * cellSize,
+        image: images.puddle_blue,
+        width: 30,
+        height: 30
+    });
+    towersLayer.add(this.image);
+}
+
 var beingConstructedRect = new Kinetic.Rect({ //rectangle of building tower
     x: 0,
     y: 0,
@@ -471,8 +494,8 @@ function afterBgCreating() { //run, after background is creating
     stage.add(bgLayer);
     stage.add(rightPanelLayer);
     stage.add(towersAuraLayer);
-    stage.add(monstersLayer);
     stage.add(towersLayer);
+    stage.add(monstersLayer);
     stage.add(basesLayer);
     stage.add(popupLayer);
 
@@ -569,7 +592,7 @@ var mobAnim = new Kinetic.Animation(function(frame) {
 
 function spawnMonster(currentWave){
     currentMonster++;
-    var maxspeed = 2/*Math.random()*0.5 + 0.1*/;
+    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
     var maxforce = 0.02;
     var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
     var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
@@ -627,6 +650,13 @@ bgLayer.on('mousemove touchmove', function(){
         }
     }
     if (isBuildingCrystal) {
+        beingConstructedCrystal.setAttrs({
+            x: mouseX*cellSize,
+            y: mouseY*cellSize,
+            visible: true
+        });
+    }
+    if (isBuildingPuddle) {
         beingConstructedCrystal.setAttrs({
             x: mouseX*cellSize,
             y: mouseY*cellSize,
@@ -815,6 +845,24 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
             beingConstructedCrystal.hide();
             isBuildingCrystal = false;
         }
+        if (isBuildingPuddle) {
+            switch (towerType) {
+                case 'bluePuddle':
+                    var newTower = new Puddle(mouseX, mouseY, 'bluePuddle', 0, bluePuddleCost, 32);
+                    goldCounter = goldCounter - bluePuddleCost;
+                    goldDisplay.setText(goldCounter);
+                    rightPanelLayer.draw();
+                    break;
+                case 'greenPuddle':
+                    var newTower = new Puddle(mouseX, mouseY, 'blueCrystal', 10, blueCrystalCost, 32);
+                    goldCounter = goldCounter - blueCrystalCost;
+                    goldDisplay.setText(goldCounter);
+                    rightPanelLayer.draw();
+                    break;
+            }
+            beingConstructedCrystal.hide();
+            isBuildingPuddle = false;
+        }
         towersLayer.draw();
 });
 
@@ -950,6 +998,29 @@ function buildTowersMenu() { //draw menu with towers
                 image: images.crystals
             });
             beingConstructedCrystal.setCrop([64, 0, 32, 32]);
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
+    });
+    puddleBlueIco.on('mousedown touchstart',  function() {
+        if (goldCounter >= bluePuddleCost) {
+            isBuildingPuddle = true;
+            towerType = 'bluePuddle';
+            beingConstructedCrystal.setAttrs({
+                image: images.puddle_blue
+            });
+        } else {
+            displayErrors("Недостаточно золота!");
+        }
+    });
+    puddleGreenIco.on('mousedown touchstart',  function() {
+        if (goldCounter >= greenCrystalCost) {
+            isBuildingCrystal = true;
+            towerType = 'blueCrystal';
+            beingConstructedCrystal.setAttrs({
+                image: images.crystals
+            });
+            beingConstructedCrystal.setCrop([32, 0, 32, 32]);
         } else {
             displayErrors("Недостаточно золота!");
         }
