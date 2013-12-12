@@ -362,9 +362,10 @@ function startGame(){
     mobAnim.start();
 
 //    soundManager.play('effectSprite');
-    playBackgroundMusic('gameMusic');
-    setTimeout(function(){playSprite('monsterA');},3000);
-    setTimeout(function(){playSprite('monsterHa');},25000);
+    soundManager.setVolume('gameMusic', 20);
+    playBackgroundMusic();
+//    setTimeout(function(){playSprite('monsterA');},3000);
+//    setTimeout(function(){playSprite('monsterHa');},25000);
 }
 /* ------------------------------------------------------------------------*/
 
@@ -527,9 +528,9 @@ function spawnMonster(currentWave){
             currentMonster=0;
             currentWave++;
             setTimeout(function(){
-                playSprite('newWave');
+//                playSprite('newWave');
                 if(waveCharacteris[currentWave][0].type === "fly"){
-                    playSprite("flyMonster")
+//                    playSprite("flyMonster")
 //                    setTimeout(function(){;},2500);
                 }
                 spawnMonster(currentWave)
@@ -962,83 +963,83 @@ function buidPath() {
 
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
-function playBackgroundMusic(audioId){
-    setVolume(audioId, 0.7);
-    playLoop(audioId);
-}
-
-function setVolume(audioId, volume){
-    var audio = document.getElementById(audioId);
-    audio.volume = volume;
-}
-
-function playLoop(audioId){
-    var myAudio = document.getElementById(audioId);
-    myAudio.addEventListener('ended', function() {
-        this.currentTime = 0;
-        this.play();
-    }, false);
-    myAudio.play();
-}
-
-function stopMusic(audioId){
-    var myAudio = document.getElementById(audioId);
-    myAudio.pause();
-    myAudio.currentTime = 0;
-}
-
-var audioSprite = document.getElementById('effects');
-
-// sprite data
-var spriteData = {
-    monsterA: {
-        start: 0.1,
-        length: 2.4
-    },
-    arrow: {
-        start: 3.0,
-        length: 2.0
-    },
-    monsterHa:{
-        start: 8.5,
-        length: 1.5
-    },
-    buttonHover: {
-        start: 10.4,
-        length: 0.2
-    },
-    buttonClick: {
-        start: 11.0,
-        length: 2.0
-    },
-    newWave: {
-        start: 14.0,
-        length: 2.5
-    },
-    flyMonster: {
-        start: 16.8,
-        length: 1.0
-    }
-};
-
-// current sprite being played
-var currentSprite = {};
-
-// time update handler to ensure we stop when a sprite is complete
-var onTimeUpdate = function() {
-    if (this.currentTime >= currentSprite.start + currentSprite.length) {
-        this.pause();
-    }
-};
-audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
-
-var playSprite = function(id) {          //play sprite according to the id
-    if (spriteData[id] && spriteData[id].length) {
-        currentSprite = spriteData[id];
-        audioSprite.currentTime = currentSprite.start;
-        audioSprite.play();
-    }
-};
+//function playBackgroundMusic(audioId){
+//    setVolume(audioId, 0.7);
+//    playLoop(audioId);
+//}
+//
+//function setVolume(audioId, volume){
+//    var audio = document.getElementById(audioId);
+//    audio.volume = volume;
+//}
+//
+//function playLoop(audioId){
+//    var myAudio = document.getElementById(audioId);
+//    myAudio.addEventListener('ended', function() {
+//        this.currentTime = 0;
+//        this.play();
+//    }, false);
+//    myAudio.play();
+//}
+//
+//function stopMusic(audioId){
+//    var myAudio = document.getElementById(audioId);
+//    myAudio.pause();
+//    myAudio.currentTime = 0;
+//}
+//
+//var audioSprite = document.getElementById('effects');
+//
+//// sprite data
+//var spriteData = {
+//    monsterA: {
+//        start: 0.1,
+//        length: 2.4
+//    },
+//    arrow: {
+//        start: 3.0,
+//        length: 2.0
+//    },
+//    monsterHa:{
+//        start: 8.5,
+//        length: 1.5
+//    },
+//    buttonHover: {
+//        start: 10.4,
+//        length: 0.2
+//    },
+//    buttonClick: {
+//        start: 11.0,
+//        length: 2.0
+//    },
+//    newWave: {
+//        start: 14.0,
+//        length: 2.5
+//    },
+//    flyMonster: {
+//        start: 16.8,
+//        length: 1.0
+//    }
+//};
+//
+//// current sprite being played
+//var currentSprite = {};
+//
+//// time update handler to ensure we stop when a sprite is complete
+//var onTimeUpdate = function() {
+//    if (this.currentTime >= currentSprite.start + currentSprite.length) {
+//        this.pause();
+//    }
+//};
+//audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
+//
+//var playSprite = function(id) {          //play sprite according to the id
+//    if (spriteData[id] && spriteData[id].length) {
+//        currentSprite = spriteData[id];
+//        audioSprite.currentTime = currentSprite.start;
+//        audioSprite.play();
+//    }
+//};
 
 
 
@@ -1047,20 +1048,20 @@ var playSprite = function(id) {          //play sprite according to the id
 
 
 
-//var sound = new Howl({
-//    urls: ['../music/effectSprite.mp3'],
-//    sprite: {
-//        monsterA: [100,2400],
-//        arrow: [3000,2000],
-//        monsterHa:[8500,1500],
-//        buttonHover: [10600,300],
-//        buttonClick:[11000,2000],
-//        newWave: [14000,2500],
-//        flyMonster: [16800,1000]
-//    }
-//});
-//
-//sound.play('buttonHover');
+var sound = new Howl({
+    urls: ['../music/effectSprite.mp3'],
+    sprite: {
+        monsterA: [100,2400],
+        arrow: [3000,2000],
+        monsterHa:[8500,1500],
+        buttonHover: [10600,300],
+        buttonClick:[11000,2000],
+        newWave: [14000,2500],
+        flyMonster: [16800,1000]
+    }
+});
+
+sound.play('buttonHover');
 //////////////////////////////////////////
 
 ////********************************************
@@ -1084,36 +1085,57 @@ var playSprite = function(id) {          //play sprite according to the id
 
 //soundManager.onready(function(){soundManager.play('effectSprite')});
 
-
-function createSoundMandager(){
-    soundManager.createSound({
-        id: 'effectSprite',
-        url: '../music/effectSprite.mp3'
-    });
-    soundManager.createSound({
-        id: 'menuMusic',
-        url: '../music/menuMusic.mp3'
-    });
-    soundManager.createSound({
-        id: 'gameMusic',
-        url: '../music/gameMusic.mp3'
-    });
-
-}
-
-//function playsome(){
-//    soundManager.play('effectSprite');
+//var effectSprite;
+//var effectSpriteArray = {
+//    monsterA:   {begin: 100, end: 2400},
+//    arrow:      {begin: 3000, end: 5000},
+//    monsterHa:  {begin: 8500, end: 10000},
+//    buttonHover:{begin: 10600, end: 11000},
+//    buttonClick:{begin: 11300, end: 13000},
+//    newWave:    {begin: 14000, end: 16500},
+//    flyMonster: {begin: 16800, end: 17800}
+//};
+//
+//function createSoundMandager(){
+//    effectSprite = soundManager.createSound({
+//        id: 'effectSprite',
+//        url: '../music/effectSprite.mp3'/*,
+//        multiShotEvents: true*/
+//    });
+//    soundManager.createSound({
+//        id: 'menuMusic',
+//        url: '../music/menuMusic.mp3'/*,
+//        onfinish: function(){
+//            this.play();
+//        }*/
+//    });
+//    soundManager.createSound({
+//        id: 'gameMusic',
+//        url: '../music/gameMusic.mp3'/*,
+//        onfinish: function(){
+//            this.play();
+//        }*/
+//    });
+//
 //}
-//function
-
-
-
-
-
-//var mySound = soundManager.createSound({
-//    url: '../music/effectSprite.mp3'
-//});
-//mySound.play();
+//
+//function playFromTo(nFrom, nTo) {
+////    effectSprite.stop();
+//    effectSprite.play({
+//        from: nFrom,
+//        to: nTo/*,
+//         onstop: function() {
+//         }*/
+//    });
+//}
+//
+//function playSprite(effect) {
+//    playFromTo(effectSpriteArray[effect]['begin'], effectSpriteArray[effect]['end']);
+//}
+//
+//function playBackgroundMusic(){
+//    soundManager.play('gameMusic');
+//}
 
 ////********************************************
 

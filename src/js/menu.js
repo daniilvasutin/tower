@@ -1,22 +1,28 @@
 $(document).on('ready', function() {
 
-    soundManager.onready(function(){
-        createSoundMandager();
+//    soundManager.onready(function(){
+//        createSoundMandager();
+//        soundManager.setVolume('menuMusic',10);
+//        soundManager.play('menuMusic');
 
-        setVolume('menuMusic',0.2);
+
         $('.button').hover(function(){
-            playSprite('buttonHover');
+//            soundManager.play('');
+//            playSprite('buttonHover');
+//            playSprite('buttonHover');
+            sound.play('buttonHover');
         },function(){});
 
         $('.button').click(function(){
-            playSprite('buttonClick');
+//            playSprite('buttonHover');
+//            playSprite('buttonClick');
         });
 
         $('#new_game_btn').on('click', function() {
             $('#main').slideUp();
             $('#game').slideDown();
             loadImages(sources, startGame);
-            stopMusic('menuMusic');
+            soundManager.stop('menuMusic');
         });
         $('#help_btn').on('click', function() {
             $('#main').slideUp();
@@ -45,5 +51,5 @@ $(document).on('ready', function() {
                 ww.close();
             }, 300);
         }
-    });
+//    });
 });
