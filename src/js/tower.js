@@ -3,7 +3,7 @@ var images = {};
 var sources = {
     bgSprite: "images/sprite_bg.jpg",
     rightPanel: "images/panel.jpg",
-    monsterImg: "images/monster.png",
+    monsterImg: "images/mobs_sprite.png",
     towerFoundationIco: "images/tower_foundation_ico.jpg",
     crystalsIcons: "images/crystals_icons.jpg",
     crystals: "images/crystals.png",
@@ -41,7 +41,6 @@ var cellSize = 32; //size of tile in background
 var widthCellCount = 22; //canvas width in cells + 4 for panel
 var heightCellCount = 15; //canvas height in cells
 var busyCells = new Array(); //busy cells in map
-var pathCells = new Array();  //path cells in map
 
 var map1 = //Map by two-dimensional array
         [         //0                           1                           2                             3                           4                           5                            6                           7                             8                          9                            10                            11                          12                         13                           14                             15                          16                            17                      18                      19                      20
@@ -60,9 +59,10 @@ var map1 = //Map by two-dimensional array
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:1,busy:1,TileType:4},{x:11,y:1,busy:1,TileType:4},{x:12,y:1,busy:1,TileType:4},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //13 row
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:2,busy:1,TileType:4},{x:11,y:2,busy:1,TileType:4},{x:12,y:2,busy:1,TileType:4},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:7,y:3,busy:1,TileType:5},{x:7,y:1,busy:1,TileType:9}, {x:7,y:2,busy:1,TileType:2}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0}, {x:7,y:2,busy:1,TileType:2},{x:2,y:2,busy:0,TileType:0},{x:1,y:4,busy:1,TileType:1},{x:2,y:4,busy:1,TileType:1},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}], //14 row
         [{x:2,y:2,busy:0,TileType:0},{x:10,y:3,busy:1,TileType:4},{x:11,y:3,busy:1,TileType:4},{x:12,y:3,busy:1,TileType:4},{x:7,y:3,busy:1,TileType:5},{x:7,y:2,busy:1,TileType:2},{x:9,y:3,busy:1,TileType:7},{x:9,y:2,busy:1,TileType:10},{x:8,y:2,busy:1,TileType:12},{x:7,y:1,busy:1,TileType:9}, {x:2,y:2,busy:0,TileType:0}, {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:1,y:5,busy:1,TileType:1},{x:2,y:5,busy:1,TileType:1},  {x:2,y:2,busy:0,TileType:0},  {x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0},{x:2,y:2,busy:0,TileType:0}] //15 row
-    ];                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  //17F
-var mapBeginCell1 = {i: 3, j: 5};
-var mapEndCell1 = {i: 11, j: 17};
+    ];
+//var monsters = new Array();                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            //17F
+var path;
+var pathCells = [{x:4,y:3},{x:8,y:3},{x:8,y:8},{x:3,y:8},{x:3,y:11},{x:12,y:11},{x:12,y:3},{x:17,y:3},{x:17,y:12}];
 /* ------------------------------------------------------------------------*/
 
 /** ----------------------------Towers var--------------------------------*/
@@ -75,7 +75,7 @@ var towerFoundationCost = 10;
 var blueCrystalCost = 15; //cost of crystal
 var redCrystalCost = 20;
 var greenCrystalCost = 25;
-var auraAnimation = {lighting: [{x: 0, y: 0, width: 160, height: 168}, {x: 165, y: 0, width: 160, height: 168}, {x: 330, y: 0, width: 160, height: 168}]};
+var auraAnimation = {lighting: [{x: 0, y: 0, width: 180, height: 185}, {x: 180, y: 0, width: 180, height: 185}, {x: 360, y: 0, width: 180, height: 185}, {x: 540, y: 0, width: 180, height: 185}]};
 
 function Foundation(image, x, y, width, height) {
     var self = this;
@@ -94,8 +94,73 @@ function Foundation(image, x, y, width, height) {
     bgLayer.draw();
 }
 
-function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, width, height) {
+function Bullet(x, y, bulletCropX) {
+    this.x = x;
+    this.y = y;
+    this.locat = new PVector(x,y);
+    
+    var velocity = new PVector(0,-2);
+    var acceleration = new PVector(0,0);
+    var maxspeed = 2;
+    var maxforce = 0.3;
+
+    this.image = new Kinetic.Image({
+        x: x + 10,
+        y: y + 10,
+        image: images.bullets,
+        crop: [bulletCropX, 0, 15, 15],
+        width: 10,
+        height: 10,
+        visible: false
+    });
+    towersLayer.add(this.image);
+
+    this.remove = function() {
+        this.image.remove();
+    }
+    this.update = function() {
+        velocity.add(acceleration);
+        velocity.limit(maxspeed);
+
+        this.locat.add(velocity);
+        acceleration.mult(0);
+    }
+
+    this.applyForce = function(force) {
+        acceleration.add(force);
+    }
+
+    this.seek = function(target) {
+
+        var desired = PVector.sub(target,this.locat);
+        desired.normalize();
+        desired.mult(maxspeed);
+
+        var steer = PVector.sub(desired,velocity);
+        steer.limit(maxforce);
+
+        this.applyForce(steer);
+    }
+
+    this.display = function() {
+        var theta = velocity.heading2D() + Math.PI/2;
+        this.image.setX(this.locat.x);
+        this.image.setY(this.locat.y);
+    }
+    
+    this.restore = function() {
+        this.image.hide();
+        this.image.setAttrs({x: this.x + 10, y: this.y + 10});
+        this.locat.x = this.x;
+        this.locat.y = this.y;
+    }
+}
+
+function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, damageInterval, width, height) {
     var self = this;
+    var lastTime = 0;
+
+    this.damageInterval = damageInterval;
     this.x = x * cellSize;
     this.y = y * cellSize;
     this.type = type;
@@ -127,15 +192,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
         height: 19,
         visible: false
     });
-    this.bullet = new Kinetic.Image({
-        x: x * cellSize + 16,
-        y: y * cellSize + 5,
-        image: images.bullets,
-        crop: [bulletCropX, 0, 15, 15],
-        width: 10,
-        height: 10,
-        visible: false
-    });
+
     this.circle = new Kinetic.Circle({
         x: x * cellSize + cellSize / 2,
         y: y * cellSize + cellSize / 2,
@@ -144,41 +201,70 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
         strokeWidth: 2,
         visible: false
     });
-    this.mob = 0;
+
+    if (type == 'redCrystal') {
+        this.aura = new Kinetic.Sprite({
+          x: x * cellSize - 73,
+          y: y * cellSize - 70,
+          image: images.aura,
+          animation: 'lighting',
+          animations: auraAnimation,
+          frameRate: 6,
+          index: 0
+        });
+        towersLayer.add(this.aura);
+        this.aura.start();
+    } else {
+        this.bullet = new Bullet(x * cellSize, y * cellSize, bulletCropX);
+        
+    }
+    
+    this.mob = null;
+
     this.destroy = function() {
+        self.shootingAnim.stop();
         self.bulletAnim.stop();
         self.image.remove();
-        self.bullet.remove();
+        if (self.bullet != null) self.bullet.remove();
         self.sale.remove();
         self.up.remove();
         self.circle.remove();
+        if (self.aura != null) self.aura.remove();
         self = null;
         towersLayer.draw();
         bgLayer.draw();
     }
-    this.bulletAnim = new Kinetic.Animation(function(frame) {
-        if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) < 0) {
-            self.bullet.setX(self.bullet.getX() + 2);
-        } else if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) > 3) {
-            self.bullet.setX(self.bullet.getX() - 2);
-        }
-        if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) < 0) {
-            self.bullet.setY(self.bullet.getY() + 2);
-        } else if (self.mob != 0 && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) > 3) {
-            self.bullet.setY(self.bullet.getY() - 2);
-        }
-        if (self.mob != 0 && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) >= 0
-                             && self.bullet.getX() - (self.mob.sprite.attrs.x + 20) <= 3
-                             && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) >= 0
-                             && self.bullet.getY() - (self.mob.sprite.attrs.y + 20) <= 3) {
-            self.mob.hp -= self.damage; //damage mob
-            if (self.mob.hp <= 0) self.mob = 0; //if mob is dead free tower
-            this.stop();
-            self.bullet.hide();
-            self.bullet.setAttrs({x: self.x + 16, y: self.y + 5});
+    
+    this.shootingAnim = new Kinetic.Animation(function(frame) {
+        if (frame.time >= (lastTime + self.damageInterval)) {
+            self.bulletAnim.start();
+            self.bullet.image.show();
+            lastTime = frame.time;
         }
     }, towersLayer);
-    towersLayer.add(this.bullet);
+
+
+    this.bulletAnim = new Kinetic.Animation(function(frame) {
+        if (self.mob != null) {
+            var target = new PVector(self.mob.sprite.attrs.x, self.mob.sprite.attrs.y);
+            self.bullet.seek(target);
+            self.bullet.update();
+            self.bullet.display();
+            if (self.bullet.image.getX() - self.mob.sprite.getX() >= -5 &&
+                self.bullet.image.getX() - self.mob.sprite.getX() <= 5 &&
+                self.bullet.image.getY() - self.mob.sprite.getY() >= -5 &&
+                self.bullet.image.getY() - self.mob.sprite.getY() <= 5) {
+                    self.mob.hp -= self.damage; //damage mob
+                    if (self.mob.hp <= 0) {
+                        self.mob = null;
+                        self.shootingAnim.stop();
+                    } //if mob is dead free tower
+                    self.bullet.restore();
+                    self.bulletAnim.stop();
+            }
+        }
+    }, towersLayer);
+    
     towersLayer.add(this.circle);
     towersLayer.add(this.image);
     towersLayer.add(this.up);
@@ -197,7 +283,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
         towersLayer.draw();
     });
     this.sale.on('click', function() { //event for click to sale crystal image
-        goldCounter = goldCounter + Math.round(self.cost/2);
+        goldCounter = goldCounter + Math.round(self.cost * self.level/2);
         goldDisplay.setText(goldCounter);
         for (var i = 0; i < towersArray.length; i++) {
             if (self.x == towersArray[i].x) {
@@ -209,13 +295,18 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, widt
         rightPanelLayer.draw();
     });
     this.up.on('click', function() { //event for click to up crystal lvl image
-        var lvlCost = self.level * 15;
+        var lvlCost = self.level * self.cost * 0.8;
         if (goldCounter >= lvlCost) {
             goldCounter = goldCounter - lvlCost;
             self.level++;
-            self.radius = self.radius + 5;
-            self.circle.setAttrs({radius: self.radius});
+            if (self.type == 'redCrystal') {
+                self.damageInterval *= 0.9;
+                self.damage = self.damage * 1.1;
+            } else {
+                self.damage = self.damage * 1.3;
+            }
             goldDisplay.setText(goldCounter);
+            displayErrors('Кристал улучшен до ' + self.level + ' уровня!');
             rightPanelLayer.draw();
             towersLayer.draw();
         } else {
@@ -257,15 +348,21 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
-var monsterTweenArray = new Array();
-var direction = new Array();
+var waveCharacteris = [
+    [{name: "wave1", hp: 70, frameRate: 4, cost: 5}],
+    [{name: "wave2", hp: 50, frameRate: 4, cost: 7}],
+    [{name: "wave3", hp: 80, frameRate: 4, cost: 10}],
+    [{name: "wave4", hp: 60, frameRate: 4, cost: 12}],
+    [{name: "wave5", hp: 130, frameRate: 4, cost: 15}]
+];
 var currentMonster = 0;
-var animations = {
-    goRight: [{x:0,y:130,width:47,height:60},{x:47,y:130,width:47,height:60},{x:96,y:130,width:44,height:60},{x:143,y:130,width:48,height:60}],
-    goTop:   [{x:0,y:195,width:45,height:60},{x:45,y:195,width:47,height:60},{x:95,y:195,width:47,height:60},{x:145,y:195,width:46,height:60}],
-    goBottom:[{x:0,y:0,width:45,height:60},{x:45,y:0,width:47,height:60},{x:95,y:0,width:47,height:60},{x:145,y:0,width:46,height: 60}],
-    goLeft:  [{x:0,y:65,width:50,height:60},{x:50,y:65,width:50,height:60},{x:100,y:65,width:47,height:60},{x:147,y:65,width:50,height:60}]
-};
+var aminationMob = [
+    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
+    [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
+    [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 25}],
+    [{x: 20,y: 0, width: 21, height: 13},{x: 20,y: 28, width: 21, height: 13}],
+    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}]
+];
 /* ------------------------------------------------------------------------*/
 
 /**-----------------------Counters vars-------------------------------------*/
@@ -318,6 +415,7 @@ var stage = new Kinetic.Stage({
 var bgLayer = new Kinetic.Layer();
 var towersLayer = new Kinetic.Layer();
 var rightPanelLayer = new Kinetic.Layer();
+var monstersLayer = new Kinetic.Layer();
 
 function afterBgCreating() { //run, after background is creating
     var rightPanel = new Kinetic.Image({
@@ -340,6 +438,7 @@ function afterBgCreating() { //run, after background is creating
     buildBases();
 
     stage.add(bgLayer);
+    stage.add(monstersLayer);
     stage.add(rightPanelLayer);
     stage.add(towersLayer);
 }
@@ -352,11 +451,12 @@ function playBackgroundMusic(){
 
 function startGame(){
     buildBackground(map1);
-    findPath(map1,mapBeginCell1,mapEndCell1);
+
+    buidPath();
 
     setTimeout(afterBgCreating, 100);
-    createMonsters();
-    newMonstersMove();
+    spawnMonster(0);
+    mobAnim.start();
 
     //playBackgroundMusic();
     //setTimeout(function(){playSprite('monsterA');},3000);
@@ -366,160 +466,40 @@ function startGame(){
 /* ------------------------------------------------------------------------*/
 
 
-
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
 
-    //v 1.6
-function Monster (index,image, x, y, type, hp, name, moveSpeed,frameRate,animations, opacity) {
-    var self = this;
-    this.x = x;
-    this.y = y;
-    this.opacity = opacity;
-    this.type = type;
-    this.hp = hp;
-    this.name = name;
-    this.image = image;
-    this.animations = animations;
-    this.frameRate = frameRate;
-    this.moveSpeed = moveSpeed;
-    this.sprite = new Kinetic.Sprite({
-        x: this.x,
-        y: this.y,
-        image: this.image,
-        animation: 'goRight',
-        animations: this.animations,
-        frameRate: this.frameRate,
-        index: 0,
-        opacity:self.opacity
-    });
-    this.currentStep = 0;
-    this.index = index;
-    this.anim = new Kinetic.Animation(function(frame) {
-        var step = self.moveSpeed * frame.timeDiff / 1000;
-        var eps = step+5;
-        var nextStep = self.currentStep+1;
-        if(self.currentStep < pathCells.length-1){
-            if(frame.time < 2000) {
-                var op = self.sprite.getOpacity() + 0.02;
-                self.sprite.setOpacity(op);
-            }
-            if(direction[self.currentStep] !== direction[nextStep]){
-                self.sprite.setAnimation(direction[nextStep]);
-            }
-            if(direction[self.currentStep] === "goRight"){
-                self.sprite.move(step, 0);
-                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goBottom"){
-                self.sprite.moveUp();
-                self.sprite.move(0, step);
-                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goLeft" ){
-                self.sprite.move((-1)*step, 0);
-                if(Math.abs(self.sprite.getX() - pathCells[nextStep].j*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }else if(direction[self.currentStep] === "goTop" ){
-                self.sprite.move(0, (-1)*step);
-                if(Math.abs(self.sprite.getY() - (pathCells[nextStep].i-1)*cellSize) <= eps){
-                    self.currentStep++;
-                }
-            }
+
+var mobAnim = new Kinetic.Animation(function(frame) {
+    for(var i = 0; i < monsterArray.length; i++) {
+        monsterArray[i].applyBehaviors(monsterArray,path);
+        if(monsterArray[i].run())
+        {
+            monsterArray[i].sprite.remove();
+            monsterArray.splice(i,1);
         }
-        //damage mobs
-        for (var i = 0; i < towersArray.length; i++) {
-            var mobPositionRadius = Math.sqrt(Math.pow(towersArray[i].x + cellSize / 2 - self.sprite.attrs.x, 2)
-                                              + Math.pow(towersArray[i].y + cellSize / 2  - self.sprite.attrs.y, 2)); //is mob in tower radius
-            if (mobPositionRadius <= towersArray[i].radius) {
-                if (towersArray[i].mob == 0) {
-                    towersArray[i].mob = self; //tower sooting in this mob
-                }
-                towersArray[i].bullet.show();
-                towersArray[i].bulletAnim.start();
-            } else if (towersArray[i].mob == self) { //mob is not in tower radius
-                towersArray[i].mob = 0;
-                towersArray[i].bullet.hide();
-                towersArray[i].bullet.setAttrs({x: towersArray[i].x + 16, y: towersArray[i].y + 5});
-            }
-        }
-        if (self.hp <= 0) { //if mob is dead, delete it
-            self.anim.stop();
-            self.sprite.remove();
-            for (var i = 0; i < monsterArray.length; i++) {
-                if (self.sprite == monsterArray[i].sprite) {
-                    monsterArray.splice(i,1);
-                    break;
-                }
-            }
-            self = null;
-            currentMonster--; //change number of monster to move
-        } else if (self.currentStep == pathCells.length-3) { //if mob come to our base
-            self.anim.stop();
-            self.sprite.remove();
-            for (var i = 0; i < monsterArray.length; i++) {
-                if (self.sprite == monsterArray[i].sprite) {
-                    monsterArray.splice(i,1);
-                    break;
-                }
-            }
-            self = null;
-            currentMonster--; //change number of monster to move
-            hpCounter--; //deduct health points
-            healthPoints.setText(hpCounter);
-            rightPanelLayer.draw();
-            if (hpCounter <= 0) { //CHANGE THEM!!!!
-                if (confirm("You loose!!! Ahahhaha!!!")) {
-                    window.location.reload();
-                }
-            }
-/*                new Kinetic.Tween({
-                node: self.sprite,
-                duration: 1,
-                opacity: 0,
-                onFinish: function(){
-                    self.sprite.moveToBottom();
-                    self.sprite.stop();
-                    self.anim.stop();
-                    this.destroy();
-                }
-            }).play();*/
-        }
-    }, bgLayer);
-
-    bgLayer.add(this.sprite);
-    this.sprite.start();
-    bgLayer.draw();
-}
-
-
-    //v1.5
-
-
-function newMonstersMove(){
-//    monsterArray[currentMonsterTween].show();
-    monsterArray[currentMonster].anim.start();
-    currentMonster++;
-    if(currentMonster < monsterArray.length) setTimeout(function(){newMonstersMove()}, 2000);
-}
-
-function createMonsters(){
-    for (var i=0; i < 10; i++) {
-        var monster = new Monster(i,images.monsterImg, pathCells[0].j * cellSize, (pathCells[0].i-1) * cellSize, "notype", 100, "EpicTerribleMouse", 35, 6,animations, 1);
-        monsterArray.push(monster);
     }
-}
+}, monstersLayer);
 
+function spawnMonster(currentWave){
+    currentMonster++;
+    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
+    var maxforce = 0.02;
+    var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+    var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
+    monsterArray.push(new Monster(new PVector(x,y),maxspeed,maxforce,pathCells[pathCells.length-1],images.monsterImg, aminationMob,currentWave));
+    if(currentMonster < 20) {
+        setTimeout(function(){
+            spawnMonster(currentWave)
+        }, Math.random()*1000 + 1000);
+    }else {
+        if(currentWave < 4){
+            currentMonster=0;
+            currentWave++;
+            setTimeout(function(){spawnMonster(currentWave)},20000);
+        }
+    }
 
-function monstersMove(currentMonsterTween){
-    var currentMonsterTween = currentMonsterTween || 0;
-//    monsterArray[currentMonsterTween].show();
-    monsterTweenArray[currentMonsterTween].play();
-    currentMonsterTween++;
-    if(currentMonsterTween < monsterArray.length) setTimeout(function(){monstersMove(currentMonsterTween)}, 1000);
 }
 /* -----------------------------Monster processing-------------------------*/
 
@@ -582,7 +562,7 @@ bgLayer.on('mouseup', function(){
                     rightPanelLayer.draw();
                 foundationsArray.push(newFoundationTower);
                 busyCells.push({x: mouseX, y: mouseY}); //add tower rectangle to busy cells array
-    
+
                 beingConstructedRect.hide();
                 beingConstructedTower.hide();
                 isBuildingFoundation = false;
@@ -621,13 +601,13 @@ beingConstructedCrystal.on('mouseup', function(){ //event for crystal put to fou
                                 rightPanelLayer.draw();
                             break;
                         case 'blueCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 35, blueCrystalCost, 50, 32, 15);
+                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 35, blueCrystalCost, 65, 32, 15, 1000);
                                 goldCounter = goldCounter - blueCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'greenCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 30, greenCrystalCost, 70, 0, 0);
+                            var newTower = new Crystal(mouseX, mouseY, 'greenCrystal', 30, greenCrystalCost, 80, 0, 0, 500);
                                 goldCounter = goldCounter - greenCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
@@ -752,9 +732,9 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'blueCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.crystals,
-                cropX: 32
+                image: images.crystals
             });
+            beingConstructedCrystal.setCrop([32, 0, 32, 32]);
         } else {
             displayErrors("Недостаточно золота!");
         }
@@ -764,9 +744,9 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'greenCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.crystals,
-                cropX: 0
+                image: images.crystals
             });
+            beingConstructedCrystal.setCrop([0, 0, 32, 32]);
         } else {
             displayErrors("Недостаточно золота!");
         }
@@ -776,9 +756,9 @@ function buildTowersMenu() { //draw menu with towers
             isBuildingCrystal = true;
             towerType = 'redCrystal';
             beingConstructedCrystal.setAttrs({
-                image: images.crystals,
-                cropX: 64
+                image: images.crystals
             });
+            beingConstructedCrystal.setCrop([64, 0, 32, 32]);
         } else {
             displayErrors("Недостаточно золота!");
         }
@@ -815,119 +795,24 @@ function cleanErrorMessages() { //clean errors
     rightPanelLayer.draw();
 }
 
-function findPath(map,mapBeginCell,mapEndCell) {
-    var stepBefore = {i: mapBeginCell.i,j: mapBeginCell.j};
-    var first = {i: mapBeginCell.i, j: mapBeginCell.j};
-    var last = {i: mapEndCell.i, j: mapEndCell.j};
-    findNextCell(map,mapBeginCell, mapEndCell,stepBefore,first, last);
-}
 
-function findNextCell(map,currentCell, mapEndCell, stepBefore, first, last){
-    var ii= currentCell.i;
-    var jj= currentCell.j;
 
-    var indexI = ii;
-    var indexJ = jj;
+function buidPath() {
 
-//    console.log(map[indexI][indexJ-1].TileType, map[indexI][indexJ+1].TileType, map[indexI-1][indexJ].TileType, map[indexI+1][indexJ].TileType);
+    path = new Path();
 
-    try{ map[indexI][indexJ+1].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ--; }
-    if(map[indexI][indexJ+1].TileType == 6 && indexJ+1 !== stepBefore.j){
-        if(first.i == ii && first.j == jj){
-            pathCells.push({i: ii, j: jj-2});
-            direction.push("goRight");
-            pathCells.push({i: ii, j: jj-1});
-            direction.push("goRight");
-            pathCells.push({i: ii, j: jj});
-            direction.push("goRight");
-        }
-        stepBefore = {i: ii, j: jj};
-        jj++;
-        pathCells.push({i: ii, j: jj});
-        direction.push("goRight");
-        if(last.i == ii && last.j == jj){
-            pathCells.push({i: ii, j: jj+1});
-            direction.push("goRight");
-            pathCells.push({i: ii, j: jj+2});
-            direction.push("goRight");
-        }
-    }else{
-        try{ map[indexI][indexJ-1].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexJ++; }
-        if(map[indexI][indexJ-1].TileType == 6 && indexJ-1 !== stepBefore.j){
-            if(first.i == ii && first.j == jj){
-                pathCells.push({i: ii, j: jj+2});
-                direction.push("goLeft");
-                pathCells.push({i: ii, j: jj+1});
-                direction.push("goLeft");
-                pathCells.push({i: ii, j: jj});
-                direction.push("goLeft");
-            }
-            stepBefore = {i: ii, j: jj};
-            jj--;
-            pathCells.push({i: ii, j: jj});
-            direction.push("goLeft");
-            if(last.i == ii && last.j == jj){
-                pathCells.push({i: ii, j: jj-1});
-                direction.push("goLeft");
-                pathCells.push({i: ii, j: jj-2});
-                direction.push("goLeft");
-            }
-        }else{
-            try{ map[indexI+1][indexJ].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexI--; }
-            if(map[indexI+1][indexJ].TileType == 6 && indexI+1 !== stepBefore.i){
-                if(first.i == ii && first.j == jj){
-                    pathCells.push({i: ii-2, j: jj});
-                    direction.push("goBottom");
-                    pathCells.push({i: ii-1, j: jj});
-                    direction.push("goBottom");
-                    pathCells.push({i: ii, j: jj});
-                    direction.push("goBottom");
-                }
-                stepBefore = {i: ii, j: jj};
-                ii++;
-                pathCells.push({i: ii, j: jj});
-                direction.push("goBottom");
-                if(last.i == ii && last.j == jj){
-                    pathCells.push({i: ii+1, j: jj});
-                    direction.push("goBottom");
-                    pathCells.push({i: ii+2, j: jj});
-                    direction.push("goBottom");
-                }
-            }else{
-                try{ map[indexI-1][indexJ].TileType; }catch(e){ stepBefore = { i: ii, j: jj }; indexI++; }
-                if(map[indexI-1][indexJ].TileType == 6 && indexI-1 !== stepBefore.i){
-                    if(first.i == ii && first.j == jj){
-                        pathCells.push({i: ii+2, j: jj});
-                        direction.push("goTop");
-                        pathCells.push({i: ii+1, j: jj});
-                        direction.push("goTop");
-                        pathCells.push({i: ii, j: jj});
-                        direction.push("goTop");
-                    }
-                    stepBefore = {i: ii, j: jj};
-                    ii--;
-                    pathCells.push({i: ii, j: jj});
-                    direction.push("goTop");
-                    if(last.i == ii && last.j == jj){
-                        pathCells.push({i: ii-1, j: jj});
-                        direction.push("goTop");
-                        pathCells.push({i: ii-2, j: jj});
-                        direction.push("goTop");
-                    }
-                }
-            }
-        }
+    for(var i = 0; i < pathCells.length; i++) {
+        path.addPoint(pathCells[i].x*cellSize + cellSize/2,pathCells[i].y*cellSize + cellSize/2);
     }
 
-    if(ii == mapEndCell.i && jj == mapEndCell.j){
+    path.createLine();
 
-    }else{
-        currentCell.i = ii;
-        currentCell.j = jj;
-        findNextCell(map,currentCell, mapEndCell, stepBefore, first, last);
-    }
-    delete map1; //!!!!!
-    map1 = null;
+    /*path.addPoint(offset,offset);
+     path.addPoint(width-offset,offset);
+     path.addPoint(width-offset,height-offset);
+     path.addPoint(width/2,height-offset*3);
+     path.addPoint(offset,height-offset);*/
+
 }
 /* -----------------------------Map processing-----------------------------*/
 
