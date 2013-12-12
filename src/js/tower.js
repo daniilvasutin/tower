@@ -13,7 +13,8 @@ var sources = {
     aura: "images/aura.png",
     saleTower: "images/sale.png",
     upTower: "images/up.png",
-    bullets: "images/bullets.png"
+    bullets: "images/bullets.png",
+    puddle_blue: "images/puddle.png"
 };
 
 function loadImages(sources, callback) {
@@ -75,7 +76,7 @@ var towerFoundationCost = 10;
 var blueCrystalCost = 30; //cost of crystal
 var redCrystalCost = 40;
 var greenCrystalCost = 20;
-var auraAnimation = {lighting: [{x: 0, y: 0, width: 180, height: 185}, {x: 180, y: 0, width: 180, height: 185}, {x: 360, y: 0, width: 180, height: 185}, {x: 540, y: 0, width: 180, height: 185}]};
+var auraAnimation = {lighting: [{x: 0, y: 0, width: 122, height: 125}, {x: 122, y: 0, width: 122, height: 126}, {x: 244, y: 0, width: 122, height: 126}, {x: 366, y: 0, width: 122, height: 126}]};
 
 function Foundation(image, x, y, width, height) {
     var self = this;
@@ -204,8 +205,8 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
 
     if (type == 'redCrystal') {
         this.aura = new Kinetic.Sprite({
-          x: x * cellSize - 73,
-          y: y * cellSize - 70,
+          x: x * cellSize - 45,
+          y: y * cellSize - 40,
           image: images.aura,
           animation: 'lighting',
           animations: auraAnimation,
@@ -371,8 +372,11 @@ var waveCharacteris = [
     [{name: "wave3", hp: 90, frameRate: 4, cost: 10}],
     [{name: "wave4", hp: 120, frameRate: 4, cost: 12}],
     [{name: "wave5", hp: 150, frameRate: 4, cost: 15}],
-    [{name: "wave6", hp: 180, frameRate: 4, cost: 17}]
-
+    [{name: "wave6", hp: 180, frameRate: 4, cost: 17}],
+    [{name: "wave7", hp: 250, frameRate: 4, cost: 20}],
+    [{name: "wave8", hp: 280, frameRate: 4, cost: 25}],
+    [{name: "wave9", hp: 310, frameRate: 4, cost: 28}],
+    [{name: "wave10", hp: 340, frameRate: 4, cost: 30}]
 ];
 var currentMonster = 0;
 var aminationMob = [
@@ -381,13 +385,17 @@ var aminationMob = [
     [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 25}],
     [{x: 20,y: 0, width: 21, height: 13},{x: 20,y: 28, width: 21, height: 13}],
     [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}],
-    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}]
+    [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
+    [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
+    [{x: 79,y: 0, width: 17, height: 26},{x: 79,y: 28, width: 17, height: 25}],
+    [{x: 20,y: 0, width: 21, height: 13},{x: 20,y: 28, width: 21, height: 13}],
+    [{x: 41,y: 0, width: 19, height: 26},{x: 41,y: 28, width: 15, height: 26}]
 ];
 /* ------------------------------------------------------------------------*/
 
 /**-----------------------Counters vars-------------------------------------*/
 var goldCounter = 100;
-var hpCounter = 5;
+var hpCounter = 10;
 /*--------------------------------------------------------------------------*/
 
 /**-----------------------------Text vars-----------------------------*/
@@ -402,7 +410,7 @@ var goldDisplay = new Kinetic.Text({
 var healthPoints = new Kinetic.Text({
     x: 23*cellSize+12,
     y: cellSize+8,
-    text: '5',
+    text: '10',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
@@ -438,6 +446,7 @@ var towersLayer = new Kinetic.Layer();
 var rightPanelLayer = new Kinetic.Layer();
 var monstersLayer = new Kinetic.Layer();
 var basesLayer = new Kinetic.Layer();
+var popupLayer = new Kinetic.Layer();
 
 function afterBgCreating() { //run, after background is creating
     var rightPanel = new Kinetic.Image({
@@ -465,7 +474,53 @@ function afterBgCreating() { //run, after background is creating
     stage.add(monstersLayer);
     stage.add(towersLayer);
     stage.add(basesLayer);
+    stage.add(popupLayer);
 
+}
+
+function gameOver() {
+    var mainBlock = new Kinetic.Rect({
+        x: 0,
+        y: 0,
+        width: 840,
+        height: 480,
+        fill: 'black',
+        stroke: 'white',
+        strokeWidth: 10
+      });
+    var restartBlock = new Kinetic.Rect({
+        x: stage.getWidth() / 2 - 60,
+        y: stage.getHeight() / 2 + 50,
+        width: 120,
+        height: 30,
+        fill: 'white',
+        stroke: 'gray',
+        strokeWidth: 4
+      });
+    var mainText = new Kinetic.Text({
+        x: stage.getWidth() / 2 - 130,
+        y: stage.getHeight() / 2 - 60,
+        text: 'Game Over',
+        fontSize: 60,
+        fontFamily: 'Calibri',
+        fill: 'white'
+      });
+    var restartText = new Kinetic.Text({
+        x: stage.getWidth() / 2 - 30,
+        y: stage.getHeight() / 2 + 53,
+        text: 'Рестарт',
+        fontSize: 20,
+        fontFamily: 'Calibri',
+        fill: 'black'
+      });
+    popupLayer.add(mainBlock);
+    popupLayer.add(restartBlock);
+    popupLayer.add(mainText);
+    popupLayer.add(restartText);
+    popupLayer.draw();
+    restartBlock.on('click tap', function() {
+        location = '';
+    });
 }
 
 function playBackgroundMusic(){
@@ -502,13 +557,19 @@ var mobAnim = new Kinetic.Animation(function(frame) {
         {
             monsterArray[i].sprite.remove();
             monsterArray.splice(i,1);
+            hpCounter--;
+            healthPoints.setText(hpCounter);
+            rightPanelLayer.draw();
+            if (hpCounter <= 0) {
+                gameOver();
+            }
         }
     }
 }, monstersLayer);
 
 function spawnMonster(currentWave){
     currentMonster++;
-    var maxspeed = 0.5/*Math.random()*0.5 + 0.1*/;
+    var maxspeed = 2/*Math.random()*0.5 + 0.1*/;
     var maxforce = 0.02;
     var x = pathCells[0].x * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
     var y = pathCells[0].y * cellSize + cellSize/2 + (Math.random()*cellSize - cellSize/2);
