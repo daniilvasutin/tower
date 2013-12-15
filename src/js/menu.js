@@ -29,6 +29,23 @@ $(document).on('ready', function() {
             $('#main').slideUp();
             $('#settings').slideDown();
         });
+        $('#sound_on').on('click', function() {
+            $('#sound_on').attr('checked', 'checked');
+        });
+        $('#sound_off').on('click', function() {
+            $('#sound_off').attr('checked', 'checked');
+        });
+        $('#save_settings').on('click', function() {
+            if ($('#sound_on').attr('checked')) {
+                setVolume('menuMusic',30);
+                playBackgroundMusic('menuMusic');
+            }
+            if ($('#sound_off').attr("checked")) {
+                stopMusic('gameMusic');
+                stopMusic('menuMusic');
+            }
+        });
+
         $('#exit_btn').on('click', function() {
             closeWindow();
         });

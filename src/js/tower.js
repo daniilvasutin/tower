@@ -14,7 +14,8 @@ var sources = {
     saleTower: "images/sale.png",
     upTower: "images/up.png",
     bullets: "images/bullets.png",
-    puddle_blue: "images/puddle.png"
+    puddle_blue: "images/puddle_blue.png",
+    puddle_green: "images/puddle_green.png"
 };
 
 function loadImages(sources, callback) {
@@ -341,7 +342,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
     });
 }
 
-function Puddle(x, y, type, damage, cost, radius) {
+function Puddle(x, y, image, type, damage, cost, radius) {
     var self = this;
     var lastTime = 0;
 
@@ -354,7 +355,7 @@ function Puddle(x, y, type, damage, cost, radius) {
     this.image = new Kinetic.Image({
         x: x * cellSize,
         y: y * cellSize,
-        image: images.puddle_blue,
+        image: image,
         width: 30,
         height: 30
     });
@@ -513,6 +514,7 @@ function afterBgCreating() { //run, after background is creating
 
 function gameOver() {
     mobAnim.stop();
+    stopMusic('gameMusic');
     var mainBlock = new Kinetic.Rect({
         x: 0,
         y: 0,
@@ -564,6 +566,7 @@ function gameOver() {
 
 function gameVictory() {
     mobAnim.stop();
+    stopMusic('gameMusic');
     var victoryMainBlock = new Kinetic.Rect({
         x: 0,
         y: 0,
@@ -756,11 +759,11 @@ bgLayer.on('mousemove touchmove', function(){
         });
     }
     if (isBuildingPuddle) {
-        beingConstructedCrystal.setAttrs({
-            x: mouseX*cellSize,
-            y: mouseY*cellSize,
-            visible: true
-        });
+            beingConstructedCrystal.setAttrs({
+                x: mouseX*cellSize,
+                y: mouseY*cellSize,
+                visible: true
+            });
     }
     bgLayer.draw();
 });
@@ -950,19 +953,25 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
             isBuildingCrystal = false;
         }
         if (isBuildingPuddle) {
-            switch (towerType) {
-                case 'bluePuddle':
-                    var newTower = new Puddle(mouseX, mouseY, 'bluePuddle', 0, bluePuddleCost, 32);
-                    goldCounter = goldCounter - bluePuddleCost;
-                    goldDisplay.setText(goldCounter);
-                    rightPanelLayer.draw();
-                    break;
-                case 'greenPuddle':
-                    var newTower = new Puddle(mouseX, mouseY, 'blueCrystal', 10, blueCrystalCost, 32);
-                    goldCounter = goldCounter - blueCrystalCost;
-                    goldDisplay.setText(goldCounter);
-                    rightPanelLayer.draw();
-                    break;
+            for (var i = 0; i < busyCells.length; i++) {
+                if ((busyCells[i].x == mouseX && busyCells[i].type == 6) && (busyCells[i].y == mouseY && busyCells[i].type == 6)) {
+                    switch (towerType) {
+                        case 'bluePuddle':
+                            var newTower = new Puddle(mouseX, mouseY, images.puddle_blue, 'bluePuddle', 0, bluePuddleCost, 32);
+                            goldCounter = goldCounter - bluePuddleCost;
+                            goldDisplay.setText(goldCounter);
+                            rightPanelLayer.draw();
+                            break;
+                        case 'greenPuddle':
+                            var newTower = new Puddle(mouseX, mouseY, images.puddle_green, 'greenPuddle', 10, greenPuddleCost, 32);
+                            goldCounter = goldCounter - greenPuddleCost;
+                            goldDisplay.setText(goldCounter);
+                            rightPanelLayer.draw();
+                            break;
+                    }
+                    beingConstructedCrystal.hide();
+                    isBuildingPuddle = false;
+                }
             }
             beingConstructedCrystal.hide();
             isBuildingPuddle = false;
@@ -1116,22 +1125,24 @@ function buildTowersMenu() { //draw menu with towers
     puddleBlueIco.on('mousedown touchstart',  function() {
         if (goldCounter >= bluePuddleCost) {
             isBuildingPuddle = true;
+            playSprite('crystalDing');
             towerType = 'bluePuddle';
             beingConstructedCrystal.setAttrs({
                 image: images.puddle_blue
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     puddleGreenIco.on('mousedown touchstart',  function() {
         if (goldCounter >= greenCrystalCost) {
-            isBuildingCrystal = true;
-            towerType = 'blueCrystal';
+            isBuildingPuddle = true;
+            playSprite('crystalDing');
+            towerType = 'greenPuddle';
             beingConstructedCrystal.setAttrs({
-                image: images.crystals
+                image: images.puddle_green
             });
-            beingConstructedCrystal.setCrop([32, 0, 32, 32]);
         } else {
             playSprite('moneyLong');
             displayErrors("Недостаточно золота!");

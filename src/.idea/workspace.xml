@@ -23,10 +23,10 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="tower.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="tower.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/js/tower.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="992" column="68" selection-start="44063" selection-end="44063" vertical-scroll-proportion="0.93971634">
+            <state line="1140" column="38" selection-start="49219" selection-end="49219" vertical-scroll-proportion="-722.68">
               <folding />
             </state>
           </provider>
@@ -35,7 +35,7 @@
       <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="81" column="39" selection-start="4032" selection-end="4032" vertical-scroll-proportion="-52.384617">
+            <state line="62" column="21" selection-start="3335" selection-end="3335" vertical-scroll-proportion="-6.6153846">
               <folding />
             </state>
           </provider>
@@ -59,10 +59,10 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="menu.js" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="menu.js" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/js/menu.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="1" column="28" selection-start="56" selection-end="65" vertical-scroll-proportion="0.0">
+            <state line="42" column="47" selection-start="1428" selection-end="1428" vertical-scroll-proportion="0.8471761">
               <folding />
             </state>
           </provider>
@@ -92,10 +92,10 @@
         <option value="$PROJECT_DIR$/html/index.html" />
         <option value="$PROJECT_DIR$/css/style.css" />
         <option value="$PROJECT_DIR$/js/path.js" />
-        <option value="$PROJECT_DIR$/js/menu.js" />
         <option value="$PROJECT_DIR$/js/monster.js" />
-        <option value="$PROJECT_DIR$/index.html" />
         <option value="$PROJECT_DIR$/js/tower.js" />
+        <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/js/menu.js" />
       </list>
     </option>
   </component>
@@ -293,6 +293,13 @@
         <state line="104" column="19" selection-start="2650" selection-end="2650" vertical-scroll-proportion="0.0" />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/js/tower.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="1140" column="38" selection-start="49219" selection-end="49219" vertical-scroll-proportion="-722.68">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/js/monster.js">
       <provider selected="true" editor-type-id="text-editor">
         <state line="42" column="7" selection-start="997" selection-end="997" vertical-scroll-proportion="0.0">
@@ -300,23 +307,16 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/menu.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1" column="28" selection-start="56" selection-end="65" vertical-scroll-proportion="0.0">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="81" column="39" selection-start="4032" selection-end="4032" vertical-scroll-proportion="-52.384617">
+        <state line="62" column="21" selection-start="3335" selection-end="3335" vertical-scroll-proportion="-6.6153846">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/js/tower.js">
+    <entry file="file://$PROJECT_DIR$/js/menu.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="992" column="68" selection-start="44063" selection-end="44063" vertical-scroll-proportion="0.93971634">
+        <state line="42" column="47" selection-start="1428" selection-end="1428" vertical-scroll-proportion="0.8471761">
           <folding />
         </state>
       </provider>
