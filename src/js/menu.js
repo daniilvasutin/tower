@@ -1,20 +1,20 @@
 $(document).on('ready', function() {
         //setVolume('menuMusic',30);
-        playBackgroundMusic('menuMusic');
+        //playBackgroundMusic('menuMusic');
 
         $('.button').hover(function(){         
-           playSprite('buttonHover');
+           //playSprite('buttonHover');
         },function(){});
 
         $('.button').click(function(){
-            playSprite('buttonClick');
+            //playSprite('buttonClick');
         });
 
         $('#new_game_btn').on('click', function() {
             $('#main').slideUp();
             $('#game').slideDown();
             loadImages(sources, startGame);
-            stopMusic('menuMusic');
+            //stopMusic('menuMusic');
         });
         $('#help_btn').on('click', function() {
             $('#main').slideUp();

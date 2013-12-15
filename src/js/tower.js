@@ -75,7 +75,7 @@ var isBuildingCrystal = false; //is the crystal now under construction?
 var isBuildingPuddle = false; //is the puddle now under construction?
 var towerFoundationCost = 10;
 var blueCrystalCost = 30; //cost of crystal
-var redCrystalCost = 40;
+var redCrystalCost = 50;
 var greenCrystalCost = 20;
 var bluePuddleCost = 50;
 var greenPuddleCost = 50;
@@ -384,24 +384,27 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
     height: cellSize,
     visible: false
 });
+
 /* ------------------------------------------------------------------------*/
 
 
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 50, frameRate: 4, cost: 5}],
-    [{name: "wave2", hp: 70, frameRate: 4, cost: 7}],
-    [{name: "wave3", hp: 90, frameRate: 4, cost: 10}],
-    [{name: "wave4", hp: 120, frameRate: 4, cost: 12}],
-    [{name: "wave5", hp: 150, frameRate: 4, cost: 15}],
-    [{name: "wave6", hp: 180, frameRate: 4, cost: 17}],
-    [{name: "wave7", hp: 250, frameRate: 4, cost: 20}],
-    [{name: "wave8", hp: 280, frameRate: 4, cost: 25}],
-    [{name: "wave9", hp: 310, frameRate: 4, cost: 28}],
-    [{name: "wave10", hp: 340, frameRate: 4, cost: 30}]
+    [{name: "wave1", hp: 70, frameRate: 4, cost: 4}],
+    [{name: "wave2", hp: 110, frameRate: 4, cost: 6}],
+    [{name: "wave3", hp: 130, frameRate: 4, cost: 8}],
+    [{name: "wave4", hp: 170, frameRate: 4, cost: 8}],
+    [{name: "wave5", hp: 250, frameRate: 4, cost: 9}],
+    [{name: "wave6", hp: 310, frameRate: 4, cost: 10}],
+    [{name: "wave7", hp: 510, frameRate: 4, cost: 10}],
+    [{name: "wave8", hp: 760, frameRate: 4, cost: 13}],
+    [{name: "wave9", hp: 1200, frameRate: 4, cost: 14}],
+    [{name: "wave10", hp: 1500, frameRate: 4, cost: 15}]
 ];
 var currentMonster = 0;
+var currentMobWave = 0;
+var wavesCount = 10;
 var aminationMob = [
     [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
     [{x: 62,y: 0, width: 15, height: 25},{x: 62,y: 28, width: 15, height: 25}],
@@ -441,7 +444,7 @@ var healthPoints = new Kinetic.Text({
 var waveNumber = new Kinetic.Text({
     x: 24 * cellSize,
     y: cellSize + 8,
-    text: '1/20',
+    text: '1/10',
     fontSize: 12,
     fontFamily: 'Calibri',
     fill: 'white'
@@ -454,6 +457,7 @@ var errorMessage = new Kinetic.Text({
     fontFamily: 'Calibri',
     fill: 'yellow'
 });
+
 /*-------------------------------------------------------------------------*/
 
 /** ----------------------------Need for run the game----------------------*/
@@ -546,6 +550,8 @@ function gameOver() {
     });
 }
 
+
+
 function playBackgroundMusic(){
     var audio1 = document.getElementById('aTsIwR');
     audio1.volume = 0.2;
@@ -558,7 +564,8 @@ function startGame(){
     buidPath();
 
     setTimeout(afterBgCreating, 100);
-    spawnMonster(0);
+    //setTimeout(runWaveInfo, 2000);
+    setTimeout(function() {spawnMonster(0)}, 4000);
     mobAnim.start();
 
     //playBackgroundMusic();
@@ -602,10 +609,16 @@ function spawnMonster(currentWave){
             spawnMonster(currentWave)
         }, Math.random()*1000 + 1000);
     }else {
-        if(currentWave < 4){
+        if(currentWave < 10){
             currentMonster=0;
+            currentMobWave++;
             currentWave++;
-            setTimeout(function(){spawnMonster(currentWave)},20000);
+
+            setTimeout(function() {
+                spawnMonster(currentWave);
+                waveNumber.setText((currentMobWave + 1) + '/' + wavesCount);
+                rightPanelLayer.draw();
+            },23000);
         }
     }
 
@@ -816,13 +829,13 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
                 if (foundationsArray[i].x == mouseX && foundationsArray[i].y == mouseY && !foundationsArray[i].complete) {
                     switch(towerType) {
                         case 'redCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 15, redCrystalCost, 60, 64, 30, 1500);
+                            var newTower = new Crystal(mouseX, mouseY, 'redCrystal', 10, redCrystalCost, 60, 64, 30, 1500);
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
                             break;
                         case 'blueCrystal':
-                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 20, blueCrystalCost, 65, 32, 15, 1000);
+                            var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 20, blueCrystalCost, 65, 32, 15, 1200);
                                 goldCounter = goldCounter - blueCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();

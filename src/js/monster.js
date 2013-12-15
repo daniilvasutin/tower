@@ -31,6 +31,8 @@ function Monster(l, ms, mf,target,image,animations,currentWave) {
     this.sprite = new Kinetic.Sprite({
         x: 0,
         y: 0,
+        offsetX: 5,
+        offsetY: 5,
         image: image,
         animation: currentWave,
         animations: animations,
