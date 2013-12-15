@@ -391,8 +391,8 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 70, frameRate: 4, cost: 4}],
-    [{name: "wave2", hp: 110, frameRate: 4, cost: 6}],
+    [{name: "wave1", hp: 60, frameRate: 4, cost: 4}],
+    [{name: "wave2", hp: 90, frameRate: 4, cost: 6}],
     [{name: "wave3", hp: 130, frameRate: 4, cost: 8}],
     [{name: "wave4", hp: 170, frameRate: 4, cost: 8}],
     [{name: "wave5", hp: 250, frameRate: 4, cost: 9}],
@@ -506,6 +506,7 @@ function afterBgCreating() { //run, after background is creating
 }
 
 function gameOver() {
+    mobAnim.stop();
     var mainBlock = new Kinetic.Rect({
         x: 0,
         y: 0,
@@ -548,9 +549,43 @@ function gameOver() {
     restartBlock.on('click tap', function() {
         location = '';
     });
+    restartText.on('click tap', function() {
+        location = '';
+    });
 }
 
-
+// Wave info before mobs are run
+var waveText = new Kinetic.Text({
+    x: 0,
+    y: stage.getHeight()/2 - 35,
+    text: '',
+    fontSize: 30,
+    fontFamily: 'Calibri',
+    fill: 'White',
+    fillLinearGradientStartPoint: [1, 100],
+    shadowColor: 'yellow',
+    shadowBlur: 5,
+    shadowOffset: [5, 5],
+    shadowOpacity: 0.8,
+    visible: false
+});
+basesLayer.add(waveText);
+var waveTween = new Kinetic.Tween({
+    x: stage.getWidth()/2 - 150,
+    y: stage.getHeight()/2 - 35,
+    node: waveText,
+    duration: 4,
+    easing: Kinetic.Easings.BackEaseOut,
+    onFinish: function() {
+        waveText.hide();
+        this.reset();
+    }
+});
+function runWaveInfo() { // run string animation with wave info
+    waveText.setText('Волна ' + (currentMobWave + 1) + ' приближается...');
+    waveText.show();
+    waveTween.play();
+}
 
 function playBackgroundMusic(){
     var audio1 = document.getElementById('aTsIwR');
@@ -564,7 +599,7 @@ function startGame(){
     buidPath();
 
     setTimeout(afterBgCreating, 100);
-    //setTimeout(runWaveInfo, 2000);
+    setTimeout(runWaveInfo, 2000);
     setTimeout(function() {spawnMonster(0)}, 4000);
     mobAnim.start();
 
@@ -613,7 +648,7 @@ function spawnMonster(currentWave){
             currentMonster=0;
             currentMobWave++;
             currentWave++;
-
+            setTimeout(runWaveInfo, 19000);
             setTimeout(function() {
                 spawnMonster(currentWave);
                 waveNumber.setText((currentMobWave + 1) + '/' + wavesCount);
