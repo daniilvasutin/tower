@@ -391,19 +391,19 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 60, frameRate: 4, cost: 4}],
-    [{name: "wave2", hp: 90, frameRate: 4, cost: 6}],
-    [{name: "wave3", hp: 130, frameRate: 4, cost: 8}],
-    [{name: "wave4", hp: 170, frameRate: 4, cost: 8}],
-    [{name: "wave5", hp: 250, frameRate: 4, cost: 9}],
-    [{name: "wave6", hp: 310, frameRate: 4, cost: 10}],
-    [{name: "wave7", hp: 510, frameRate: 4, cost: 10}],
-    [{name: "wave8", hp: 760, frameRate: 4, cost: 13}],
-    [{name: "wave9", hp: 1200, frameRate: 4, cost: 14}],
-    [{name: "wave10", hp: 1500, frameRate: 4, cost: 15}]
+    [{name: "wave1", hp: 1, frameRate: 4, cost: 5}],
+    [{name: "wave2", hp: 1, frameRate: 4, cost: 6}],
+    [{name: "wave3", hp: 1, frameRate: 4, cost: 8}],
+    [{name: "wave4", hp: 1, frameRate: 4, cost: 8}],
+    [{name: "wave5", hp: 1, frameRate: 4, cost: 9}],
+    [{name: "wave6", hp: 1, frameRate: 4, cost: 10}],
+    [{name: "wave7", hp: 1, frameRate: 4, cost: 10}],
+    [{name: "wave8", hp: 1, frameRate: 4, cost: 13}],
+    [{name: "wave9", hp: 1, frameRate: 4, cost: 14}],
+    [{name: "wave10", hp: 1, frameRate: 4, cost: 15}]
 ];
 var currentMonster = 0;
-var currentMobWave = 0;
+var currentMobWave = 1;
 var wavesCount = 10;
 var aminationMob = [
     [{x: 0,y: 0, width: 17, height: 26},{x: 0,y: 28, width: 17, height: 26}],
@@ -512,9 +512,11 @@ function gameOver() {
         y: 0,
         width: 840,
         height: 480,
-        fill: 'black',
         stroke: 'white',
-        strokeWidth: 10
+        strokeWidth: 10,
+        fillLinearGradientStartPoint: [0, 0],
+        fillLinearGradientEndPoint: [0, 480],
+        fillLinearGradientColorStops: [0, 'white', 1, 'black']
       });
     var restartBlock = new Kinetic.Rect({
         x: stage.getWidth() / 2 - 60,
@@ -554,6 +556,51 @@ function gameOver() {
     });
 }
 
+function gameVictory() {
+    mobAnim.stop();
+    var victoryMainBlock = new Kinetic.Rect({
+        x: 0,
+        y: 0,
+        width: 840,
+        height: 480,
+        fillLinearGradientStartPoint: [0, 0],
+        fillLinearGradientEndPoint: [0, 480],
+        fillLinearGradientColorStops: [0, 'white', 1, 'green'],
+        stroke: 'white',
+        strokeWidth: 10
+      });
+    var nextLevelBlock = new Kinetic.Rect({
+        x: stage.getWidth() / 2 - 60,
+        y: stage.getHeight() / 2 + 50,
+        width: 120,
+        height: 30,
+        fill: 'white',
+        stroke: 'gray',
+        strokeWidth: 4
+      });
+    var victoryMainText = new Kinetic.Text({
+        x: stage.getWidth() / 2 - 130,
+        y: stage.getHeight() / 2 - 60,
+        text: 'Победа!',
+        fontSize: 60,
+        fontFamily: 'Calibri',
+        fill: 'black'
+      });
+    var nextLevelText = new Kinetic.Text({
+        x: stage.getWidth() / 2 - 60,
+        y: stage.getHeight() / 2 + 53,
+        text: 'Следующая карта',
+        fontSize: 20,
+        fontFamily: 'Calibri',
+        fill: 'black'
+      });
+    popupLayer.add(victoryMainBlock);
+    popupLayer.add(nextLevelBlock);
+    popupLayer.add(victoryMainText);
+    popupLayer.add(nextLevelText);
+    popupLayer.draw();
+}
+
 // Wave info before mobs are run
 var waveText = new Kinetic.Text({
     x: 0,
@@ -582,7 +629,7 @@ var waveTween = new Kinetic.Tween({
     }
 });
 function runWaveInfo() { // run string animation with wave info
-    waveText.setText('Волна ' + (currentMobWave + 1) + ' приближается...');
+    waveText.setText('Волна ' + currentMobWave  + ' приближается...');
     waveText.show();
     waveTween.play();
 }
@@ -630,6 +677,9 @@ var mobAnim = new Kinetic.Animation(function(frame) {
             }
         }
     }
+    if (currentMobWave >= wavesCount && monsterArray.length == 0) {
+        gameVictory();
+    }
 }, monstersLayer);
 
 function spawnMonster(currentWave){
@@ -646,12 +696,12 @@ function spawnMonster(currentWave){
     }else {
         if(currentWave < 10){
             currentMonster=0;
-            currentMobWave++;
             currentWave++;
             setTimeout(runWaveInfo, 19000);
+            currentMobWave++;
             setTimeout(function() {
                 spawnMonster(currentWave);
-                waveNumber.setText((currentMobWave + 1) + '/' + wavesCount);
+                waveNumber.setText(currentMobWave + '/' + wavesCount);
                 rightPanelLayer.draw();
             },23000);
         }
