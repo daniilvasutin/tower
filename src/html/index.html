@@ -1,0 +1,71 @@
+<html>
+   <head>
+       <meta charset="utf-8">
+       <title></title>
+       <link rel="stylesheet" type="text/css" href="../css/style.css" />
+       <script type="text/javascript" src="../js/jquery-1.10.2.min.js" ></script>
+       <script type="text/javascript" src="../js/menu.js" ></script>
+   </head>
+   <body>
+       <div class="main_menu" id="main">
+                <button id="new_game_btn" class="button">Новая игра</button>
+                <button id="help_btn" class="button">Помощь</button>
+                <button id="glossary_btn" class="button">Глоссарий</button>
+                <button id="settings_btn" class="button">Настройки</button>
+                <button id="exit_btn" class="button">Выход</button>
+        </div>
+
+       <div class="text_block" id="help">
+           <p>
+               <h2>Помощь</h2>
+               <p>Это абсолютно бесполезная помощь, которую все равно никто никогда не читает.</p>
+               <h3>Советы:</h3>
+               <ul>
+                   <li>Если вы нажмете на кнопку то кнопка будет нажата.</li>
+                   <li>Если вы не нажмете на кнопку то соответствующая кнопка не будет нажата.</li>
+                   <li>Если вы будите удерживать кнопку то кнопка будет удержана вами.</li>
+               </ul>
+           </p>
+           <button class="button_small to_menu">Назад</button>
+       </div>
+
+       <div class="text_block" id="glossary">
+           <p>Тут будет описание вышек и мобов! :)</p>
+           <button class="button_small to_menu">Назад</button>
+       </div>
+
+       <div class="text_block" id="settings">
+           <h3>Звук</h3>
+           <input type="radio" name="sound" id="sound_on" checked/>ON
+           <input type="radio" name="sound" id="sound_off"/>OFF
+           <button class="button_small to_menu">Назад</button>
+       </div>
+
+       <div id="game"></div>
+
+       <audio id="aTsIwR">
+           <source src="../music/tsIwR.mp3" type="audio/mpeg" />
+       </audio><br />
+
+       <audio id="menuMusic" autoplay loop >
+           <source src="../music/menuMusic.mp3" type="audio/mpeg" />
+       </audio><br />
+
+       <audio id="gameMusic" >
+           <source src="../music/gameMusic.mp3" type="audio/mpeg" />
+       </audio><br />
+
+       <audio id="effects" preload="auto">
+           <source src="../music/effectSprite.mp3" type="audio/mpeg" />
+       </audio><br />
+
+       <script src="../js/kinetic-v4.5.3.js"></script>
+       <!--<script type="text/javascript" src="../js/howler.js"></script>-->
+       <!--<script type="text/javascript" src="../js/soundmanager2-nodebug-jsmin.js"></script>-->
+
+       <script type="text/javascript" src="../js/vector.js"></script>
+       <script type="text/javascript" src="../js/path.js"></script>
+       <script type="text/javascript" src="../js/monster.js"></script>
+       <script type="text/javascript" src="../js/tower.js"></script>
+    </body>
+</html>

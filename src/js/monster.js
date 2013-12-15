@@ -11,6 +11,7 @@ function max(a,b) {
 }
 
 function Monster(l, ms, mf,target,image,animations,currentWave) {
+
     var self = this;
     var locat = l;
     var r = 5.0;
@@ -40,6 +41,7 @@ function Monster(l, ms, mf,target,image,animations,currentWave) {
         index: 0,
         opacity:1
     });
+
 
     this.anim = new Kinetic.Animation(function(frame) {
         //damage mobs
@@ -89,6 +91,7 @@ function Monster(l, ms, mf,target,image,animations,currentWave) {
             }
         }
         if (self.hp <= 0) { //if mob is dead, delete it
+            playSprite('moneyShot',15);
             self.anim.stop();
             self.sprite.remove();
             goldCounter += self.cost;

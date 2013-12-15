@@ -298,6 +298,8 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
             towersArray[i].sale.hide();
             towersArray[i].circle.hide();
         }
+
+        playSprite('towerBuild',30);
         self.circle.show();
         self.up.show();
         self.sale.show();
@@ -312,6 +314,7 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
                 break;
             }
         }
+        playSprite('moneyLong');
         self.destroy();
         rightPanelLayer.draw();
     });
@@ -330,7 +333,9 @@ function Crystal(x, y, type, damage, cost, radius, crystCropX, bulletCropX, dama
             displayErrors('Кристал улучшен до ' + self.level + ' уровня!');
             rightPanelLayer.draw();
             towersLayer.draw();
+            playSprite('upTowerLevel');
         } else {
+            playSprite('note');
             displayErrors('Недостаточно золота!');
         }
     });
@@ -391,16 +396,17 @@ var beingConstructedCrystal = new Kinetic.Image({ //building crystal image
 /** ----------------------------Monster var--------------------------------*/
 var monsterArray = new Array();
 var waveCharacteris = [
-    [{name: "wave1", hp: 1, frameRate: 4, cost: 5}],
-    [{name: "wave2", hp: 1, frameRate: 4, cost: 6}],
-    [{name: "wave3", hp: 1, frameRate: 4, cost: 8}],
-    [{name: "wave4", hp: 1, frameRate: 4, cost: 8}],
-    [{name: "wave5", hp: 1, frameRate: 4, cost: 9}],
-    [{name: "wave6", hp: 1, frameRate: 4, cost: 10}],
-    [{name: "wave7", hp: 1, frameRate: 4, cost: 10}],
-    [{name: "wave8", hp: 1, frameRate: 4, cost: 13}],
-    [{name: "wave9", hp: 1, frameRate: 4, cost: 14}],
-    [{name: "wave10", hp: 1, frameRate: 4, cost: 15}]
+
+    [{name: "wave1", hp: 60, frameRate: 4, cost: 5, type: 'ground'}],
+    [{name: "wave2", hp: 90, frameRate: 4, cost: 6, type: 'ground'}],
+    [{name: "wave3", hp: 130, frameRate: 4, cost: 8, type: 'ground'}],
+    [{name: "wave4", hp: 155, frameRate: 4, cost: 8, type: 'fly'}],
+    [{name: "wave5", hp: 200, frameRate: 4, cost: 9, type: 'ground'}],
+    [{name: "wave6", hp: 230, frameRate: 4, cost: 10, type: 'ground'}],
+    [{name: "wave7", hp: 270, frameRate: 4, cost: 10, type: 'ground'}],
+    [{name: "wave8", hp: 320, frameRate: 4, cost: 13, type: 'ground'}],
+    [{name: "wave9", hp: 400, frameRate: 4, cost: 14, type: 'fly'}],
+    [{name: "wave10", hp: 510, frameRate: 4, cost: 15, type: 'ground'}]
 ];
 var currentMonster = 0;
 var currentMobWave = 1;
@@ -570,16 +576,16 @@ function gameVictory() {
         strokeWidth: 10
       });
     var nextLevelBlock = new Kinetic.Rect({
-        x: stage.getWidth() / 2 - 60,
+        x: stage.getWidth() / 2 - 110,
         y: stage.getHeight() / 2 + 50,
-        width: 120,
+        width: 210,
         height: 30,
         fill: 'white',
         stroke: 'gray',
         strokeWidth: 4
       });
     var victoryMainText = new Kinetic.Text({
-        x: stage.getWidth() / 2 - 130,
+        x: stage.getWidth() / 2 - 110,
         y: stage.getHeight() / 2 - 60,
         text: 'Победа!',
         fontSize: 60,
@@ -587,7 +593,7 @@ function gameVictory() {
         fill: 'black'
       });
     var nextLevelText = new Kinetic.Text({
-        x: stage.getWidth() / 2 - 60,
+        x: stage.getWidth() / 2 - 85,
         y: stage.getHeight() / 2 + 53,
         text: 'Следующая карта',
         fontSize: 20,
@@ -634,12 +640,6 @@ function runWaveInfo() { // run string animation with wave info
     waveTween.play();
 }
 
-function playBackgroundMusic(){
-    var audio1 = document.getElementById('aTsIwR');
-    audio1.volume = 0.2;
-    audio1.play();
-}
-
 function startGame(){
     buildBackground(map1);
 
@@ -649,18 +649,15 @@ function startGame(){
     setTimeout(runWaveInfo, 2000);
     setTimeout(function() {spawnMonster(0)}, 4000);
     mobAnim.start();
-
-    //playBackgroundMusic();
-    //setTimeout(function(){playSprite('monsterA');},3000);
-    //setTimeout(function(){playSprite('monsterHa');},25000);
-
+	
+    setVolume('gameMusic', 50);
+    playBackgroundMusic('gameMusic');
 }
 /* ------------------------------------------------------------------------*/
 
 
 /***************************************************************************/
 /** ----------------------------Monster processing-------------------------*/
-
 
 var mobAnim = new Kinetic.Animation(function(frame) {
     for(var i = 0; i < monsterArray.length; i++) {
@@ -699,7 +696,11 @@ function spawnMonster(currentWave){
             currentWave++;
             setTimeout(runWaveInfo, 19000);
             currentMobWave++;
-            setTimeout(function() {
+            setTimeout(function(){
+                playSprite('newWave');
+                if(waveCharacteris[currentWave][0].type === "fly"){
+                    setTimeout(function(){playSprite("flyMonster");},2500);
+                }
                 spawnMonster(currentWave);
                 waveNumber.setText(currentMobWave + '/' + wavesCount);
                 rightPanelLayer.draw();
@@ -823,14 +824,17 @@ bgLayer.on('mouseup touchend', function(){
                 beingConstructedTower.hide();
                 isBuildingFoundation = false;
                 beingConstructedCrystal.moveToTop(); //draw being constructed crystal over foundation
+                playSprite('towerBuild',60);
             }
         } else { //if place is busy
+            playSprite('note');
             beingConstructedRect.hide();
             beingConstructedTower.hide();
             isBuildingFoundation = false;
         }
     }
     if (isBuildingCrystal) { //if crystal is not on towerFoundation hide it
+        playSprite('note');
         beingConstructedCrystal.hide();
         isBuildingCrystal = false;
     }
@@ -918,6 +922,7 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
                                 goldCounter = goldCounter - redCrystalCost;
                                 goldDisplay.setText(goldCounter);
                                 rightPanelLayer.draw();
+
                             break;
                         case 'blueCrystal':
                             var newTower = new Crystal(mouseX, mouseY, 'blueCrystal', 20, blueCrystalCost, 65, 32, 15, 1200);
@@ -933,6 +938,7 @@ beingConstructedCrystal.on('mouseup touchend', function(){ //event for crystal p
                             break;
                         default: break;
                     }
+                    playSprite('crystalDing');
                     towersArray.push(newTower);
 
                     beingConstructedCrystal.hide();
@@ -984,7 +990,7 @@ function buildBackground(map) { //draw background
             backgroundImageArray.push(tile);
 
             if (map[i][j].busy == 1) { //define the occupied space
-                busyCells.push({x: j, y: i});
+                busyCells.push({x: j, y: i, type: map[i][j].TileType});
             }
         }
     }
@@ -1055,17 +1061,20 @@ function buildTowersMenu() { //draw menu with towers
     /* Towers menu events */
     towerFoundationIco.on('mousedown touchstart',  function() {
         if (goldCounter >= towerFoundationCost) {
+            playSprite('towerClicked',10);
             isBuildingFoundation = true;
             towerType = 'foundation';
             beingConstructedTower.setAttrs({
                 image: images.towerFoundation
             });
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalBlueIco.on('mousedown touchstart',  function() {
         if (goldCounter >= blueCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'blueCrystal';
             beingConstructedCrystal.setAttrs({
@@ -1073,11 +1082,13 @@ function buildTowersMenu() { //draw menu with towers
             });
             beingConstructedCrystal.setCrop([32, 0, 32, 32]);
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalGreenIco.on('mousedown touchstart',  function() {
         if (goldCounter >= greenCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'greenCrystal';
             beingConstructedCrystal.setAttrs({
@@ -1085,11 +1096,13 @@ function buildTowersMenu() { //draw menu with towers
             });
             beingConstructedCrystal.setCrop([0, 0, 32, 32]);
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
     crystalRedIco.on('mousedown touchstart',  function() {
         if (goldCounter >= greenCrystalCost) {
+            playSprite('crystalDing');
             isBuildingCrystal = true;
             towerType = 'redCrystal';
             beingConstructedCrystal.setAttrs({
@@ -1120,6 +1133,7 @@ function buildTowersMenu() { //draw menu with towers
             });
             beingConstructedCrystal.setCrop([32, 0, 32, 32]);
         } else {
+            playSprite('moneyLong');
             displayErrors("Недостаточно золота!");
         }
     });
@@ -1176,9 +1190,31 @@ function buidPath() {
 }
 /* -----------------------------Map processing-----------------------------*/
 
-
 /***************************************************************************/
 /** ----------------------------Sound processing---------------------------*/
+function playBackgroundMusic(audioId){
+    playLoop(audioId);
+}
+
+function setVolume(audioId, volume){
+    var audio = document.getElementById(audioId);
+    audio.volume = volume/100;
+}
+
+function playLoop(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.addEventListener('ended', function() {
+        this.currentTime = 0;
+        this.play();
+    }, false);
+    myAudio.play();
+}
+
+function stopMusic(audioId){
+    var myAudio = document.getElementById(audioId);
+    myAudio.pause();
+    myAudio.currentTime = 0;
+}
 
 var audioSprite = document.getElementById('effects');
 
@@ -1193,8 +1229,52 @@ var spriteData = {
         length: 2.0
     },
     monsterHa:{
-        start: 8.1,
-        length: 9.5
+        start: 8.5,
+        length: 1.5
+    },
+    buttonHover: {
+        start: 10.8,
+        length: 0.2
+    },
+    buttonClick: {
+        start: 11.0,
+        length: 2.0
+    },
+    newWave: {
+        start: 14.0,
+        length: 2.5
+    },
+    flyMonster: {
+        start: 16.8,
+        length: 1.0
+    },
+    towerClicked: {
+        start: 18.6,
+        length: 0.4
+    },
+    towerBuild: {
+        start: 19.6,
+        length: 0.5
+    },
+    moneyLong: {
+        start: 20.5,
+        length: 0.8
+    },
+    moneyShot: {
+        start: 21.7,
+        length: 0.7
+    },
+    note: {
+        start: 22.7,
+        length: 0.8
+    },
+    crystalDing: {
+        start: 24.1,
+        length: 0.5
+    },
+    upTowerLevel: {
+        start: 24.9,
+        length: 0.8
     }
 };
 
@@ -1209,11 +1289,12 @@ var onTimeUpdate = function() {
 };
 audioSprite.addEventListener('timeupdate', onTimeUpdate, false);
 
-var playSprite = function(id) {          //play sprite according to the id
+var playSprite = function(id,volume) {          //play sprite according to the id
     if (spriteData[id] && spriteData[id].length) {
         currentSprite = spriteData[id];
         audioSprite.currentTime = currentSprite.start;
+        var volume = volume || 100;
+        setVolume('effects',volume);
         audioSprite.play();
     }
 };
-/* ----------------------------Sound processing----------------------------*/
